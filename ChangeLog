@@ -1,3 +1,9 @@
+2004/07/26	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/op.c:
+	  - New effect OpTV has been added.
+	* effects/aging.c:
+	  - Light flickering effect has been added.
+
 2004/01/20	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/spark.c:
 	  - Now mode is not reset in start().

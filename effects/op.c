@@ -5,7 +5,7 @@
  * OpTV - Optical art meets real-time video effect.
  * Copyright (C) 2004 FUKUCHI Kentaro
  *
- * Inspired by Adrian Likin's script for the GIMP.
+ * TODO: How to anti-alias?
  */
 
 #include <stdlib.h>
@@ -23,7 +23,7 @@ static char *effectname = "OpTV";
 static int stat;
 static unsigned char phase;
 static int mode = 0;
-static int speed = 8;
+static int speed = 16;
 #define OPMAP_MAX 4
 static char *opmap[OPMAP_MAX];
 #define OP_SPIRAL1  0
@@ -56,17 +56,10 @@ static void setOpmap()
 			opmap[OP_SPIRAL2][i] = ((unsigned int)
 				((at/M_PI*4096) + (r*8) + j ))&255;
 
-			//opmap[OP_PARABOLA][i] = ((unsigned int)(y*8+exp(-xx*xx*0.00006)*yy*8))&255;
-			opmap[OP_PARABOLA][i] = ((unsigned int)(exp(-xx*xx*0.0008/sc)*yy*1024/sc))&255;
-			//opmap[OP_RIPPLE][i] = ((unsigned int)-(sqrt(xx*xx+yy*yy)*16+sin(x*0.7+yy*0.3)*17)&255);
+			opmap[OP_PARABOLA][i] = ((unsigned int)(yy/(xx*xx*0.000004+0.1)*128/sc))&255;
+			opmap[OP_HSTRIPE][i] = (x%16)*16;
+			/* opmap[OP_RIPPLE][i] = ((unsigned int)-(sqrt(xx*xx+yy*yy)*16+sin(x*0.7+yy*0.3)*17)&255); */
 			i++;
-		}
-	}
-	i = 0;
-	for(y=0; y<video_height; y++) {
-		for(x=0; x<video_width; x++) {
-			j = x%16;
-			opmap[OP_HSTRIPE][i++] = j*16;
 		}
 	}
 }
@@ -118,38 +111,31 @@ static int stop()
 static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
-	RGB32 v;
-	char *pg;
-	unsigned char *diff, g;
+	char *p;
+	unsigned char *diff, v;
 
 	switch(mode) {
 		default:
 		case 0:
-			pg = opmap[OP_SPIRAL1];
+			p = opmap[OP_SPIRAL1];
 			break;
 		case 1:
-			pg = opmap[OP_SPIRAL2];
+			p = opmap[OP_SPIRAL2];
 			break;
 		case 2:
-			pg = opmap[OP_PARABOLA];
+			p = opmap[OP_PARABOLA];
 			break;
 		case 3:
-			pg = opmap[OP_HSTRIPE];
+			p = opmap[OP_HSTRIPE];
 			break;
 	}
 
 	diff = image_y_over(src);
 	for(y=0; y<video_height; y++) {
 		for(x=0; x<video_width; x++) {
-			if(*diff++ == 0xff) {
-				v = 0xffffff;
-			} else {
-				v = 0;
-			}
-			g = (char)(*pg+phase*3)>>7;
-			v ^= (g<<16) | (g<<8) | g;
-			*dest++ = v;
-			pg++;
+			v = ((char)(*p+phase)>>7) ^ *diff++;
+			*dest++ = (v<<16) | (v<<8) | v;
+			p++;
 		}
 	}
 
@@ -175,22 +161,22 @@ static int event(SDL_Event *event)
 			mode = 3;
 			break;
 		case SDLK_q:
-			speed = 1;
-			break;
-		case SDLK_w:
-			speed = 2;
-			break;
-		case SDLK_e:
 			speed = 4;
 			break;
-		case SDLK_r:
+		case SDLK_w:
 			speed = 8;
 			break;
-		case SDLK_t:
+		case SDLK_e:
 			speed = 16;
 			break;
-		case SDLK_y:
+		case SDLK_r:
 			speed = 32;
+			break;
+		case SDLK_t:
+			speed = 64;
+			break;
+		case SDLK_y:
+			speed = -64;
 			break;
 		case SDLK_u:
 			speed = -32;
