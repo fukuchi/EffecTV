@@ -186,35 +186,35 @@ int dizzyEvent(SDL_Event *event)
 			zoomrate = 1.01;
 			break;
 
-        case SDLK_INSERT:
+		case SDLK_INSERT:
 			phase_increment += 0.01;
-            break;
-            
-        case SDLK_DELETE:
+			break;
+
+		case SDLK_DELETE:
 			phase_increment -= 0.01;
 			if(phase_increment < 0.01) {
 				phase_increment = 0.01;
 			}
-            break;
+			break;
 
-        case SDLK_PAGEUP:
+		case SDLK_PAGEUP:
 			zoomrate += 0.01;
 			if(zoomrate > 1.1) {
 				zoomrate = 1.1;
 			}
-            break;
-            
-        case SDLK_PAGEDOWN:
+			break;
+
+		case SDLK_PAGEDOWN:
 			zoomrate -= 0.01;
 			if(zoomrate < 1.01) {
 				zoomrate = 1.01;
 			}
-            break;
-            
+			break;
+
 		default:
 			break;
 		}
 	}
-    
+
 	return 0;
 }
