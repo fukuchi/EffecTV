@@ -79,8 +79,8 @@ static effectRegisterFunc *effects_register_list[] =
 	diffRegister,
 	scrollRegister,
 	warholRegister,
-//	matrixRegister,
-//	pupRegister,
+	matrixRegister,
+	pupRegister,
 };
 
 static effect **effectsList;

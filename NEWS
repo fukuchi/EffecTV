@@ -1,5 +1,9 @@
 Overview of Changes in EffecTV-0.3.9
 ====================================
+* New effect "MatrixTV" and "PupTV" have been added.
+  You say "Who wants Matrix effect after the trilogy? It's obsolete." I'm
+  sorry, it's due to my slow slow udpating.
+
 * API of effect module has been simplified.
 
 * The supported version of vloopback has been changed from 0.90 to 0.91.
@@ -13,7 +17,7 @@ Overview of Changes in EffecTV-0.3.9
 
 * PuzzleTV's block sliding effect becomes smooth.
 
-* Some bug fixes.
+* Many bug fixes.
 
 Overview of Changes in EffecTV-0.3.8
 ====================================

@@ -1,3 +1,22 @@
+2003/12/24	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/{matrix.c,pup.c,effect.h,Makefile}, main.c:
+	  - Finally I have added MatrixTV and brand new PupTV.
+	* effectv.1, README, NEWS:
+	  - Added notes for 0.3.9.
+
+2003/12/21	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* main.c:
+	  - Now you can set an effect name what EffecTV starts up from.
+	  - registEffect -> registerEffect.
+	  - Note that the old EffecTV allowed to omit '-' of command line options.
+	    Now it is not allowed anymore.
+	* effects/simura.c:
+	  - Does not reset color and mirror in start().
+
+2003/12/20	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/edge.c:
+	  - Fixed a bug. It is a great surprising that the old code works well.
+
 2003/12/19	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/simura.c:
 	  - Default mirroring mode changed.

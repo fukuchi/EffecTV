@@ -153,75 +153,116 @@ You should download effectv-docs.tar.gz found at EffecTV web page.
 Summary of effects
 ------------------
 QuarkTV
-	Dissolves moving objects.
+    Dissolves moving objects.
+
 FireTV
-	Clips incoming objects and burns it.
+    Clips incoming objects and burns it.
+
 BurningTV
-	Burns incoming objects.
+    Burns incoming objects.
+
 RadioacTV
-	Brightens moving objects and blurs it.
+    Brightens moving objects and blurs it.
+
 StreakTV
-	Makes 8 afterimages.
+    Makes 8 afterimages.
+
 BaltanTV
-	Makes afterimages longer.
+    Makes afterimages longer.
+
 1DTV
-	Grabs a horizontal line from video every 1/30 sec.
+    Grabs a horizontal line from video every 1/30 sec.
+
 DotTV
-	Converts the picture into a set of dots.
+    Converts the picture into a set of dots.
+
 MosaicTV
-	Censors incoming objects.
+    Censors incoming objects.
+
 PuzzleTV
-	Scrambles the picture.
+    Scrambles the picture.
+
 PredatorTV
-	Makes incoming objects invisible visibly.
+    Makes incoming objects invisible visibly.
+
 SpiralTV
-	Spiraling motion-distortion effect.
+    Spiraling motion-distortion effect.
+
 SimuraTV
-	Color distortion and image mirroring.
+    Color distortion and image mirroring.
+
 EdgeTV
-	Detects edge and display it like good old computer way.
+    Detects edge and display it like good old computer way.
+
 ShagadelicTV
-	Go back to swinging '60s!
+    Go back to swinging '60s!
+
 NoiseTV
-	Makes incoming objects noisy.
+    Makes incoming objects noisy.
+
 AgingTV
-	Film-aging effect.
+    Film-aging effect.
+
 LifeTV
-	Conway's life game with video input interaction.
+    Conway's life game with video input interaction.
+
 TransFormTV
-	Performs positional translations on images.
+    Performs positional translations on images.
+
 SparkTV
-	Spark effect.
+    Spark effect.
+
 warpTV
-	Goo'ing effect.
+    Goo'ing effect.
+
 HolographicTV
-	Holographic vision seen in Star Wars.
+    Holographic vision seen in Star Wars.
+
 cycleTV
-	Color cycling effect.
+    Color cycling effect.
+
 RippleTV
-	Ripple mark effect.
+    Ripple mark effect.
+
 DiceTV
-	A "dicing" effect.
+    A "dicing" effect.
+
 VertigoTV
-	Alpha blending with zoomed and rotated images.
+    Alpha blending with zoomed and rotated images.
+
 DeinterlaceTV
-	Deinterlacing video images.
+    Deinterlacing video images.
+
 NervousTV
-	Realtime frame shuffling effect.
+    Realtime frame shuffling effect.
+
 RndmTV
-	Gives you a noisy picture in color or B/W.
+    Gives you a noisy picture in color or B/W.
+
 RevTV
-	Waveform monitor effect.
+    Waveform monitor effect.
+
 RandomDotStereoTV
-	Makes random dot stereo stream from video input.
+    Makes random dot stereo stream from video input.
+
 LensTV
-	Old school demo lens effect.
+    Old school demo lens effect.
+
 DiffTV
-	Hilights interframe differences.
+    Hilights interframe differences.
+
 BrokenTV
-	Simulates broken TV.
+    Simulates broken TV.
+
 WarholTV
-	Hommage to Andy Warhol.
+    Hommage to Andy Warhol.
+
+MatrixTV
+    A Matrix like effect.
+
+PUPTV
+    Comes from "Partial UPdate", certain part of image is updated at a frame.
+
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

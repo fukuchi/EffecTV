@@ -3,25 +3,21 @@
 effectv \- real-time video effector
 .SH SYNOPSIS
 .B "effectv"
-[-help]
-[-device FILE]
-[-channel NUMBER]
-[-norm NORM]
-[-freqtab FREQTAB]
-[-fullscreen]
-[-hardware]
-[-doublebuffer]
-[-fps]
-[-size WxH]
-[-geometry WxH]
-[-scale NUMBER]
-[-autoplay NUMBER]
-[-palette PALETTE]
-[-vloopback FILE]
+[options...]
+[effect name]
 
 .SH DESCRIPTION
 EffecTV is a real-time video effector. You can enjoy movies, TV programs
-and any other video stream through the many amazing effects.
+and any other video stream through the many amazing effects. Run EffecTV
+and push Up/Down arrow key to change the effect.
+
+EffecTV accepts options and an effect name. In most cases you need not to set
+any options and name. You may specify a device file name and a channel number
+to see the input source you want.
+
+EffecTV can be launched from any effect you want. Put an effect name after
+the command name ("effectv") or option(s). It's case-insensitive, and a
+trailing "TV" can be omitted.
 
 .SH OPTIONS
 .TP
@@ -205,6 +201,12 @@ Simulates broken TV.
 .TP
 .I WarholTV
 Hommage to Andy Warhol.
+.TP
+.I MatrixTV
+A Matrix like effect.
+.TP
+.I PUPTV
+Comes from "Partial UPdate", certain part of image is updated at a frame.
 
 .SH AUTHOR
 The core of EffecTV was developed by FUKUCHI Kentaro <fukuchi@users.sourceforge.net>.
