@@ -20,6 +20,8 @@
 
 #define DEFAULT_DEVICE "/dev/video"
 
+#define STRBUF_LENGTH 1024
+
 static int v4l_debug = 0; /* 1 = print debug message */
 
 static int v4lperror_level = V4L_PERROR_ALL;
@@ -45,13 +47,15 @@ static void v4lperror(const char *str)
 int v4lopen(char *name, v4ldevice *vd)
 {
 	int i;
+	char buf[STRBUF_LENGTH];
 
 	if(name == NULL)
 		name = DEFAULT_DEVICE;
 
 	if(v4l_debug) fprintf(stderr, "v4lopen:open...\n");
 	if((vd->fd = open(name,O_RDWR)) < 0) {
-		v4lperror("v4lopen:open");
+		snprintf(buf, STRBUF_LENGTH, "v4lopen: failed to open %s", name);
+		v4lperror(buf);
 		return -1;
 	}
 	if(v4lgetcapability(vd))
