@@ -1,3 +1,6 @@
+2002/03/13	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* video.c: Now video.c stores parameters of v4l_picture.
+
 2002/03/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/cycle.c: Removed meaningless video_getaddress().
 
