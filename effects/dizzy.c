@@ -65,7 +65,7 @@ static void setParams()
 	sy = (-vx * y - vy * x + y + sin(phase*6) * 2) * 65536;
 
 	phase += phase_increment;
-	if(phase>5700000) phase = 0;
+	if(phase > 5700000) phase = 0;
 }
 
 effect *dizzyRegister()
@@ -181,6 +181,9 @@ int dizzyEvent(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
+			phase = 0.0;
+			phase_increment = 0.02;
+			zoomrate = 1.01;
 			break;
 
         case SDLK_INSERT:
