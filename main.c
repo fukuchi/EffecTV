@@ -249,7 +249,6 @@ static int startTV()
 	long lastusec=0, usec=0;
 	SDL_Event event;
 	char buf[256];
-	static int alt_pressed = 0;
 
 	currentEffectNum = 0;
 	currentEffect = NULL;
@@ -321,12 +320,32 @@ static int startTV()
 				case SDLK_TAB:
 					horizontal_flip = horizontal_flip ^ 1;
 					break;
-				case SDLK_LALT:
-				case SDLK_RALT:
-					alt_pressed = 1;
+				case SDLK_F1:
+					video_change_brightness(+4096);
+					break;
+				case SDLK_F2:
+					video_change_brightness(-4096);
+					break;
+				case SDLK_F3:
+					video_change_hue(+4096);
+					break;
+				case SDLK_F4:
+					video_change_hue(-4096);
+					break;
+				case SDLK_F5:
+					video_change_color(+4096);
+					break;
+				case SDLK_F6:
+					video_change_color(-4096);
+					break;
+				case SDLK_F7:
+					video_change_contrast(+4096);
+					break;
+				case SDLK_F8:
+					video_change_contrast(-4096);
 					break;
 				case SDLK_RETURN:
-					if(alt_pressed) {
+					if(SDL_GetModState() & (KMOD_LALT | KMOD_RALT)) {
 						screen_fullscreen();
 					}
 					break;
@@ -337,12 +356,8 @@ static int startTV()
 					break;
 				}
 			}
-			if(event.type == SDL_KEYUP) {
+			if(event.type == SDL_KEYUP) { /* Just as a place holder */
 				switch(event.key.keysym.sym) {
-				case SDLK_LALT:
-				case SDLK_RALT:
-					alt_pressed = 0;
-					break;
 				default:
 					break;
 				}
