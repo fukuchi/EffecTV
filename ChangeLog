@@ -1,3 +1,12 @@
+2003/12/26	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/noise.c:
+	  - The noise pattern has been changed.
+	* effects/matrix.c:
+	  - Default mode has been changed to no-blending mode.
+	* effects/blurzoom.c:
+	  - Additional color palettes have been added.
+	  - Removed an unused variable.
+
 2003/12/24	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{matrix.c,pup.c,effect.h,Makefile}, main.c:
 	  - Finally I have added MatrixTV and brand new PupTV.

@@ -63,7 +63,7 @@ static int stop()
 
 static int draw(RGB32 *src, RGB32 *dest)
 {
-	int i;
+	int x, y;
 	unsigned char *diff;
 
 	if(!bgIsSet) {
@@ -71,14 +71,16 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 
 	diff = image_diff_filter(image_bgsubtract_y(src));
-	for(i=0; i<video_area; i++) {
-		if(*diff++) {
-			*dest = 0 - (inline_fastrand()>>31);
-		} else {
-			*dest = *src;
+	for(y=video_height; y>0; y--) {
+		for(x=video_width; x>0; x--) {
+			if(*diff++) {
+				*dest = 0 - ((inline_fastrand()>>31) & y);
+			} else {
+				*dest = *src;
+			}
+			src++;
+			dest++;
 		}
-		src++;
-		dest++;
 	}
 
 	return 0;

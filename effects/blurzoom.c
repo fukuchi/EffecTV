@@ -14,6 +14,7 @@
 #include "utils.h"
 
 #define COLORS 32
+#define PATTERN 4
 #define MAGIC_THRESHOLD 40
 #define RATIO 0.95
 
@@ -36,9 +37,9 @@ int buf_margin_left;
 
 static char *effectname = "RadioacTV";
 static int stat;
-static RGB32 palette[COLORS];
+static RGB32 *palette;
+static RGB32 palettes[COLORS*PATTERN];
 static int mode = 0; /* 0=normal/1=strobe/2=strobe2/3=trigger */
-static int bgmode = 0; /* 0=motion / 1=edge */
 static int snapTime = 0;
 static int snapInterval = 3;
 static RGB32 *snapframe;
@@ -149,13 +150,20 @@ static void makePalette()
 #define DELTA (255/(COLORS/2-1))
 
 	for(i=0; i<COLORS/2; i++) {
-		palette[i] = i*DELTA;
+		palettes[           i] = i*DELTA;
+		palettes[COLORS   + i] = (i*DELTA)<<8;
+		palettes[COLORS*2 + i] = (i*DELTA)<<16;
 	}
 	for(i=0; i<COLORS/2; i++) {
-		palette[i+COLORS/2] = 255 | (i*DELTA)<<16 | (i*DELTA)<<8;
+		palettes[         + i + COLORS/2] = 255 | (i*DELTA)<<16 | (i*DELTA)<<8;
+		palettes[COLORS   + i + COLORS/2] = (255<<8) | (i*DELTA)<<16 | i*DELTA;
+		palettes[COLORS*2 + i + COLORS/2] = (255<<16) | (i*DELTA)<<8 | i*DELTA;
 	}
 	for(i=0; i<COLORS; i++) {
-		palette[i] = palette[i] & 0xfefeff;
+		palettes[COLORS*3 + i] = (255*i/COLORS) * 0x10101;
+	}
+	for(i=0; i<COLORS*PATTERN; i++) {
+		palettes[i] = palettes[i] & 0xfefeff;
 	}
 }
 
@@ -198,6 +206,7 @@ effect *blurzoomRegister()
 
 	setTable();
 	makePalette();
+	palette = palettes;
 
 	return entry;
 }
@@ -302,6 +311,18 @@ static int event(SDL_Event *event)
 				snapTime = 1;
 			else
 				snapTime = 0;
+			break;
+		case SDLK_r:
+			palette = &palettes[COLORS*2];
+			break;
+		case SDLK_g:
+			palette = &palettes[COLORS];
+			break;
+		case SDLK_b:
+			palette = &palettes[0];
+			break;
+		case SDLK_w:
+			palette = &palettes[COLORS*3];
 			break;
 		case SDLK_SPACE:
 			if(mode == 3)

@@ -143,7 +143,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		p += video_width * FONT_H;
 	}
 
-	if(mode == 0) {
+	if(mode == 1) {
 		for(x=0; x<video_area; x++) {
 			a = *dest;
 			b = *src++;
