@@ -218,6 +218,22 @@ int v4lsetchannel(v4ldevice *vd, int ch)
 }
 
 /*
+ * v4lsetfreq - set the frequency of tuner
+ *
+ * vd: v4l device object
+ * ch: frequency in KHz
+ */
+int v4lsetfreq(v4ldevice *vd, int freq)
+{
+	unsigned long longfreq=(freq*16)/1000;
+	if(ioctl(vd->fd, VIDIOCSFREQ, &longfreq) < 0) {
+		perror("v4lsetchannel:VIDIOCSFREQ");
+		return -1;
+	}
+	return 0;
+}
+
+/*
  * v4lsetchannelnorm - set the norm of channel
  *
  * vd: v4l device object

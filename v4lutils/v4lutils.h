@@ -48,6 +48,7 @@ extern int v4lsetframebuffer(v4ldevice *, void *, int, int, int, int);
 extern int v4loverlaystart(v4ldevice *);
 extern int v4loverlaystop(v4ldevice *);
 extern int v4lsetchannel(v4ldevice *, int);
+extern int v4lsetfreq(v4ldevice *,int);
 extern int v4lsetchannelnorm(v4ldevice *vd, int, int);
 extern int v4lgetpicture(v4ldevice *);
 extern int v4lsetpicture(v4ldevice *, int, int, int, int, int);
