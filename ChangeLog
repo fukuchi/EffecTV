@@ -1,6 +1,7 @@
 2001/09/19	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* frequencies.c: Fixed Italy frequency table, Added Argentina frequency
 	  table. (imported from xawtv-3.62)
+	* Changed version to 0.3.2.
 
 2001/09/18	Sam Mertens		<smertens@users.sf.net>
 	* effects/dice.c: Imported DiceTV from BSB.

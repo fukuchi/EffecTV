@@ -1,4 +1,4 @@
-EffecTV 0.3.1
+EffecTV 0.3.2
 
 GENERAL INFORMATION
 ===================
@@ -141,6 +141,12 @@ warpTV
 	Goo'ing effect.
 HolographicTV
 	Holographic vision seen in Star Wars.
+cycleTV
+	Color cycling effect.
+RippleTV
+	Ripple mark effect.
+DiceTV
+	A 'dicing' effect.
 
 Recording/broadcasting EffecTV
 ------------------------------

@@ -3,7 +3,7 @@
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * cycleTV - no effect.
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Written by clifford smith <nullset@dookie.net>
  *
  */
 
