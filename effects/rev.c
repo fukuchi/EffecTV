@@ -10,7 +10,7 @@
  * It was originally done by deflecting the electron beam on a monitor using
  * additional electromagnets on the yoke of a b/w CRT. Here it is emulated digitally.
 
- * Experimaental tapes were made with this system by Bill and Louise Etra and Woody and Steina Vasulka
+ * Experimental tapes were made with this system by Bill and Louise Etra and Woody and Steina Vasulka
 
  * The line spacing can be controlled using the 1 and 2 Keys.
  * The gain is controlled using the 3 and 4 keys.
@@ -114,6 +114,7 @@ void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int
 	RGB32 *cdst=dst+((dsty*video_width)+dstx);
 	RGB32 *nsrc;
 	int y,x,R,G,B,yval;
+	int offset;
 
 // draw the offset lines
 	for (y=srcy; y<h+srcy; y+=linespace){
@@ -124,8 +125,9 @@ void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int
 			G = ((*nsrc)&0xff00)>>(8-2);
 			B = (*nsrc)&0xff;
 			yval = y-((short)(R + G + B) / vscale) ;
-			if (yval>0) {
-				cdst[x+(yval*video_width)]=vthecolor;
+			offset = x + (yval * video_width);
+			if(offset >= 0 && offset < video_area) {
+				cdst[offset]=vthecolor;
 			}
 		}
 	 }

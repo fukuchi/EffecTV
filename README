@@ -94,7 +94,8 @@ Options
 	Launch EffecTV in fullscreen mode.
 
 -hardware
-	Use direct video memory (if possible). Sometimes it makes EffecTV faster.
+	Use direct video memory (if possible). Sometimes it makes EffecTV
+	faster.
 
 -doublebuffer
 	Enable double buffering mode (if possible). Sometime it makes EffecTV

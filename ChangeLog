@@ -1,5 +1,8 @@
+2002/07/06	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/rev.c: A out of range memory error has been fixed.
+
 2002/07/03	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* effects/aging.c: A memory leak bug has been fixed.
+	* effects/aging.c: A out of range memory error has been fixed.
 
 2002/06/23	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* REAMDE.vloopback90: Removed a meaningless line.
