@@ -9,11 +9,11 @@ CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I.. -I../v4lutils
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 
 LIBEFFECTS = libeffects.a
-EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
+EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZZY) \
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
-          $(DICE)
+          $(DICE) $(DIZZY)
 SUBDIRS =
 
 %.o: %.c
@@ -42,6 +42,7 @@ ifeq ($(USE_NASM), yes)
 BLURZOOM += blurzoomcore.o
 endif
 BALTAN = baltan.o
+DIZZY = Dizzy.o Dizzy.so
 STREAK = streak.o
 ONED = 1d.o
 DOT = dot.o
@@ -64,6 +65,7 @@ HOLO = holo.o
 CYCLE = cycle.o
 RIPPLE = ripple.o
 DICE = dice.o
+DIZZY = dizzy.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)

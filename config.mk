@@ -2,8 +2,8 @@
 
 ## NASM
 # comment out the next two lines if you want not to use NASM.
-#CONFIG += -DUSE_NASM
-#USE_NASM = yes
+CONFIG += -DUSE_NASM
+USE_NASM = yes
 
 ## vloopback
 # comment out the next two lines if you want to disable vloopback support.

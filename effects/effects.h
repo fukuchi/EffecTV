@@ -36,3 +36,4 @@ extern effectRegistFunc holoRegister;
 extern effectRegistFunc cycleRegister;
 extern effectRegistFunc rippleRegister;
 extern effectRegistFunc diceRegister;
+extern effectRegistFunc dizzyRegister;

@@ -1,9 +1,14 @@
+2001/10/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/dizzy.c: Added an new effect DizzyTV.
+	* config.mk: Changed the default to use NASM.
+
 2001/10/02	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* effects/blurzoom.c: Added a replacement code of blurzoomcore.nas.
 	* config.mk: Added a common configuration file for Makefiles.
 	* Makefile, effects/Makefile: Changed to refer config.mk.
 	* README: Fixed 'Compiling & installing' section.
-	* debian/*: Debianizing trial.
+	* debian/*: Debianizing trial. These files may be separated from main
+	  trunc?
 
 2001/09/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, effectv.1: Typo fixes.
