@@ -1,7 +1,5 @@
 *ATTENTION*
 vloopback-0.90 has some trouble in pipe creation and signal handling.
-Please apply a patch follows.
-
 The following patch to vloopback-0.90 seems to solve the problem quite
 effectively. Be aware that it is a very unofficial patch.
 
@@ -9,7 +7,8 @@ The following patch is *not* for vloopback-0.83 or later.
 We recommend you to use vloopback-0.90, but if you want to use vloopback-0.83,
 please read 'README.vloopback83'.
 
-This patche is based on Anderr Zaja's patch posted to Motion mailing list.
+This patche is based on Anderr Zaja's patch posted to Motion mailing list,
+and Tilmann Bitterberg's patch from http://tibit.org/video/#vloop.
 
 -- cut --
 diff -ruN vloopback-0.90.orig/Makefile vloopback-0.90/Makefile
