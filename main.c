@@ -78,7 +78,9 @@ static effectRegisterFunc *effects_register_list[] =
 	lensRegister,
 	diffRegister,
 	scrollRegister,
-	warholRegister
+	warholRegister,
+//	matrixRegister,
+//	pupRegister,
 };
 
 static effect **effectsList;
@@ -202,7 +204,7 @@ static void drawErrorPattern()
 	screen_update();
 }
 
-static int registEffects()
+static int registerEffects()
 {
 	int i, n;
 	effect *entry;
@@ -248,7 +250,43 @@ static int changeEffect(int num)
 	return 1;
 }
 
-static int startTV()
+static int searchEffect(char *name)
+{
+	int i, num, len1, len2;
+	char *p;
+
+	len1 = strlen(name);
+	if(len1 > 2) {
+		if(strncasecmp(&name[len1-2], "TV", 2) == 0) {
+			len1 -= 2;
+		}
+	}
+
+	num = -1;
+	for(i=0; i<effectMax; i++) {
+		p = effectsList[i]->name;
+		len2 = strlen(p);
+		if(len2 > 2) {
+			if(strncasecmp(&p[len2-2], "TV", 2) == 0) {
+				len2 -= 2;
+			}
+		}
+		if(len1 != len2)
+			continue;
+		if(strncasecmp(name, effectsList[i]->name, len1) == 0) {
+			num = i;
+			break;
+		}
+	}
+	if(num == -1) {
+		fprintf(stderr, "Couldn't find \"%s\". Starts DumbTV.\n", name);
+		num = 0;
+	}
+
+	return num;
+}
+
+static int startTV(char *startEffect)
 {
 	int ret;
 	int flag;
@@ -265,7 +303,11 @@ static int startTV()
 		exit(1);
 	}
 
-	currentEffectNum = 0;
+	if(startEffect != NULL) {
+		currentEffectNum = searchEffect(startEffect);
+	} else {
+		currentEffectNum = 0;
+	}
 	currentEffect = NULL;
 	flag = changeEffect(currentEffectNum);
 	if(autoplay) {
@@ -437,14 +479,18 @@ int main(int argc, char **argv)
 	int vw, vh; /* video width,height */
 	int sw, sh, ss; /* screen width,height,scale */
 	int palette = 0;
+	char *startEffect = NULL;
 
 	vw = vh = sw = sh = 0;
 	ss = 1;
 
 	for(i=1;i<argc;i++) {
 		option = argv[i];
-		if(*option == '-')
+		if(*option != '-') {
+			break;
+		} else {
 			option++;
+		}
 		if (strncmp(option, "channel", 2) == 0) {
 			i++;
 			if(i<argc) {
@@ -568,6 +614,9 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 	}
+	if(i < argc) {
+		startEffect = argv[i];
+	}
 
 	srand(time(NULL));
 	fastsrand(time(NULL));
@@ -616,13 +665,13 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	if(registEffects() == 0) {
+	if(registerEffects() == 0) {
 		fprintf(stderr, "No available effect.\n");
 		exit(1);
 	}
 
 //	showTitle();
-	startTV();
+	startTV(startEffect);
 
 #ifdef MEM_DEBUG
 	if(debug) {
