@@ -22,6 +22,14 @@ V4L_LIBS = ../v4lutils/libv4lutils.a -lpthread
 %.o: %.nas
 	$(NASM) -f elf $<
 
+all-recursive:
+	@list='$(SUBDIRS)'; for subdir in $$list; do \
+	(cd $$subdir && $(MAKE) all-recursive) || exit 1;\
+	done; \
+	$(MAKE) all-am
+
+all-am: palettecheck
+
 palettecheck: palettecheck.o
 	$(CC) -o $@ palettecheck.o $(V4L_LIBS)
 
