@@ -1,3 +1,9 @@
+2001/10/22	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
+	* README.ps2, doc.japanese/README.ps2: Changed section name.
+	* debian/*: Fixed copyright description, rules and dir.
+	* docs.japanese/FAQ: Added translated doc.
+	* FAQ: Typo fixed and added new information.
+
 2001/10/20	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* included PS2 patch.
 	* README.ps2, doc.japanese/README.ps2: Added documents for PS2.

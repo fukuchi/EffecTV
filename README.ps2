@@ -1,0 +1,101 @@
+This document describes how to use EffecTV on PlayStaion2 Linux (PS2 Linux)
+environment.
+
+Before Install
+==============
+Video capture devices supported by PS2 Linux are only USB devices. In addition,
+the kernel is very old, version 2.2.1, so a few USB cameras are supported.
+I tested ov511 based USB camera (WebCamPlus), and it works but little buggy.
+
+Install
+=======
+ov511 device driver
+-------------------
+If you want to use ov511 based USB camera, you need to download a new driver
+from:
+
+http://alpha.dyndns.org/ov511/download/ov511-1.43.tar.gz
+
+Extract it and apply a patch attached to the end of this docuement. You can
+apply the apatch by following command.
+
+$ patch -p1 < README.ps2
+
+Then make a module. Please note that CONFIG_VIDEO_DEV must be enabled. You need
+make decompression module(ov511_decomp.o) if you want compression support.
+Please read README of ov511 driver.
+
+If you have another USB devices and does not work on PS2 Linux even if it is
+supported by 2.2.1, you may want to try the latest driver. It may not work
+on PS2 Linux without some modification. I hope my ov511 patch will help you.
+
+EffecTV
+-------
+Edit line 15 to 17 of 'config.mk' and set "ARCH = ps2-linux" like following.
+
+# ARCH = i686-linux
+## Linux for Playstation2
+ARCH = ps2-linux
+
+Then make it. You need SDL(1.2.1 or later). Please read documents of EffecTV.
+
+Launch
+======
+Using YUV based system for input images is very good for the performance.
+For example, when you use ov511 based USB camera, use yuv420p format.
+To change the format, use "-palette" option like following.
+
+$ effectv -palette yuv420p
+
+TODO
+====
+Double precision floating point operation on PS2 is very slow. Especially,
+ShagadelicTV gets affected. It seems that libm must be rebuilt (atan2()
+outputs wrong results...).
+
+Patch
+=====
+----------from here----------
+diff -ruN ov511-1.43.orig/Makefile ov511-1.43/Makefile
+--- ov511-1.43.orig/Makefile	Mon Oct  8 20:51:29 2001
++++ ov511-1.43/Makefile	Thu Oct 11 10:21:56 2001
+@@ -1,10 +1,9 @@
+ #################################### OPTIONS ##################################
+ 
+ # Try changing this to /usr/src/linux/include if you get strange compile errors
+-INCLUDEDIR = /usr/include
++INCLUDEDIR = /usr/src/linux/include
+ 
+-CFLAGS = -D__KERNEL__ -DMODULE -O2 -Wall -Wstrict-prototypes \
+-	-fomit-frame-pointer -I$(INCLUDEDIR) 
++CFLAGS = -D__KERNEL__ -I$(INCLUDEDIR) -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -G 0 -mno-abicalls -fno-pic -mcpu=r5900 -mips1 -pipe -mlong-calls -DMODULE -DEXPORT_SYMTAB
+ 
+ # Uncomment to enable kernel i2c support (for devices with tuners)
+ # If you know how to cause "make i2c" to set this automatically, let me know.
+diff -ruN ov511-1.43.orig/ov511.c ov511-1.43/ov511.c
+--- ov511-1.43.orig/ov511.c	Mon Oct  8 20:50:46 2001
++++ ov511-1.43/ov511.c	Thu Oct 11 10:21:01 2001
+@@ -392,6 +392,11 @@
+  * So I copied it again for the OV511 driver -claudio
+  **********************************************************************/
+ 
++static inline void * vmalloc_32(unsigned long size)
++{
++	return vmalloc(size);
++}
++
+ /* Given PGD from the address space's page table, return the kernel
+  * virtual mapping of the physical memory mapped at ADR.
+  */
+diff -ruN ov511-1.43.orig/ov511.h ov511-1.43/ov511.h
+--- ov511-1.43.orig/ov511.h	Mon Oct  8 20:51:16 2001
++++ ov511-1.43/ov511.h	Thu Oct 11 10:21:01 2001
+@@ -15,6 +15,8 @@
+ #include "i2c-algo-usb.h"
+ #endif
+ 
++#define VID_HARDWARE_OV511 27
++
+ #define OV511_DEBUG	/* Turn on debug messages */
+ 
+ #ifdef OV511_DEBUG

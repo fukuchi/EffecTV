@@ -29,9 +29,10 @@ binary-arch: checkroot build
 	install -d debian/tmp
 	cd debian/tmp && install -d `cat ../dirs`
 	$(MAKE) install DESTDIR=`pwd`/debian/tmp prefix=/usr mandir=/usr/share/man
+	cp docs.japanese/effectv.1 debian/tmp/usr/share/man/ja/man1/
 # Must have debmake installed for this to work. Otherwise please copy
 # /usr/bin/debstd into the debian directory and change debstd to debian/debstd
-	debstd ChangeLog README README.vloopback TODO 
+	debstd ChangeLog README README.vloopback TODO FAQ CREWS doc
 	dpkg-gencontrol -isp
 	chown -R root.root debian/tmp
 	chmod -R go=rX debian/tmp

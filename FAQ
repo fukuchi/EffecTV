@@ -42,16 +42,14 @@ numbers to detect the right one.
 Q3: Some effects do not work.
 
 A: Older versions EffecTV employed gray scaled capturing mode that
-some drivers do not support. Since version 0.2.0, all of the effects
-use a 320x240xRGB32 capturing mode, supported by most drivers.
-Please update your EffecTV to latest version.
+some drivers do not support. Since version 0.3.0, color format is converted by
+EffecTV core, so this problem was fixed. Please update your EffecTV to latest
+version.
 ----------
 Q4: EffecTV is frozen.
 
 A: The bttv driver that comes with linux-2.2.18 is broken. Try the
-latest bttv driver available at http://www.strusel007.de/linux/bttv/.
-You also will need to apply the i2c patch for the linux kernel,
-available at the same location.
+latest bttv driver available at http://www.bytesex.org/bttv/.
 ----------
 Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
 
@@ -109,7 +107,7 @@ palette to YUV series by using "-palette" option.
 ----------
 Q9: I upgraded the Video4Linux driver(or the kernel) and I got error...
 
-Since I update to the new Kernel 2.4.6 I can't use my capture card with
+Since I update to the new Linux Kernel 2.4.6 I can't use my capture card with
 EffecTV. When I try to start EffecTV, I get the following Error:
 
 video_init: Can't find a supported pixel format.
