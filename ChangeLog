@@ -1,7 +1,11 @@
+2002/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/1d.c,puzzle.c: Replaced from bcopy() to memcpy().
+
 2002/08/03	Sam Mertens		<smertens@users.sf.net>
 	* effects/lens.c: Included Ed Tannenbaum's port of LensTV from BSB
 	* effects/diff.c: Ported diff.c from BSB
 	* effects/transform.c: removed unused variables (compiler warning)
+
 2002/07/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* frequencies.c: Added Australian Optus cable TV channels
 	  (imported from xawtv-3.76).
