@@ -59,7 +59,6 @@ AGING = aging.o
 TRANSFORM = transform.o
 LIFE = life.o
 SPARK = spark.o
-THREAD = thread.o
 WARP = warp.o
 HOLO = holo.o
 CYCLE = cycle.o
