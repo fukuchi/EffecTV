@@ -8,6 +8,8 @@
 	* effects/puzzle.c:
 	  - Added auto solver.
 	  - Made block sliding smooth.
+	* effects/spark.c:
+	  - Added 2 new modes using image_y_over and image_y_under.
 
 2003/12/17	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{burn,fire,mosaic,noise,ripple,spart}.c:
