@@ -58,10 +58,10 @@ USING
 
 Before using
 ------------
-Before starting up EffecTV, you have to know about your hardware's settings.
+Before starting up EffecTV, you should know about your hardwares settings.
 * Video norm(NTSC, PAL, etc.) of your video camera or player
-* Channel number of the Video source (this is different from the TV
-  station/channel)
+* Channel number of the Video source (this is different from channel numbers
+  of TV stations)
 * Video4linux device file name
 You can adjust these settings with command line options. See the next section.
 
@@ -92,12 +92,12 @@ Options
 	Launch EffecTV in fullscreen mode.
 
 -hardware
-	Use direct video memory (if possible). Sometimes it makes EffecTV
-	faster.
+	Use direct video memory (if possible). It makes EffecTV faster in some
+	cases.
 
 -doublebuffer
-	Enable double buffering mode (if possible). Sometime it makes EffecTV
-	faster.
+	Enable double buffering mode (if possible). It makes EffecTV faster in
+	some cases.
 
 -fps
 	Show frames/sec on its title bar (X11 only).
@@ -129,9 +129,9 @@ Options
 	See "Recording/broadcasting EffecTV" section.
 
 effect name
-	EffecTV can be launched from any effect you want. Put an effect name after
-	the command name ("effectv") or option(s). It's case-insensitive, and a
-	trailing "TV" can be omitted.
+	EffecTV can be launched from any effect you want. Put an effect name
+	after the command name ("effectv") or option(s). It's case-insensitive,
+	and a trailing "TV" can be omitted.
 
 Key
 ---
@@ -139,7 +139,7 @@ Up/Down     change effect.
 Right/Left  change TV channel.
 Space       capture a background image(for FireTV, BurningTV, etc.).
             change mode(for SpiralTV, TransFormTV)
-ALT+ENTER   fullscreen mode(toggle).
+ALT+Enter   fullscreen mode(toggle).
 TAB         Horizontal flipping(toggle).
 Escape      Quit
 F1/F2       increase/decrease brightness of video input.
@@ -264,7 +264,7 @@ PUPTV
     Comes from "Partial UPdate", certain part of image is updated at a frame.
 
 ChameleonTV
-	Vanishing into the wall...
+    Still object will be disappearing.
 
 
 Vloopback support - chaining/recording/broadcasting EffecTV
@@ -287,7 +287,7 @@ For XawTv,
 
 $ xawtv -c /dev/video2
 
-To record the output to a mpeg file by using FFmpeg,
+To record the output to an MPEG file by using FFmpeg,
 
 $ ffmpeg -vd /dev/video2 -s 320x240 effect.mpg
 
@@ -343,8 +343,8 @@ Japanese
 
 BackStage Branch
 ----------------
-BackStage Branch is the experimental development branch of EffecTV. New
-effects and new features come here at first.
+BackStage Branch is an experimental development branch of EffecTV. New effects
+and new features will be added to the branch at first.
 
 CVS
 ---
@@ -364,6 +364,9 @@ COPYING.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+If you want to reuse EffecTV source code for your product without open your
+source code, please contact us.
 
 AUTHORS
 =======

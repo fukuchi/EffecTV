@@ -2,8 +2,8 @@ EffecTV 0.3.9
 
 序
 ==
-EffecTVはリアルタイムで動作するビデオイフェクターです。様々なイフェクターで
-ビデオやテレビを楽しめます。
+EffecTVはリアルタイムで動作するビデオイフェクターです。様々なイフェクターでビデ
+やテレビを楽しめます。
 
 インストール
 ============
@@ -273,7 +273,7 @@ PUPTV
     "Partial Update"の略で、1フレーム毎に特定の場所だけ更新されていく。 
 
 ChameleonTV
-	じっとしていると消えます。
+    じっとしていると消えます。
 
 
 Vloopback機能の使い方 - EffecTVの出力を録画・放送するには
@@ -340,7 +340,7 @@ fukuchi@users.sourceforge.net
 SourceForge
 ===========
 EffecTVのプロジェクトページはSourceForge(http://sourceforge.net/)に置かせてい
-ただいでいます。URLは
+ただいています。URLは
 
 http://sourceforge.net/projects/effectv/
 
@@ -391,6 +391,9 @@ ftp://ftp.sra.co.jp/pub/gnu/local-fix/GPL2-j/gpl.text.gz
 本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特定目的適合性に
 ついての暗黙の保証を含めて、いかなる保証も行ないません。詳細についてはGNU 一般
 公有使用許諾書をお読みください。
+
+もしEffecTVのソースコードを、GPLに準拠しない(ソースコードを公開しない)製品に利
+用したい場合は我々に相談してください。
 
 開発メンバー
 ============

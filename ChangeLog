@@ -1,8 +1,14 @@
+2004/01/12	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/pup.c:
+	  - Renamed "diagonalPup2" to "dissolutionPup".
+	* README, docs.japanese/README:
+	  - Typo fixes.
+
 2004/01/03	Sam Mertens		<smertens@users.sourceforge.net>
 	* CREWS:
 	  - Added DiffTV to my list of effects :)
 
-2004/1/1	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+2004/01/01	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/matrix.c:
 	  - Modified color palette.
 
@@ -109,7 +115,7 @@
 	* All effects now are passed RGB32 *src and *dest, therefore,
 	  {video,screen}_getaddress() were removed from draw().
 
-2003/12/3	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+2003/12/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* *.h: "void" were supplied to functions have no argument.
 
 2003/11/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>

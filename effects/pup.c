@@ -29,7 +29,7 @@ static int paramInc = 0;
 
 static void randomPup(RGB32 *);
 static void diagonalPup(RGB32 *);
-static void diagonalPup2(RGB32 *);
+static void dissolutionPup(RGB32 *);
 static void verticalPup(RGB32 *);
 static void horizontalPup(RGB32 *);
 static void rasterPup(RGB32 *);
@@ -97,7 +97,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 			diagonalPup(src);
 			break;
 		case 3:
-			diagonalPup2(src);
+			dissolutionPup(src);
 			break;
 		case 4:
 			randomPup(src);
@@ -222,7 +222,7 @@ static void diagonalPup(RGB32 *src)
 		phase = 0;
 }
 
-static void diagonalPup2(RGB32 *src)
+static void dissolutionPup(RGB32 *src)
 {
 	static int phase = 0;
 	static int step = 13;
