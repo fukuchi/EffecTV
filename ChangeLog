@@ -1,6 +1,17 @@
+2002/08/18	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* config.mk: Changed default vloopback version to 0.90.
+	* README.vloopback83: Attached new patch for vloopback-0.83.
+	* README.vloopback90: Was renamed to README.vloopback.
+	* README: Now vloopback-0.90 is recommended.
+
+	* README.vloopback: Attached new patch for vloopback-0.90. New patch
+	  includes VIDIOCSINVAILD ioctl handler.
+	* vloopback.c: VIDIOCSINVAILD ioctl support was added.
+
 2002/08/09	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* README.ps2: A patch for ov511-1.62 was added.
-	* effects/lens.c: Now lens[] is allocated dynamically. Some optimizations.
+	* effects/lens.c: Now lens[] is allocated dynamically.
+	  Some optimizations.
 	  An out of range error in clipmag() was removed.
 
 	* EffecTV-0.3.7 has been released.

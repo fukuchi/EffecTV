@@ -57,6 +57,10 @@ static palette_converter_fromRGB32 *converter;
 #define MIN_WIDTH 32
 #define MIN_HEIGHT 32
 
+#if VLOOPBACK_VERSION > 83
+#define VIDIOCSINVALID _IO('v',BASE_VIDIOCPRIVATE+1)
+#endif
+
 static void gbuf_clear()
 {
 	gbufstat[0] = GBUFFER_UNUSED;
@@ -401,10 +405,11 @@ static void *signal_loop(void *arg)
 #if VLOOPBACK_VERSION > 83
 			ret = v4l_ioctlhandler(cmd, ioctlbuf+sizeof(unsigned long int));
 			if(ret) {
-		/* There is no way to return error code to the caller with vloopback
-		 * device. Only way to return EINVAL is changing values in ioctlbuf. */
+				/* new vloopback patch supports a way to return EINVAL to
+				 * a client. */
 				memset(ioctlbuf+sizeof(unsigned long int), 0xff, MAXIOCTL-sizeof(unsigned long int));
 				fprintf(stderr, "vloopback: ioctl %lx unsuccessfully handled.\n", cmd);
+				ioctl(outputfd, VIDIOCSINVALID);
 			}
 			if(ioctl(outputfd, cmd, ioctlbuf+sizeof(unsigned long int))) {
 				fprintf(stderr, "vloopback: ioctl %lx unsuccessfull.\n", cmd);

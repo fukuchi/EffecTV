@@ -73,27 +73,65 @@ diff -ruN vloopback-0.90.orig/Makefile vloopback-0.90/Makefile
  	rm -f *.o *~
 diff -ruN vloopback-0.90.orig/vloopback.c vloopback-0.90/vloopback.c
 --- vloopback-0.90.orig/vloopback.c	Fri Jun 29 23:52:06 2001
-+++ vloopback-0.90/vloopback.c	Mon Jan 21 03:09:08 2002
-@@ -50,7 +50,8 @@
++++ vloopback-0.90/vloopback.c	Sun Aug 18 11:51:03 2002
+@@ -50,7 +50,7 @@
  
  #include <linux/config.h>
  #include <linux/kernel.h>
 -#include <linux/malloc.h>
-+//#include <linux/malloc.h>
 +#include <linux/slab.h>
  #include <linux/vmalloc.h>
  #include <linux/wrapper.h>
  #include <linux/module.h>
-@@ -505,7 +506,7 @@
+@@ -59,6 +59,7 @@
+ #include <linux/init.h>
+ #include <linux/proc_fs.h>
+ 
++#define VIDIOCSINVALID	_IO('v',BASE_VIDIOCPRIVATE+1)
+ 
+ /************************************************************
+     2.2 support
+@@ -105,6 +106,7 @@
+ 	unsigned int pid;
+ 	unsigned int zerocopy;
+ 	unsigned long int ioctlnr;
++	unsigned int invalid_ioctl; /* 0 .. none invalid; 1 .. invalid */
+ 	unsigned int ioctllength;
+ 	char *ioctldata;
+ 	char *ioctlretdata;
+@@ -505,7 +507,11 @@
  			kill_proc(loops[nr]->pid, SIGIO, 1);
  			interruptible_sleep_on(&loops[nr]->wait);
  			
 -			if (cmd & IOC_IN) {
-+			if (!(cmd & IOC_OUT)) {
++			if (loops[nr]->invalid_ioctl) {
++				loops[nr]->invalid_ioctl = 0;
++				return -ENOTTY;
++			}
++			if (cmd & IOC_IN && !(cmd & IOC_OUT)) {
  				if (memcmp(loops[nr]->ioctlretdata, loops[nr]->ioctldata, _IOC_SIZE(cmd))) {
  					return -EINVAL;
  				}
-@@ -965,6 +966,8 @@
+@@ -515,11 +521,15 @@
+ 				return 0;
+ 			}
+ 		} else {
+-			if (loops[nr]->ioctlnr!=cmd)
++			if ( (loops[nr]->ioctlnr!=cmd) && (cmd != (VIDIOCSINVALID)))
+ 				/* wrong ioctl */
+ 				return 0;
+-			if (copy_from_user(loops[nr]->ioctlretdata, arg, loops[nr]->ioctllength))
+-				return -EFAULT;
++			if (cmd == VIDIOCSINVALID) {
++				loops[nr]->invalid_ioctl = 1;
++			} else {
++				if (copy_from_user(loops[nr]->ioctlretdata, arg, loops[nr]->ioctllength))
++					return -EFAULT;
++			}
+ 			if (waitqueue_active(&loops[nr]->wait))
+ 				wake_up(&loops[nr]->wait);
+ 			loops[nr]->ioctlnr=-1;
+@@ -965,11 +975,14 @@
  
  static int create_pipe(int nr)
  {
@@ -102,7 +140,13 @@ diff -ruN vloopback-0.90.orig/vloopback.c vloopback-0.90/vloopback.c
  	loops[nr]= kmalloc(sizeof(struct vloopback_pipe), GFP_KERNEL);
  	loops[nr]->vloopin= kmalloc(sizeof(struct vloopback_device), GFP_KERNEL);
  	loops[nr]->vloopout= kmalloc(sizeof(struct vloopback_device), GFP_KERNEL);
-@@ -990,15 +993,16 @@
+ 	loops[nr]->vloopin->pipenr=nr;
+ 	loops[nr]->vloopout->pipenr=nr;
++	loops[nr]->invalid_ioctl = 0; /* tibit */
+ 	loops[nr]->buffer=NULL;
+ 	loops[nr]->width=0;
+ 	loops[nr]->height=0;
+@@ -990,15 +1003,16 @@
  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
  	init_waitqueue_head(&loops[nr]->wait);
  	init_MUTEX(&loops[nr]->lock);
@@ -122,3 +166,14 @@ diff -ruN vloopback-0.90.orig/vloopback.c vloopback-0.90/vloopback.c
  		video_unregister_device(&loops[nr]->vloopin->viddev);
  		kfree(loops[nr]->vloopin);
  		kfree(loops[nr]->vloopout);
+@@ -1029,6 +1043,10 @@
+ MODULE_PARM_DESC(spares, "Nr of spare pipes that should be created");
+ MODULE_PARM(dev_offset, "i");
+ MODULE_PARM_DESC(dev_offset, "Prefered offset for video device numbers");
++
++#if LINUX_VERSION_CODE > KERNEL_VERSION(2, 4, 10)
++MODULE_LICENSE("GPL");
++#endif
+ 
+ EXPORT_NO_SYMBOLS;
+ 
