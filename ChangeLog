@@ -7,6 +7,7 @@
 	  0.3.4.
 	* frequencies.[ch], main.c, effectv.1, docs.japanese/effectv.1:
 	  Added canada-cable. (imported from xawtv-3.69)
+	* effects/nervous.c: Now it uses memcpy() to copy frames.
 
 2002/02/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/nervous.c: New effect "nervousTV" by Ed Tannenbaum.
