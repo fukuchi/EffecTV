@@ -1,0 +1,86 @@
+EffecTV 0.1.0
+
+GENERAL INFORMATION
+===================
+EffecTV is a real-time video effector. It runs on SDL and video4linux.
+
+INSTALL
+=======
+
+Requirements
+------------
+Video capture card supported by video4linux is required.
+
+EffecTV requires SDL library, available from http://www.libsdl.org/.
+EffecTV uses video4linux. Check your kernel configuration and
+CONFIG_VIDEO_DEV is enabled.
+bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
+from http://www.strusel007.de/linux/bttv/.
+NASM is required to assemble some modules. See following URL:
+http://www.web-sites.co.uk/nasm
+ftp://ftp.kernel.org/pub/software/devel/nasm/
+
+Compiling & installing
+----------------------
+Currently there is no configure script. Modify Makefile and do 
+
+make
+
+and copy "effectv" to anywhere.
+
+The device file (typically "/dev/video") must be readable and writable
+for you.
+
+USING
+=====
+
+Synopsis
+--------
+effectv [options...]
+
+Options:
+	-device FILE     use Video4Linux device FILE
+	-channel NUMBER  channel number of video source
+	-fullscreen      enable fullscreen mode
+	-double          doubling screen size
+	-hardware        use direct video memory
+
+Key
+---
+Up/Down		change effect.
+Space		capture a background image(for FireTV and BurningTV).
+Escape		Quit
+
+CONTACT
+=======
+
+Web
+---
+See http://matsu-www.is.titech.ac.jp/~fukuchi/rooms/EffecTV/index.html
+
+Mailing list
+------------
+If you want to join EffecTV crews mailing list, send a mail to:
+
+fukuchi-effectvjoin@is.titech.ac.jp
+
+The ML is not automated, I will add your address to the ML by hand.
+Please write the address where you want to receive messages at.
+
+Bug-reporting & Suggestions
+---------------------------
+Welcome! Send a mail to:
+
+fukuchi-effectv@is.titech.ac.jp
+
+The message send to this address is delivered to EffecTV crews.
+
+LICENSING INFORMATION
+=====================
+EffecTV is a free software. Currently, We release this product under the terms
+of the GPL.
+
+---
+FUKUCHI kentarou
+E-mail: fukuchi@is.titech.ac.jp
+Web: http://matsu-www.is.titech.ac.jp/~fukuchi/

@@ -1,0 +1,7 @@
+2001/02/14	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Now effects uses a shared buffer for temporary frame buffer.
+	  But the effects uses large amount buffer(QuarkTV, BaltanTV, StreakTV)
+	  alloctes buffers by themselves.
+	* Return values of xxxStart() and xxxDraw() are handled. When they
+	  failed, drawErrorPattern() is called.(currently it only fill the screen
+	  in blank)
