@@ -3,6 +3,8 @@
 	* main.c, effects/rds.c: Added RandomDotStereoTV.
 	* changed version to 0.3.6.
 
+	* EffecTV-0.3.6 has been released.
+
 2002/04/03	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README.ps2, docs.japanese/README.ps2 : New patch for ov511-1.59.
 
