@@ -38,8 +38,10 @@ numbers to detect the right one.
 ----------
 Q3: Some effects do not work.
 
-A: The driver for your video capturing device doesn't support some capturing
-mode used by them. Support for those system is underway.
+A: Old EffecTV employs gray scaled capturing mode that some drivers do not
+support. Since version 0.2.0, all of effects uses only 320x240xRGB32 capturing
+mode, supported by most part of driver. Please update your EffecTV to latest
+version.
 ----------
 Q4: EffecTV is frozen.
 
@@ -94,3 +96,12 @@ Q8: EffecTV is slow.
 A: EffecTV uses 32 bits-per-pixel depth screen. When you launch EffecTV
 on any other depth screen, images are converted to that depth by SDL, and it
 makes little slow. If you use X11, try to run it in 32 bpp depth mode.
+
+If you use a capture card that employs Brooktree chip(Bt8x8) or other chip that
+support gray scaled capturing mode, you may want to make EffecTV with palette
+changing feature. Add following line to EffecTV/Makefile and remake;
+
+CONFIG = -DENABLE_PALETTECHANGE
+
+If some effects displays red screen, palette changing is not available on your
+capture card.
