@@ -11,10 +11,12 @@
 #include <string.h>
 #include "../EffecTV.h"
 #include "utils.h"
+#include "heart.inc"
 
 int dotStart();
 int dotStop();
 int dotDraw();
+int dotEvent();
 
 #define DOTDEPTH 5
 #define DOTMAX (1<<DOTDEPTH)
@@ -22,11 +24,13 @@ int dotDraw();
 static char *effectname = "DotTV";
 static int state;
 static RGB32 *pattern;
+static RGB32 *heart_pattern;
 static int dots_width;
 static int dots_height;
 static int dot_size;
 static int dot_hsize;
 static int *sampx, *sampy;
+static int mode = 0;
 
 inline static unsigned char inline_RGBtoY(int rgb)
 {
@@ -88,6 +92,93 @@ static void makePattern()
 	}
 }
 
+static void makeOneHeart(int val, unsigned char *bigheart)
+{
+	int x, y;
+	int xx, yy;
+	int f1x, f1y;
+	int f2x, f2y;
+	double s1x, s1y;
+	double s2x, s2y;
+	double d1x, d1y;
+	double d2x, d2y;
+	double sum, hsum;
+	double w, h;
+	RGB32 *pat;
+	RGB32 c;
+
+	pat = heart_pattern + val * dot_size * dot_hsize;
+	s2y = (double)(-dot_hsize) / dot_size * (31.9 + (double)(DOTMAX-val)/2)
+		+ 31.9;
+	f2y = (int)s2y;
+	for(y=0; y<dot_size; y++) {
+		s1y = s2y;
+		f1y = f2y;
+
+		s2y = (double)(y+1-dot_hsize) / dot_size
+			* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+		f2y = (int)s2y;
+		d1y = 1.0 - (s1y - (double)f1y);
+		d2y = s2y - (double)f2y;
+		h = s2y - s1y;
+
+		s2x = (double)(-dot_hsize) / dot_size
+			* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+		f2x = (int)s2x;
+		for(x=0; x<dot_hsize; x++) {
+			s1x = s2x;
+			f1x = f2x;
+			s2x = (double)(x+1-dot_hsize) / dot_size
+				* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+			f2x = (int)s2x;
+			d1x = 1.0 - (s1x - (double)f1x);
+			d2x = s2x - (double)f2x;
+			w = s2x - s1x;
+
+			sum = 0.0;
+			for(yy = f1y; yy <= f2y; yy++) {
+				hsum = d1x * bigheart[yy*32+f1x];
+				for(xx = f1x+1; xx < f2x; xx++) {
+					hsum += bigheart[yy*32+xx];
+				}
+				hsum += d2x * bigheart[yy*32+f2x];
+
+				if(yy == f1y) {
+					sum += hsum * d1y;
+				} else if(yy == f2y) {
+					sum += hsum * d2y;
+				} else {
+					sum += hsum;
+				}
+			}
+			c = (RGB32)(sum / w / h);
+			if(c<0) c = 0;
+			if(c>255) c = 255;
+			*pat++ = c<<16 | (c&0xfe)<<7 | (c>>1);
+		}
+	}
+}
+
+static void makeHeartPattern()
+{
+	int i, x, y;
+	unsigned char *bigheart;
+
+	bigheart = (unsigned char *)malloc(sizeof(unsigned char) * 64 * 32);
+	memset(bigheart, 0, 64 * 32 * sizeof(unsigned char));
+	for(y=0; y<32; y++) {
+		for(x=0; x<16;x++) {
+			bigheart[(y+16)*32+x+16] = half_heart[y*16+x];
+		}
+	}
+
+	for(i=0; i<DOTMAX; i++) {
+		makeOneHeart(i, bigheart);
+	}
+
+	free(bigheart);
+}
+
 effect *dotRegister()
 {
 	effect *entry;
@@ -111,6 +202,11 @@ effect *dotRegister()
 	if(pattern == NULL) {
 		return NULL;
 	}
+	heart_pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_size * PIXEL_SIZE);
+	if(heart_pattern == NULL) {
+		free(pattern);
+		return NULL;
+	}
 
 	sharedbuffer_reset();
 	sampx = (int *)sharedbuffer_alloc(video_width*sizeof(int));
@@ -128,9 +224,10 @@ effect *dotRegister()
 	entry->start = dotStart;
 	entry->stop = dotStop;
 	entry->draw = dotDraw;
-	entry->event = NULL;
+	entry->event = dotEvent;
 
 	makePattern();
+	makeHeartPattern();
 
 	return entry;
 }
@@ -192,6 +289,27 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 	}
 }
 
+static void drawHeart(int xx, int yy, unsigned char c, RGB32 *dest)
+{
+	int x, y;
+	RGB32 *pat;
+
+	c = (c>>(8-DOTDEPTH));
+	pat = heart_pattern + c * dot_size * dot_hsize;
+	dest = dest + yy * dot_size * screen_width + xx * dot_size;
+	for(y=0; y<dot_size; y++) {
+		for(x=0; x<dot_hsize; x++) {
+			*dest++ = *pat++;
+		}
+		pat--;
+		for(x=0; x<dot_hsize; x++) {
+			*dest++ = *pat--;
+		}
+		dest += screen_width - dot_size;
+		pat += dot_hsize + 1;
+	}
+}
+
 int dotDraw()
 {
 	int x, y;
@@ -208,11 +326,21 @@ int dotDraw()
 	src = (RGB32 *)video_getaddress();
 	dest = (RGB32 *)screen_getaddress();
 
-	for(y=0; y<dots_height; y++) {
-		sy = sampy[y];
-		for(x=0; x<dots_width; x++) {
-			sx = sampx[x];
-			drawDot(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
+	if(mode) {
+		for(y=0; y<dots_height; y++) {
+			sy = sampy[y];
+			for(x=0; x<dots_width; x++) {
+				sx = sampx[x];
+				drawHeart(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
+			}
+		}
+	} else {
+		for(y=0; y<dots_height; y++) {
+			sy = sampy[y];
+			for(x=0; x<dots_width; x++) {
+				sx = sampx[x];
+				drawDot(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
+			}
 		}
 	}
 	if(screen_mustlock()) {
@@ -220,6 +348,21 @@ int dotDraw()
 	}
 	if(video_grabframe())
 		return -1;
+
+	return 0;
+}
+
+int dotEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_SPACE:
+			mode ^= 1;
+			break;
+		default:
+			break;
+		}
+	}
 
 	return 0;
 }
