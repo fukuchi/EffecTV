@@ -103,7 +103,6 @@ int nervousDraw()
 	}
 
 	readplane = inline_fastrand()%PLANES;
-        //if (readplane==PLANES) readplane=0;
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
 			return 0;
