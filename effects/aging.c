@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "../effect.h"
 #include "utils.h"
 
 int agingStart();
