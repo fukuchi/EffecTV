@@ -27,9 +27,10 @@ Vloopback device driver is required for the video loopback feature.
 http://motion.technolust.cx/vloopback/index.html
 vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback.
 
-NASM is required to assemble some modules. See following URL:
+NASM can be used to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
 ftp://ftp.kernel.org/pub/software/devel/nasm/
+If you want not to use NASM, you have to modify "config.mk".
 
 Compiling & installing
 ----------------------

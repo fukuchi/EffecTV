@@ -276,7 +276,7 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			struct video_mmap *vidmmap = arg;
 
 			if(vidmmap->width > MAX_WIDTH || vidmmap->height > MAX_HEIGHT) {
-				fprintf(stderr, "vloopback:requested capture size is to big(%dx%d).\n",vidmmap->width, vidmmap->height);
+				fprintf(stderr, "vloopback:requested capture size is too big(%dx%d).\n",vidmmap->width, vidmmap->height);
 				return EINVAL;
 			}
 			if(vidmmap->width < MIN_WIDTH || vidmmap->height < MIN_HEIGHT) {

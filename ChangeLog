@@ -1,8 +1,14 @@
+2001/10/10	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/dizzy.c: Bugfixes and some parameters now can be controlable.
+	* doc.japanese/{README,effectv.1}: Catched up 0.3.3.
+	* vloopback.c: Typo fixed.
+
 2001/10/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/dizzy.c: Bugfixes.
 	* palette.[ch]: Added new function 'palettex_getpalette()'.
 	* main.c: Added new option "-palette".
-	* video.c: Now video_init() requires a palette number. If 0, it uses RGB32.
+	* video.c: Now video_init() requires a palette number. If 0, it uses
+	  RGB32.
 	* README, effectv.1 : Added more description of options.
 	* Changed version to 0.3.3.
 
@@ -33,8 +39,8 @@
 	* tools/ directory added to $SUBDIRS in Makefile
 
 2001/09/21	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* effects/ripple.c: Rain drop function was enhanced. Some debug code was
-	  eliminated.
+	* effects/ripple.c: Rain drop function was enhanced. Some debug code
+	  was eliminated.
 
 2001/09/20	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/ripple.c: More beautification.
@@ -69,7 +75,8 @@
 	* tools/palettecheck.c: bug fixes. Thanks to Frederic Logier.
 
 2001/09/04	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* tools/{Makefile,README,palettecheck.c}: Added a capability checking tool.
+	* tools/{Makefile,README,palettecheck.c}: Added a capability checking
+	  tool.
 	* video.c, palette.c: Added some error messages.
 	* FAQ: Added Q9.
 
@@ -85,8 +92,8 @@
 	* burn.c: A little optimization.
 
 2001/07/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
-	* EffecTV.h: Added definitions of SDL_DISABLE and SDL_ENABLE for SDL-1.1.x
-	  (those macro values are defined since SDL-1.2.0).
+	* EffecTV.h: Added definitions of SDL_DISABLE and SDL_ENABLE for
+	  SDL-1.1.x (those macro values are defined since SDL-1.2.0).
 	  Thanks to Kazuyuki Shudo.
 	* screen.c: Now it uses SDL_DISABLE and SDL_ENABLE instead of 0 and 1.
 	* effectv.1: typo fixed.
@@ -96,8 +103,9 @@
 	  but vloopback-0.90 seems to be unstable.
 
 2001/06/24	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
-	* video.c: Changed the order to stop frame grabbing. Now it syncs current
-	  grabbing frame, then stops another frame. IBM usb cam now works fine.
+	* video.c: Changed the order to stop frame grabbing. Now it syncs
+	  current grabbing frame, then stops another frame. IBM usb cam now
+	  works fine.
 
 2001/06/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* video.c: Changed the logic of detecting supported pixel format.
@@ -105,14 +113,14 @@
 	* Changed version to 0.3.1.
 
 2001/06/16	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
-	* Some utility functions(utils.[ch], yuv.c, image.c buffer.o ) were moved
-	  from effects/ to the top directory.
+	* Some utility functions(utils.[ch], yuv.c, image.c buffer.o) were
+	  moved from effects/ to the top directory.
 	* palette.c: convert_YUV422toRGB32() and convert_RGB32toYUV422() were
 	  added.
 
 2001/06/11	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
-	* palette.c: Bug fixes of RGB conversion. RGB32toRGB565/555 did shift red
-	  value of each pixel too right.
+	* palette.c: Bug fixes of RGB conversion. RGB32toRGB565/555 did shift
+	  red value of each pixel too right.
 	* tools/AddEffect.pl: Mentioned in Coding-HOWTO, but it was not inclued.
 
 2001/06/10	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
