@@ -1,3 +1,6 @@
+2001/03/14	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* effects/1d.c: did not handle state in Start() and Stop().
+
 2001/03/02	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Changed version to 0.1.5.
 

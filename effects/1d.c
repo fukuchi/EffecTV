@@ -16,6 +16,7 @@ int onedStop();
 int onedDraw();
 
 static char *effectname = "1DTV";
+static int state = 0;
 static int format;
 static int linelength;
 static int lines;
@@ -57,19 +58,24 @@ int onedStart()
 	format = video_getformat();
 	video_setformat(VIDEO_PALETTE_RGB32);
 	if(scale == 2){
-		video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
+		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
+			return -1;
 	}
-	video_grabstart();
-
+	if(video_grabstart())
+		return -1;
+	state = 1;
 	return 0;
 }
 
 int onedStop()
 {
-	video_grabstop();
-	video_setformat(format);
-	if(scale == 2){
-		video_changesize(0, 0);
+	if(state) {
+		video_grabstop();
+		video_setformat(format);
+		if(scale == 2){
+			video_changesize(0, 0);
+		}
+		state = 0;
 	}
 
 	return 0;
