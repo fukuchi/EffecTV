@@ -1,3 +1,7 @@
+2001/09/21	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/ripple.c: Rain drop function was enhanced. Some debug code was
+	  eliminated.
+
 2001/09/20	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/ripple.c: More beautification.
 	* effects/ripple.c: Saturation check bug was fixed.

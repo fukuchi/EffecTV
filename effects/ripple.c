@@ -70,7 +70,6 @@ effect *rippleRegister()
 		return NULL;
 	}
 
-	bzero(vtable, map_h*map_w*3*sizeof(signed char));
 	map3 = map + map_w * map_h * 2;
 
 	entry = (effect *)malloc(sizeof(effect));
@@ -92,6 +91,7 @@ effect *rippleRegister()
 int rippleStart()
 {
 	bzero(map, map_h*map_w*3*sizeof(int));
+	bzero(vtable, map_h*map_w*2*sizeof(signed char));
 	map1 = map;
 	map2 = map + map_h*map_w;
 	image_set_threshold_y(MAGIC_THRESHOLD);
@@ -144,59 +144,94 @@ static void motiondetect(RGB32 *src)
 	}
 }
 
+static inline void drop(int power)
+{
+	int x, y;
+	int *p, *q;
+
+	x = fastrand()%(map_w-4)+2;
+	y = fastrand()%(map_h-4)+2;
+	p = map1 + y*map_w + x;
+	q = map2 + y*map_w + x;
+	*p = power;
+	*q = power;
+	*(p-map_w) = *(p-1) = *(p+1) = *(p+map_w) = power/2;
+	*(p-map_w-1) = *(p-map_w+1) = *(p+map_w-1) = *(p+map_w+1) = power/4;
+	*(q-map_w) = *(q-1) = *(q+1) = *(q+map_w) = power/2;
+	*(q-map_w-1) = *(q-map_w+1) = *(q+map_w-1) = *(p+map_w+1) = power/4;
+}
+
 static void raindrop()
 {
 	static int period = 0;
 	static int rain_stat = 0;
 	static unsigned int drop_prob = 0;
 	static int drop_prob_increment = 0;
+	static int drops_per_frame_max = 0;
+	static int drops_per_frame = 0;
 	static int drop_power = 0;
 
-	int i, x, y;
-	int *p, *q;
+	int i;
 
 	if(period == 0) {
 		switch(rain_stat) {
 		case 0:
-			period = (fastrand()>>20)+100;
+			period = (fastrand()>>23)+100;
 			drop_prob = 0;
-			drop_prob_increment = (0x0fffffff<<(fastrand()>>30))/period;
+			drop_prob_increment = 0x00ffffff/period;
 			drop_power = (-(fastrand()>>28)-2)<<point;
+			drops_per_frame_max = 2<<(fastrand()>>30); // 2,4,8 or 16
 			rain_stat = 1;
 			break;
 		case 1:
-			period = (fastrand()>>22)+1000;
-			drop_prob_increment = 0;
+			drop_prob = 0x00ffffff;
+			drops_per_frame = 1;
+			drop_prob_increment = 1;
+			period = (drops_per_frame_max - 1) * 16;
 			rain_stat = 2;
 			break;
 		case 2:
-			period = (fastrand()>>24)+60;
-			drop_prob_increment = -(drop_prob/period);
+			period = (fastrand()>>22)+1000;
+			drop_prob_increment = 0;
 			rain_stat = 3;
 			break;
 		case 3:
+			period = (drops_per_frame_max - 1) * 16;
+			drop_prob_increment = -1;
+			rain_stat = 4;
+			break;
+		case 4:
+			period = (fastrand()>>24)+60;
+			drop_prob_increment = -(drop_prob/period);
+			rain_stat = 5;
+			break;
+		case 5:
 		default:
 			period = (fastrand()>>23)+500;
 			drop_prob = 0;
 			rain_stat = 0;
+			break;
 		}
 	}
-	if(rain_stat>0) {
-		for(i=0; i<5; i++) {
-			if((fastrand()>>1)<drop_prob) {
-				x = fastrand()%(map_w-4)+2;
-				y = fastrand()%(map_h-4)+2;
-				p = map1 + y*map_w + x;
-				q = map2 + y*map_w + x;
-				*p = drop_power;
-				*q = drop_power;
-				*(p-map_w) = *(p-1) = *(p+1) = *(p+map_w) = drop_power/2;
-				*(p-map_w-1) = *(p-map_w+1) = *(p+map_w-1) = *(p+map_w+1) = drop_power/4;
-				*(q-map_w) = *(q-1) = *(q+1) = *(q+map_w) = drop_power/2;
-				*(q-map_w-1) = *(q-map_w+1) = *(q+map_w-1) = *(p+map_w+1) = drop_power/4;
-			}
+	switch(rain_stat) {
+	default:
+	case 0:
+		break;
+	case 1:
+	case 5:
+		if((fastrand()>>8)<drop_prob) {
+			drop(drop_power);
 		}
 		drop_prob += drop_prob_increment;
+		break;
+	case 2:
+	case 3:
+	case 4:
+		for(i=drops_per_frame/16; i>0; i--) {
+			drop(drop_power);
+		}
+		drops_per_frame += drop_prob_increment;
+		break;
 	}
 	period--;
 }
@@ -343,33 +378,12 @@ int rippleDraw()
 	for(y=0; y<height; y+=2) {
 		for(x=0; x<width; x+=2) {
 			h = ((p[0]>>(point-5))+128)<<8;
+//			h = ((int)vp[1]+128)<<8;
 			dest[0] = h;
 			dest[1] = h;
 			dest[width] = h;
 			dest[width+1] = h;
 			p++;
-#if 0
-			h = (int)vp[0] + (int)vp[1] + 128;
-			if(h<0) h=0;
-			if(h>255) h=255;
-			dest[0] = h<<8;
-
-			h = (int)vp[2] + (int)vp[1] + 128;
-			if(h<0) h=0;
-			if(h>255) h=255;
-			dest[1] = h<<8;
-
-			h = (int)vp[0] + (int)vp[map_w*2+1] + 128;
-			if(h<0) h=0;
-			if(h>255) h=255;
-			dest[width] = h<<8;
-
-			h = (int)vp[2] + (int)vp[map_w*2+1] + 128;
-			if(h<0) h=0;
-			if(h>255) h=255;
-			dest[width+1] = h<<8;
-#endif
-
 			dest+=2;
 			vp+=2;
 		}
@@ -380,7 +394,7 @@ int rippleDraw()
 	h = map_h/2;
 	dest2 += video_height/2*video_width;
 	p = map1 + h * map_w;
-	for(x=0; x<map_w; x++) {
+	for(x=0; x<map_w-1; x++) {
 		y = p[x]>>(point-2);
 		if(y>=h) y = h - 1;
 		if(y<=-h) y = -h + 1;
