@@ -5,7 +5,13 @@ Overview of Changes in EffecTV-0.3.9
 * The supported version of vloopback has been changed from 0.90 to 0.91.
   Older version is no longer supported.
 
-* Some new modes have been added to FireTV.
+* EffecTV can be launched from any effect you want. Put an effect name after
+  the command name ("effectv") or option(s). It's case-insensitive, and a
+  trailing "TV" can be omitted.
+
+* Some new modes have been added to FireTV, BurningTV and SparkTV.
+
+* PuzzleTV's block sliding effect becomes smooth.
 
 * Some bug fixes.
 

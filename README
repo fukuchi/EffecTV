@@ -67,7 +67,7 @@ You can adjust these settings with command line options. See the next section.
 
 Synopsis
 --------
-effectv [options...]
+effectv [options...] [effect name]
 
 Options
 -------
@@ -127,6 +127,11 @@ Options
 -vloopback FILE
 	Use device FILE for output of vloopback device.
 	See "Recording/broadcasting EffecTV" section.
+
+effect name
+	EffecTV can be launched from any effect you want. Put an effect name after
+	the command name ("effectv") or option(s). It's case-insensitive, and a
+	trailing "TV" can be omitted.
 
 Key
 ---
