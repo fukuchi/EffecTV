@@ -63,7 +63,8 @@ static effectRegistFunc *effects_register_list[] =
 	warpRegister,
 	holoRegister,
 	cycleRegister,
-	rippleRegister
+	rippleRegister,
+	diceRegister
 };
 
 static effect **effectsList;
