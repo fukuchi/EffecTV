@@ -37,6 +37,8 @@ int vthecolor=0xffffffff;
 static char *effectname = "revTV";
 static int state = 0;
 
+void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h);
+
 effect *revRegister()
 {
 	effect *entry;
