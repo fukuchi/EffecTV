@@ -1,6 +1,12 @@
+2002/03/31	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README.vloopback90: Revised the patch included.
+	* Makefile, config.mk: New macro variable LIBS.extra was added for non x86
+	  linux (ps2-linux, indeed).
+
 2002/03/30	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/nemo.c: Code cleaning up. planetable now allocated at run-time.
 	* README, effectv.1, EffecTV.h, etc. : changed version to 0.3.5.
+	* effects/rev.c: Added function prototype of vasulka().
 
 2002/03/29	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* main.c, effects/{nemo.c,Makefile,effects.h}: Added NemoTV.

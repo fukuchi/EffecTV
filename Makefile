@@ -7,7 +7,7 @@ NASM = nasm
 INSTALL = /usr/bin/install -c
 
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
-LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
+LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs` $(LIBS.extra)
 
 PROGRAM = effectv
 

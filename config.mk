@@ -52,7 +52,9 @@ CONFIG.arch = -DPS2
 CFLAGS.opt = -O3 -fomit-frame-pointer -funroll-loops
 USE_NASM = no
 USE_MMX = no
+USE_VLOOPBACK = no
 CONFIG += -DRGB_BGR_CONVERSION
+LIBS.extra = -ldl -L/usr/X11R6/lib -lX11 -lXext
 endif
 
 ifeq ($(USE_NASM), yes)
