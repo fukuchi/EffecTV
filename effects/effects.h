@@ -41,3 +41,6 @@ extern effectRegistFunc DeinterlaceRegister;
 extern effectRegistFunc nervousRegister;
 extern effectRegistFunc rndmRegister;
 extern effectRegistFunc revRegister;
+extern effectRegistFunc nemoRegister;
+extern effectRegistFunc rdsRegister;
+extern effectRegistFunc stereoRegister;

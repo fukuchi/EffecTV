@@ -5,7 +5,6 @@ include ../config.mk
 CC = gcc
 NASM = nasm
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config --cflags`
-#CFLAGS = -g -I.. -I../v4lutils `sdl-config --cflags`
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 
 LIBEFFECTS = libeffects.a
@@ -13,7 +12,8 @@ EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZ
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
-          $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV)
+          $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(NEMO) \
+		  $(RDS) $(STEREO)
 SUBDIRS =
 
 %.o: %.c
@@ -70,6 +70,9 @@ DEINTERLACE = Deinterlace.o
 NERVOUS = nervous.o
 RNDM = rndm.o
 REV = rev.o
+NEMO = nemo.o
+RDS = rds.o
+STEREO = stereo.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)
