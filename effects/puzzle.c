@@ -175,7 +175,7 @@ int puzzleDraw()
 	if(marginh) {
 		p = src + (blockh * blocksize) * video_width;
 		q = dest + (blockh * blocksize) * video_width;
-		bcopy(p, q, marginh*video_width*sizeof(RGB32));
+		memcpy(p, q, marginh*video_width*sizeof(RGB32));
 	}
 	if(stretch) {
 		image_stretch_to_screen();

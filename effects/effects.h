@@ -42,3 +42,6 @@ extern effectRegistFunc nervousRegister;
 extern effectRegistFunc rndmRegister;
 extern effectRegistFunc revRegister;
 extern effectRegistFunc rdsRegister;
+extern effectRegistFunc lensRegister;
+extern effectRegistFunc diffRegister;
+

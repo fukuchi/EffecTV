@@ -152,7 +152,7 @@ int onedDraw()
 	if(doublebuf) {
 		dest = (RGB32 *)screen_getaddress() + screen_width * prevsline;
 		for(i=0; i<prevsheight; i++) {
-			bcopy(linebuf, dest, screen_width*sizeof(RGB32));
+			memcpy(linebuf, dest, screen_width*sizeof(RGB32));
 			dest += screen_width;
 		}
 	}

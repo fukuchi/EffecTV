@@ -88,7 +88,7 @@ void SquareTableInit()
 int TransFormStart()
 {
   int x,y,i;
-  int xdest,ydest;
+//   int xdest,ydest;
   for (i=0;i < TableMax ; i++) {
     TableList[i]= malloc(sizeof(int) * video_width * video_height);
   }

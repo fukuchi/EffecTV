@@ -71,7 +71,9 @@ static effectRegistFunc *effects_register_list[] =
 	nervousRegister,
 	rndmRegister,
 	revRegister,
-	rdsRegister
+	rdsRegister,
+    lensRegister,
+    diffRegister
 };
 
 static effect **effectsList;
