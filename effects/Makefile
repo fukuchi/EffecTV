@@ -2,14 +2,14 @@
 
 CC = gcc
 NASM = nasm
-CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -Iv4lutils `sdl-config --cflags`
+CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I../v4lutils `sdl-config --cflags`
 #CFLAGS = -g -Iv4lutils `sdl-config --cflags`
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
-          $(ONED) $(DOT) $(MOSAIC)
-UTILS = utils.o buffer.o
+          $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR)
+UTILS = utils.o buffer.o yuv.o
 SUBDIRS =
 
 %.o: %.c
@@ -35,6 +35,8 @@ STREAK = streak.o
 ONED = 1d.o
 DOT = dot.o
 MOSAIC = mosaic.o
+PUZZLE = puzzle.o
+PREDATOR = predator.o
 
 $(LIBEFFECTS): $(EFFECTS) $(UTILS)
 	ar rc $(LIBEFFECTS) $(EFFECTS) $(UTILS)

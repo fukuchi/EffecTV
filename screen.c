@@ -16,6 +16,7 @@
 #include "screen.h"
 
 SDL_Surface *screen = NULL;
+const SDL_VideoInfo *videoinfo;
 
 /*
  * screen_init - initialize screen
@@ -51,6 +52,7 @@ int screen_init(int flags, int scale)
 	}
 	SDL_ShowCursor(0);
 	atexit(screen_quit);
+	videoinfo = SDL_GetVideoInfo();
 	return 0;
 }
 
@@ -66,5 +68,12 @@ int screen_bpp()
 		return screen->format->BitsPerPixel;
 	} else {
 		return 0;
+	}
+}
+
+void screen_setcaption(const char *str)
+{
+	if(videoinfo->wm_available) {
+		SDL_WM_SetCaption(str, NULL);
 	}
 }

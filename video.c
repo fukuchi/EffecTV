@@ -16,13 +16,26 @@
 
 v4ldevice vd;
 
-int video_init(char *file, int channel)
+static normlist normlists[] =
+{
+	{"ntsc"   , VIDEO_MODE_NTSC},
+	{"pal"    , VIDEO_MODE_PAL},
+	{"secam"  , VIDEO_MODE_SECAM},
+	{"auto"   , 3},
+	{"pal-nc" , 3},
+	{"pal-m"  , 4},
+	{"pal-n"  , 5},
+	{"ntsc-jp", 6},
+	{"", -1}
+};
+
+int video_init(char *file, int channel, int norm)
 {
 	if(file == NULL){
 		file = DEFAULT_VIDEO_DEVICE;
 	}
 	if(v4lopen(file, &vd)) return -1;
-	v4lsetdefaultnorm(&vd, DEFAULT_VIDEO_NORM);
+	v4lsetdefaultnorm(&vd, norm);
 	v4lgetcapability(&vd);
 
 	if(v4lsetchannel(&vd, channel)) return -1;
@@ -70,4 +83,21 @@ int video_changesize(int width, int height)
 		height = SCREEN_HEIGHT;
 	}
 	return v4lgrabinit(&vd, width, height);
+}
+
+/*
+ * videox_ series are the utility for using video capturing layer.
+ * They don't touch a v4ldevice.
+ */
+int videox_getnorm(char *name)
+{
+	int i;
+
+	for(i=0; normlists[i].type != -1; i++) {
+		if(strcasecmp(name, normlists[i].name) == 0) {
+			return normlists[i].type;
+		}
+	}
+
+	return -1;
 }

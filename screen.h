@@ -16,6 +16,7 @@ extern SDL_Surface *screen;
 int screen_init(int flags, int scale);
 void screen_quit();
 int screen_bpp();
+void screen_setcaption(const char *str);
 
 #define screen_getaddress() (screen->pixels)
 #define screen_update() (SDL_Flip(screen))

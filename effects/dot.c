@@ -89,7 +89,7 @@ int dotStart()
 {
 	SDL_FillRect(screen, NULL, 0);
 	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_GREY) < 0)
+	if(video_setformat(VIDEO_PALETTE_GREY))
 		return -1;
 	if(video_changesize(80, 60))
 		return -1;

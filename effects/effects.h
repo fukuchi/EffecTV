@@ -18,3 +18,5 @@ extern effectRegistFunc streakRegister;
 extern effectRegistFunc onedRegister;
 extern effectRegistFunc dotRegister;
 extern effectRegistFunc mosaicRegister;
+extern effectRegistFunc puzzleRegister;
+extern effectRegistFunc predatorRegister;

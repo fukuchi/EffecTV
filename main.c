@@ -32,7 +32,9 @@ static effectRegistFunc *effects_register_list[] =
 	streakRegister,
 	onedRegister,
 	dotRegister,
-	mosaicRegister
+	mosaicRegister,
+	puzzleRegister,
+	predatorRegister
 };
 
 static effect **effectsList;
@@ -49,6 +51,7 @@ static void usage()
 	printf("Options:\n");
 	printf("\tdevice FILE\tuse device FILE for video4linux\n");
 	printf("\tchannel NUMBER\tchannel number of video source\n");
+	printf("\tnorm {ntsc,pal,secam,ntsc-jp}\tset video norm\n");
 	printf("\tfullscreen\tenable fullscreen mode\n");
 	printf("\tdouble\t\tdoubling screen size\n");
 	printf("\thardware\tuse direct video memory(if possible)\n");
@@ -59,11 +62,11 @@ static void drawErrorPattern()
 {
 	SDL_Rect rect;
 
-	rect.w = SCREEN_WIDTH;
-	rect.h = SCREEN_HEIGHT;
+	rect.w = SCREEN_WIDTH*scale;
+	rect.h = SCREEN_HEIGHT*scale;
 	rect.x = 0;
 	rect.y = 0;
-	SDL_FillRect(screen, &rect, 0);
+	SDL_FillRect(screen, &rect, 0xff0000);
 	screen_update();
 }
 
@@ -102,7 +105,7 @@ static int changeEffect(int num)
 	if(currentEffectNum >= effectMax)
 		currentEffectNum -= effectMax;
 	currentEffect = effectsList[currentEffectNum];
-	SDL_WM_SetCaption(currentEffect->name, NULL);
+	screen_setcaption(currentEffect->name);
 	if(currentEffect->start() < 0)
 		return 2;
 
@@ -141,7 +144,7 @@ static int startTV()
 				gettimeofday(&tv, NULL);
 				usec = tv.tv_sec*1000000+tv.tv_usec;
 				sprintf(buf, "%s (%2.2f fps)", currentEffect->name, (float)100000000/(usec - lastusec));
-				SDL_WM_SetCaption(buf, NULL);
+				screen_setcaption(buf);
 				lastusec = usec;
 				frames = 0;
 			}
@@ -177,6 +180,7 @@ int main(int argc, char **argv)
 	int i;
 	char *option;
 	int channel = 0;
+	int norm = DEFAULT_VIDEO_NORM;
 	int screen_flags = 0;
 	char *devfile = NULL;
 
@@ -192,13 +196,24 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing channel number.\n");
 				exit(1);
 			}
-		}
-		else if(strncmp(option, "device", 6) == 0) {
+		} else if(strcmp(option, "norm") == 0) {
+			i++;
+			if(i<argc) {
+				if((norm = videox_getnorm(argv[i])) < 0) {
+					fprintf(stderr, "norm %s is not supported.\n", argv[i]);
+					exit(1);
+				}
+			} else {
+				fprintf(stderr, "missing norm.\n");
+				exit(1);
+			}
+		} else if(strncmp(option, "device", 6) == 0) {
 			i++;
 			if(i<argc) {
 				devfile = argv[i];
 			} else {
 				fprintf(stderr, "missing device file.\n");
+				exit(1);
 			}
 		} else if(strncmp(option, "hardware", 8) == 0) {
 			screen_flags |= SDL_HWSURFACE;
@@ -227,7 +242,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Memory allocation failed.\n");
 		exit(1);
 	}
-	if(video_init(devfile, channel)) {
+	if(video_init(devfile, channel, norm)) {
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
 	}

@@ -189,13 +189,6 @@ int burnDraw()
 				a += b;
 				b = a & 0x1010100;
 				dest[y*SCREEN_WIDTH+x] = a | (b - (b >> 8));
-#ifdef ORIG
-				if(buffer[y*SCREEN_WIDTH+x]) {
-					dest[y*SCREEN_WIDTH+x] = palette[buffer[y*SCREEN_WIDTH+x]];
-				} else {
-					dest[y*SCREEN_WIDTH+x] = ((unsigned int *)src)[y*SCREEN_WIDTH+x];
-				}
-#endif
 			}
 		}
 	}

@@ -45,7 +45,8 @@ int dumbStart()
 	format = video_getformat();
 	video_setformat(VIDEO_PALETTE_RGB32);
 	if(scale == 2){
-		video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
+		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
+			return -1;
 	}
 	if(video_grabstart())
 		return -1;

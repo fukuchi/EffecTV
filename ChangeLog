@@ -1,6 +1,31 @@
+2001/02/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* New function videox_getnorm() in video.c
+	* New options "-norm" is added.
+
+2001/02/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Changed version to 0.1.3
+	* Changed default norm to NTSC
+
+2001/02/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* New effect PredatorTV
+	* New YUV utility modules.
+
+2001/02/17	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* effects/puzzle.c
+	  Shuffling routine is revised.
+
+2001/02/16	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* New effect PuzzleTV
+
+2001/02/16	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* SDL_WM_SetCaption() is replaced by screen_setcaption() in main.c
+	  screen_setcaption() calls SDL_WM_SetCaption() only when window manager
+	  feature is available.
+
 2001/02/15	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Double scaled BurnTV now uses addition with saturation.
-	* MosaicTV (as known as CensoredTV) is added.
+	* MosaicTV is added.
+	* changed version to 0.1.2
 
 2001/02/15	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Fixed the bugs in usage and README.
