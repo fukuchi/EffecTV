@@ -1,5 +1,5 @@
-Overview of Changes in EffecTV-0.3.9
-====================================
+Overview of Changes in EffecTV-0.3.9 (2004/1/13)
+================================================
 * New effects "MatrixTV", "PupTV" and "ChameleonTV" have been added.
   You say "Who wants Matrix effect after the trilogy? It's obsolete." Sorry,
   it's due to Kentaro's slow slow udpating.
@@ -20,8 +20,8 @@ Overview of Changes in EffecTV-0.3.9
 
 * Many bug fixes.
 
-Overview of Changes in EffecTV-0.3.8
-====================================
+Overview of Changes in EffecTV-0.3.8 (2002/10/5)
+================================================
 * New effects BrokenTV and WarholTV developed by Jun IIO was added.
 
 * The default v4l device file was changed from "/dev/video" to "/dev/video0".

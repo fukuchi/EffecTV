@@ -1,3 +1,8 @@
+2004/01/13	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* NEWS:
+	  - Added release date.
+	* EffecTV-0.3.9 has been released.
+
 2004/01/12	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/pup.c:
 	  - Renamed "diagonalPup2" to "dissolutionPup".
