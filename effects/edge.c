@@ -92,11 +92,11 @@ static int draw(RGB32 *src, RGB32 *dest)
 			q = *(src - 4);
 
 /* difference between the current pixel and right neighbor. */
-			r = ((p&0xff0000) - (q&0xff0000))>>16;
-			g = ((p&0xff00) - (q&0xff00))>>8;
-			b = (p&0xff) - (q&0xff);
-			r *= r;
-			g *= g;
+			r = ((int)(p&0xff0000) - (int)(q&0xff0000))>>16;
+			g = ((int)(p&0xff00) - (int)(q&0xff00))>>8;
+			b = (int)(p&0xff) - (int)(q&0xff);
+			r *= r; /* Multiply itself and divide it with 16, instead of */
+			g *= g; /* using abs(). */
 			b *= b;
 			r = r>>5; /* To lack the lower bit for saturated addition,  */
 			g = g>>5; /* devide the value with 32, instead of 16. It is */
@@ -108,9 +108,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 /* difference between the current pixel and upper neighbor. */
 			q = *(src - video_width*4);
-			r = ((p&0xff0000) - (q&0xff0000))>>16;
-			g = ((p&0xff00) - (q&0xff00))>>8;
-			b = (p&0xff) - (q&0xff);
+			r = ((int)(p&0xff0000) - (int)(q&0xff0000))>>16;
+			g = ((int)(p&0xff00) - (int)(q&0xff00))>>8;
+			b = (int)(p&0xff) - (int)(q&0xff);
 			r *= r;
 			g *= g;
 			b *= b;
