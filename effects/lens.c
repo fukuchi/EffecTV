@@ -7,7 +7,7 @@
  * http://www.paassen.tmfweb.nl/retrodemo.html
  *
  *
- * Ported to EffecTV BSB by Buddy Smith???
+ * Ported to EffecTV BSB by Buddy Smith
  * Modified from BSB for EffecTV 0.3.x by Ed Tannenbaaum
  * ET added interactive control via mouse as follows....
  * Mouse with no buttons pressed moves magnifier
