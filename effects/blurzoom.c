@@ -2,7 +2,8 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * blurzoom.c: blur and zoom (I need a good name...)
+ * RadioacTV - motion-enlightment effect.
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * I referred to "DUNE!" by QuoVadis for this effect.
  */
@@ -24,37 +25,33 @@ int blurzoomDraw();
 extern void blurzoomcore();
 
 unsigned char *blurzoombuf;
-int blurzoomx[SCREEN_WIDTH];
-int blurzoomy[SCREEN_HEIGHT];
+int *blurzoomx;
+int *blurzoomy;
+int buf_width_blocks;
+int buf_width;
+int buf_height;
+int buf_area;
+int buf_margin_right;
+int buf_margin_left;
 
 static char *effectname = "RadioacTV";
 static int stat;
-static unsigned int *background;
-static unsigned int palette[COLORS];
-static unsigned char abstable[65536];
+static RGB32 palette[COLORS];
 
-static void makeAbstable()
-{
-	int x, y;
+#define VIDEO_HWIDTH (buf_width/2)
+#define VIDEO_HHEIGHT (buf_height/2)
 
-	for(y=0; y<256; y++) {
-		for(x=0; x<256; x++) {
-			abstable[y<<8|x] = (abs(x-y)>MAGIC_THRESHOLD)?0x1f:0;
-		}
-	}
-}
-
-/* this table assumes that SCALE_WIDTH is times of 32 */
+/* this table assumes that video_width is times of 32 */
 static void setTable()
 {
 	int bits, x, y, tx, ty, xx;
 	int ptr, prevptr;
 
-	prevptr = (int)(0.5+RATIO*(-SCREEN_HWIDTH)+SCREEN_HWIDTH);
-	for(xx=0; xx<(SCREEN_WIDTH/32); xx++){
+	prevptr = (int)(0.5+RATIO*(-VIDEO_HWIDTH)+VIDEO_HWIDTH);
+	for(xx=0; xx<(buf_width_blocks); xx++){
 		bits = 0;
 		for(x=0; x<32; x++){
-			ptr= (int)(0.5+RATIO*(xx*32+x-SCREEN_HWIDTH)+SCREEN_HWIDTH);
+			ptr= (int)(0.5+RATIO*(xx*32+x-VIDEO_HWIDTH)+VIDEO_HWIDTH);
 			bits = bits<<1;
 			if(ptr != prevptr)
 				bits |= 1;
@@ -63,15 +60,15 @@ static void setTable()
 		blurzoomx[xx] = bits;
 	}
 
-	ty = (int)(0.5+RATIO*(-SCREEN_HHEIGHT)+SCREEN_HHEIGHT);
-	tx = (int)(0.5+RATIO*(-SCREEN_HWIDTH)+SCREEN_HWIDTH);
-	xx=(int)(0.5+RATIO*(SCREEN_WIDTH-1-SCREEN_HWIDTH)+SCREEN_HWIDTH);
-	blurzoomy[0] = ty*SCREEN_WIDTH+tx;
-	prevptr = ty*SCREEN_WIDTH+xx;
-	for(y=1; y<SCREEN_HEIGHT; y++){
-		ty = (int)(0.5+RATIO*(y-SCREEN_HHEIGHT)+SCREEN_HHEIGHT);
-		blurzoomy[y] = ty*SCREEN_WIDTH + tx - prevptr;
-		prevptr = ty*SCREEN_WIDTH + xx;
+	ty = (int)(0.5+RATIO*(-VIDEO_HHEIGHT)+VIDEO_HHEIGHT);
+	tx = (int)(0.5+RATIO*(-VIDEO_HWIDTH)+VIDEO_HWIDTH);
+	xx=(int)(0.5+RATIO*(buf_width-1-VIDEO_HWIDTH)+VIDEO_HWIDTH);
+	blurzoomy[0] = ty * buf_width + tx;
+	prevptr = ty * buf_width + xx;
+	for(y=1; y<buf_height; y++){
+		ty = (int)(0.5+RATIO*(y-VIDEO_HHEIGHT)+VIDEO_HHEIGHT);
+		blurzoomy[y] = ty * buf_width + tx - prevptr;
+		prevptr = ty * buf_width + xx;
 	}
 }		
 
@@ -96,10 +93,25 @@ effect *blurzoomRegister()
 {
 	effect *entry;
 	
+	buf_width_blocks = (video_width / 32);
+	if(buf_width_blocks > 255) {
+		return NULL;
+	}
+	buf_width = buf_width_blocks * 32;
+	buf_height = video_height;
+	buf_area = buf_width * buf_height;
+	buf_margin_left = (video_width - buf_width)/2;
+	buf_margin_right = video_width - buf_width - buf_margin_left;
+
 	sharedbuffer_reset();
-	background = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
-	blurzoombuf = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA*2);
-	if(background == NULL || blurzoombuf == NULL) {
+	blurzoombuf = (unsigned char *)sharedbuffer_alloc(buf_area*2);
+	if(blurzoombuf == NULL) {
+		return NULL;
+	}
+
+	blurzoomx = (int *)malloc(buf_width*sizeof(int));
+	blurzoomy = (int *)malloc(buf_height*sizeof(int));
+	if(blurzoomx == NULL || blurzoomy == NULL) {
 		return NULL;
 	}
 
@@ -116,20 +128,15 @@ effect *blurzoomRegister()
 
 	setTable();
 	makePalette();
-	makeAbstable();
 
 	return entry;
 }
 
 int blurzoomStart()
 {
-	bzero(blurzoombuf, SCREEN_AREA*2);
+	bzero(blurzoombuf, buf_area*2);
+	image_set_threshold_y(MAGIC_THRESHOLD);
 	if(video_grabstart())
-		return -1;
-	if(video_syncframe())
-		return -1;
-	bcopy(video_getaddress(), background, SCREEN_AREA*PIXEL_SIZE);
-	if(video_grabframe())
 		return -1;
 	stat = 1;
 	return 0;
@@ -147,22 +154,25 @@ int blurzoomStop()
 
 int blurzoomDraw()
 {
-	int i, x, y, v;
-	unsigned int a, b;
-	unsigned int *src, *dest;
+	int x, y;
+	RGB32 a, b;
+	RGB32 *src, *dest;
+	unsigned char *diff, *p;
 
 	if(video_syncframe())
 		return -1;
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
+	src = (RGB32 *)video_getaddress();
 
-	for(i=0; i<SCREEN_AREA; i++) {
-		blurzoombuf[i] |= abstable[(src[i]&0xff)<<8|(background[i]&0xff)];
-		background[i] = src[i];
+	diff = image_bgsubtract_update_y(src);
+	diff += buf_margin_left;
+	p = blurzoombuf;
+	for(y=0; y<buf_height; y++) {
+		for(x=0; x<buf_width; x++) {
+			p[x] |= diff[x] >> 3;
+		}
+		diff += video_width;
+		p += buf_width;
 	}
-	if(video_grabframe())
-		return -1;
-
 	blurzoomcore();
 
 	if(screen_mustlock()) {
@@ -170,35 +180,36 @@ int blurzoomDraw()
 			return 0;
 		}
 	}
-	if(scale == 2) {
-		i=0;
-		for(y=0; y<SCREEN_HEIGHT; y++) {
-			for(x=0; x<SCREEN_WIDTH; x++) {
-				a = background[i] & 0xfefeff;
-				b = palette[blurzoombuf[i]];
-				a += b;
-				b = a & 0x1010100;
-				v = a | (b - (b >> 8));
-				i++;
-				dest[x*2] = v;
-				dest[x*2+1] = v;
-				dest[x*2+SCREEN_WIDTH*2] = v;
-				dest[x*2+SCREEN_WIDTH*2+1] = v;
-			}
-			dest += SCREEN_WIDTH*4;
-		}
+	if(stretch) {
+		dest = stretching_buffer;
 	} else {
-		for(i=0; i<SCREEN_AREA; i++) {
-			a = background[i] & 0xfefeff;
-			b = palette[blurzoombuf[i]];
+		dest = (RGB32 *)screen_getaddress();
+	}
+	p = blurzoombuf;
+	for(y=0; y<video_height; y++) {
+		for(x=0; x<buf_margin_left; x++) {
+			*dest++ = *src++;
+		}
+		for(x=0; x<buf_width; x++) {
+			a = *src++ & 0xfefeff;
+			b = palette[*p++];
 			a += b;
 			b = a & 0x1010100;
-			dest[i] = a | (b - (b >> 8));
+			*dest++ = a | (b - (b >> 8));
 		}
+		for(x=0; x<buf_margin_right; x++) {
+			*dest++ = *src++;
+		}
+	}
+	if(stretch) {
+		image_stretch_to_screen();
 	}
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
+	if(video_grabframe())
+		return -1;
+
 
 	return 0;
 }

@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <SDL/SDL.h>
 
 #include "EffecTV.h"
@@ -24,9 +23,6 @@ static const SDL_VideoInfo *screeninfo;
 /*
  * Screen properties. These variables are immutable after calling screen_init()
  */
-/* Scale of screen. Screen size is described in EffecTV.h */
-int scale = 1;
-
 /* Flag for double buffering mode. */
 int doublebuf = 0;
 
@@ -36,12 +32,22 @@ int hwsurface = 0;
 /* Flag for fullscreen mode. */
 int fullscreen = 0;
 
+/* This flag is set when capturing size and screen size are different. */
+int stretch;
+
+/* Screen width and height. */
+int screen_width;
+int screen_height;
+/* When screen_width(height) is indivisible by video_width(height),
+ * or scale of width and height are different, screen_scale is set to -1. */
+int screen_scale;
+
 /* Screen initialization.
  * Before calling this function, screen properties(scale, doublebuf, hwsurface,
  * fullscreen) must be set. In the initializing process, those variables may be
  * reset and they are never changed again during run time.
  */
-int screen_init()
+int screen_init(int w, int h, int s)
 {
 	int flags = 0;
 
@@ -59,7 +65,34 @@ int screen_init()
 	if(doublebuf) {
 		flags |= SDL_DOUBLEBUF;
 	}
-	screen = SDL_SetVideoMode(SCREEN_WIDTH*scale, SCREEN_HEIGHT*scale,
+
+	if(w || h) {
+		if(w < video_width)
+			w = video_width;
+		if(h < video_height)
+			h = video_height;
+		screen_width = w;
+		screen_height = h;
+		if((w % video_width) || (h % video_height)) {
+			screen_scale = -1;
+		} else if((w / video_width) == (h / video_height)) {
+			screen_scale = w / video_width;
+		} else {
+			screen_scale = -1;
+		}
+	} else {
+		screen_scale = s;
+		screen_width = video_width * s;
+		screen_height = video_height * s;
+	}
+
+	if((screen_width == video_width) && (screen_height == video_height)) {
+		stretch = 0;
+	} else {
+		stretch = 1;
+	}
+
+	screen = SDL_SetVideoMode(screen_width, screen_height,
 	                          DEFAULT_DEPTH, flags);
 	if(screen == NULL) {
 		fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
@@ -122,5 +155,14 @@ void screen_clear(int color)
 	if(doublebuf) {
 		SDL_FillRect(screen, NULL, color);
 		screen_update();
+	}
+}
+
+/* Toggles fullscreen mode. */
+void screen_fullscreen()
+{
+	if(screeninfo->wm_available) {
+		if(SDL_WM_ToggleFullScreen(screen))
+			fullscreen ^= 1;
 	}
 }

@@ -2,15 +2,18 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * edge.c: detects edge and display it in good old computer way.
+ * EdgeTV - detects edge and display it in good old computer way. 
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * The idea of EdgeTV is taken from Adrian Likins's effector script for GIMP,
  * `Predator effect.'
+ *
  * The algorithm of the original script pixelizes the image at first, then
- * it adopts the edge detection filter to the image.
+ * it adopts the edge detection filter to the image. It also adopts MaxRGB
+ * filter to the image. This is not used in EdgeTV.
  * This code is highly optimized and employs many fake algorithms. For example,
- * it devides a value with 16 instead of using sqrt() in line 154. It is too
- * hard for me to write detailed comment in this code.
+ * it devides a value with 16 instead of using sqrt() in line 141. It is too
+ * hard for me to write detailed comment in this code in English.
  */
 
 #include <stdlib.h>
@@ -19,25 +22,29 @@
 #include "../EffecTV.h"
 #include "utils.h"
 
-
 int edgeStart();
 int edgeStop();
 int edgeDraw();
-int edgeDrawDouble();
 
 static char *effectname = "EdgeTV";
 static int stat;
-static unsigned int *map;
+static RGB32 *map;
 
-#define MAP_WIDTH (SCREEN_WIDTH/4)
-#define MAP_HEIGHT (SCREEN_HEIGHT/4)
+static int map_width;
+static int map_height;
+
+static int video_width_margin;
 
 effect *edgeRegister()
 {
 	effect *entry;
 	
+	map_width = video_width / 4;
+	map_height = video_height / 4;
+	video_width_margin = video_width - map_width * 4;
+
 	sharedbuffer_reset();
-	map = (unsigned int *)sharedbuffer_alloc(MAP_WIDTH*MAP_HEIGHT*sizeof(unsigned int)*2);
+	map = (RGB32 *)sharedbuffer_alloc(map_width*map_height*sizeof(RGB32)*2);
 	if(map == NULL) {
 		return NULL;
 	}
@@ -50,11 +57,7 @@ effect *edgeRegister()
 	entry->name = effectname;
 	entry->start = edgeStart;
 	entry->stop = edgeStop;
-	if(scale == 2) {
-		entry->draw = edgeDrawDouble;
-	} else {
-		entry->draw = edgeDraw;
-	}
+	entry->draw = edgeDraw;
 	entry->event = NULL;
 
 	return entry;
@@ -63,7 +66,10 @@ effect *edgeRegister()
 int edgeStart()
 {
 	screen_clear(0);
-	bzero(map, MAP_WIDTH*MAP_HEIGHT*sizeof(unsigned int)*2);
+	if(stretch) {
+		image_stretching_buffer_clear(0);
+	}
+	bzero(map, map_width * map_height * sizeof(RGB32) * 2);
 	if(video_grabstart())
 		return -1;
 
@@ -84,10 +90,10 @@ int edgeStop()
 int edgeDraw()
 {
 	int  x, y;
-	unsigned int *src, *dest;
 	int r, g, b;
-	unsigned int p, q;
-	unsigned int v0, v1, v2, v3;
+	RGB32 *src, *dest;
+	RGB32 p, q;
+	RGB32 v0, v1, v2, v3;
 
 	if(video_syncframe())
 		return -1;
@@ -96,13 +102,17 @@ int edgeDraw()
 			return 0;
 		}
 	}
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
+	src = (RGB32 *)video_getaddress();
+	if(stretch) {
+		dest = stretching_buffer;
+	} else {
+		dest = (RGB32 *)screen_getaddress();
+	}
 
-	src += SCREEN_WIDTH*4+4;
-	dest += SCREEN_WIDTH*4+4;
-	for(y=1; y<MAP_HEIGHT-1; y++) {
-		for(x=1; x<MAP_WIDTH-1; x++) {
+	src += video_width*4+4;
+	dest += video_width*4+4;
+	for(y=1; y<map_height-1; y++) {
+		for(x=1; x<map_width-1; x++) {
 			p = *src;
 			q = *(src - 4);
 
@@ -122,7 +132,7 @@ int edgeDraw()
 			v2 = (r<<17)|(g<<9)|b;
 
 /* difference between the current pixel and upper neighbor. */
-			q = *(src - SCREEN_WIDTH*4);
+			q = *(src - video_width*4);
 			r = ((p&0xff0000) - (q&0xff0000))>>16;
 			g = ((p&0xff00) - (q&0xff00))>>8;
 			b = (p&0xff) - (q&0xff);
@@ -137,10 +147,10 @@ int edgeDraw()
 			if(b>255) b = 255;
 			v3 = (r<<17)|(g<<9)|b;
 
-			v0 = map[(y-1)*MAP_WIDTH*2+x*2];
-			v1 = map[y*MAP_WIDTH*2+(x-1)*2+1];
-			map[y*MAP_WIDTH*2+x*2] = v2;
-			map[y*MAP_WIDTH*2+x*2+1] = v3;
+			v0 = map[(y-1)*map_width*2+x*2];
+			v1 = map[y*map_width*2+(x-1)*2+1];
+			map[y*map_width*2+x*2] = v2;
+			map[y*map_width*2+x*2+1] = v3;
 			r = v0 + v1;
 			g = r & 0x01010100;
 			dest[0] = r | (g - (g>>8));
@@ -151,163 +161,25 @@ int edgeDraw()
 			dest[3] = v3;
 			r = v2 + v1;
 			g = r & 0x01010100;
-			dest[SCREEN_WIDTH] = r | (g - (g>>8));
+			dest[video_width] = r | (g - (g>>8));
 			r = v2 + v3;
 			g = r & 0x01010100;
-			dest[SCREEN_WIDTH+1] = r | (g - (g>>8));
-			dest[SCREEN_WIDTH+2] = v3;
-			dest[SCREEN_WIDTH+3] = v3;
-			dest[SCREEN_WIDTH*2] = v2;
-			dest[SCREEN_WIDTH*2+1] = v2;
-			dest[SCREEN_WIDTH*3] = v2;
-			dest[SCREEN_WIDTH*3+1] = v2;
+			dest[video_width+1] = r | (g - (g>>8));
+			dest[video_width+2] = v3;
+			dest[video_width+3] = v3;
+			dest[video_width*2] = v2;
+			dest[video_width*2+1] = v2;
+			dest[video_width*3] = v2;
+			dest[video_width*3+1] = v2;
 
 			src += 4;
 			dest += 4;
 		}
-		src += SCREEN_WIDTH*3+8;
-		dest += SCREEN_WIDTH*3+8;
+		src += video_width*3+8+video_width_margin;
+		dest += video_width*3+8+video_width_margin;
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
-
-	return 0;
-}
-
-int edgeDrawDouble()
-{
-	int  x, y;
-	unsigned int *src, *dest;
-	int r, g, b;
-	unsigned int p, q;
-	unsigned int v0, v1, v2, v3;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
-
-	src += SCREEN_WIDTH*4+4;
-	dest += SCREEN_WIDTH*2*8+8;
-	for(y=1; y<MAP_HEIGHT-1; y++) {
-		for(x=1; x<MAP_WIDTH-1; x++) {
-			p = *src;
-			q = *(src - 4);
-
-/* difference between the current pixel and right neighbor. */
-			r = ((p&0xff0000) - (q&0xff0000))>>16;
-			g = ((p&0xff00) - (q&0xff00))>>8;
-			b = (p&0xff) - (q&0xff);
-			r *= r;
-			g *= g;
-			b *= b;
-			r = r>>5; /* To lack the lower bit for saturated addition,  */
-			g = g>>5; /* devide the value with 32, instead of 16. It is */
-			b = b>>4; /* same as `v2 &= 0xfefeff' */
-			if(r>127) r = 127;
-			if(g>127) g = 127;
-			if(b>255) b = 255;
-			v2 = (r<<17)|(g<<9)|b;
-
-/* difference between the current pixel and upper neighbor. */
-			q = *(src - SCREEN_WIDTH*4);
-			r = ((p&0xff0000) - (q&0xff0000))>>16;
-			g = ((p&0xff00) - (q&0xff00))>>8;
-			b = (p&0xff) - (q&0xff);
-			r *= r;
-			g *= g;
-			b *= b;
-			r = r>>5;
-			g = g>>5;
-			b = b>>4;
-			if(r>127) r = 127;
-			if(g>127) g = 127;
-			if(b>255) b = 255;
-			v3 = (r<<17)|(g<<9)|b;
-
-			v0 = map[(y-1)*MAP_WIDTH*2+x*2];
-			v1 = map[y*MAP_WIDTH*2+(x-1)*2+1];
-			map[y*MAP_WIDTH*2+x*2] = v2;
-			map[y*MAP_WIDTH*2+x*2+1] = v3;
-			r = v0 + v1;
-			g = r & 0x01010100;
-			r |= g - (g>>8);
-			dest[0] = r;
-			dest[1] = r;
-			dest[SCREEN_WIDTH*2] = r;
-			dest[SCREEN_WIDTH*2+1] = r;
-			r = v0 + v3;
-			g = r & 0x01010100;
-			r |= g - (g>>8);
-			dest[2] = r;
-			dest[3] = r;
-			dest[SCREEN_WIDTH*2+2] = r;
-			dest[SCREEN_WIDTH*2+3] = r;
-
-			dest[4] = v3;
-			dest[5] = v3;
-			dest[6] = v3;
-			dest[7] = v3;
-			dest[SCREEN_WIDTH*2+4] = v3;
-			dest[SCREEN_WIDTH*2+5] = v3;
-			dest[SCREEN_WIDTH*2+6] = v3;
-			dest[SCREEN_WIDTH*2+7] = v3;
-
-			r = v2 + v1;
-			g = r & 0x01010100;
-			r |=  g - (g>>8);
-			dest[SCREEN_WIDTH*2*2] = r;
-			dest[SCREEN_WIDTH*2*2+1] = r;
-			dest[SCREEN_WIDTH*2*3] = r;
-			dest[SCREEN_WIDTH*2*3+1] = r;
-
-			r = v2 + v3;
-			g = r & 0x01010100;
-			r |= g - (g>>8);
-			dest[SCREEN_WIDTH*2*2+2] = r;
-			dest[SCREEN_WIDTH*2*2+3] = r;
-			dest[SCREEN_WIDTH*2*3+2] = r;
-			dest[SCREEN_WIDTH*2*3+3] = r;
-
-			dest[SCREEN_WIDTH*2*2+4] = v3;
-			dest[SCREEN_WIDTH*2*2+5] = v3;
-			dest[SCREEN_WIDTH*2*2+6] = v3;
-			dest[SCREEN_WIDTH*2*2+7] = v3;
-			dest[SCREEN_WIDTH*2*3+4] = v3;
-			dest[SCREEN_WIDTH*2*3+5] = v3;
-			dest[SCREEN_WIDTH*2*3+6] = v3;
-			dest[SCREEN_WIDTH*2*3+7] = v3;
-
-			dest[SCREEN_WIDTH*2*4] = v2;
-			dest[SCREEN_WIDTH*2*4+1] = v2;
-			dest[SCREEN_WIDTH*2*4+2] = v2;
-			dest[SCREEN_WIDTH*2*4+3] = v2;
-			dest[SCREEN_WIDTH*2*5] = v2;
-			dest[SCREEN_WIDTH*2*5+1] = v2;
-			dest[SCREEN_WIDTH*2*5+2] = v2;
-			dest[SCREEN_WIDTH*2*5+3] = v2;
-			dest[SCREEN_WIDTH*2*6] = v2;
-			dest[SCREEN_WIDTH*2*6+1] = v2;
-			dest[SCREEN_WIDTH*2*6+2] = v2;
-			dest[SCREEN_WIDTH*2*6+3] = v2;
-			dest[SCREEN_WIDTH*2*7] = v2;
-			dest[SCREEN_WIDTH*2*7+1] = v2;
-			dest[SCREEN_WIDTH*2*7+2] = v2;
-			dest[SCREEN_WIDTH*2*7+3] = v2;
-
-			src += 4;
-			dest += 8;
-		}
-		src += SCREEN_WIDTH*3+8;
-		dest += SCREEN_WIDTH*2*7+16;
+	if(stretch) {
+		image_stretch_to_screen();
 	}
 	if(screen_mustlock()) {
 		screen_unlock();

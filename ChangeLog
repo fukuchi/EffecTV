@@ -1,3 +1,20 @@
+2001/05/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Imported from BackStage Branch;
+	  * New internal architecture - free capturing size and scaling.
+	  * New option "-size" "-geometry" "-scale" were added. "-double" and
+	    "-hireso" were removed.
+	  * Various pixel format support.
+	  * Autoplay mode (EXPERIMENTAL)
+	  * Video loop back support was enhanced (EXPERIMENTAL). Now EffecTV can
+	    be chained!
+	  * Horizontal flipping (TAB key)
+	  * ALT+Enter for fullscreen mode toggle.
+	  * Many bugfixes.
+	* Okay, NEW EFFECT!
+	  NoiseTV, AgingTV, TransFromTV, LifeTV, SparkTV, WarpTV, HolographicTV.
+	  (StrobeTV and ThreadTV in BackStageBranch coming soon!)
+	* Changed version to 0.2.99.
+
 2001/03/27	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Many feature enhancements from BackStage Branch;
 	  * New effects: EdgeTV and ShagadelicTV.

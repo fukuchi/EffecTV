@@ -32,6 +32,7 @@ struct _v4ldevice
 	unsigned char *map;
 	pthread_mutex_t mutex;
 	int frame;
+	int framestat[2];
 	int overlay;
 };
 
@@ -48,6 +49,7 @@ extern int v4lsetframebuffer(v4ldevice *, void *, int, int, int, int);
 extern int v4loverlaystart(v4ldevice *);
 extern int v4loverlaystop(v4ldevice *);
 extern int v4lsetchannel(v4ldevice *, int);
+extern int v4lmaxchannel(v4ldevice *);
 extern int v4lsetfreq(v4ldevice *,int);
 extern int v4lsetchannelnorm(v4ldevice *vd, int, int);
 extern int v4lgetpicture(v4ldevice *);
@@ -65,6 +67,8 @@ extern int v4lunlock(v4ldevice *);
 extern int v4lsyncf(v4ldevice *);
 extern int v4lgrabf(v4ldevice *);
 extern unsigned char *v4lgetaddress(v4ldevice *);
+extern int v4lreadframe(v4ldevice *, unsigned char *);
 extern void v4lprint(v4ldevice *);
+extern void v4ldebug(int);
 
 #endif /* __V4LUTILS_H__ */

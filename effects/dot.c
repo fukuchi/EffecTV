@@ -2,7 +2,8 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * dot.c: convert gray scale image into 80x60 dots image
+ * DotTV: convert gray scale image into a set of dots
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
 
@@ -20,13 +21,13 @@ int dotDraw();
 
 static char *effectname = "DotTV";
 static int state;
-static int palette[16];
-static unsigned int pattern[DOTMAX][4];
-#ifdef ENABLE_PALETTECHANGE
-static int format;
-#endif
+static RGB32 *pattern;
+static int dots_width;
+static int dots_height;
+static int dot_size;
+static int dot_hsize;
+static int *sampx, *sampy;
 
-#ifndef ENABLE_PALETTECHANGE
 inline static unsigned char inline_RGBtoY(int rgb)
 {
 	int i;
@@ -36,14 +37,20 @@ inline static unsigned char inline_RGBtoY(int rgb)
 	i += BtoY[rgb&0xff];
 	return i;
 }
-#endif
 
-static void makePalette()
+static void init_sampxy_table()
 {
-	int i;
+	int i, j;
 
-	for(i=0; i<16; i++) {
-		palette[i] = i<<20 | i<<12 | i<<4;
+	j = dot_hsize;
+	for(i=0; i<dots_width; i++) {
+		sampx[i] = j * video_width / screen_width;
+		j += dot_size;
+	}
+	j = dot_hsize;
+	for(i=0; i<dots_height; i++) {
+		sampy[i] = j * video_height / screen_height;
+		j += dot_size;
 	}
 }
 
@@ -52,28 +59,31 @@ static void makePattern()
 	int i, x, y, c;
 	int u, v;
 	double p, q, r;
-	unsigned int d[4];
+	RGB32 *pat;
 
 	for(i=0; i<DOTMAX; i++) {
-		r = 1.0*i/DOTMAX+3.0;
+/* Generated pattern is a quadrant of a disk. */
+		pat = pattern + (i+1) * dot_hsize * dot_hsize - 1;
+		r = (0.2 * i / DOTMAX + 0.8) * dot_hsize;
 		r = r*r;
-		for(y=0; y<4; y++) {
-			for(x=0; x<4; x++) {
+		for(y=0; y<dot_hsize; y++) {
+			for(x=0; x<dot_hsize; x++) {
 				c = 0;
 				for(u=0; u<4; u++) {
 					p = (double)u/4.0 + y;
+					p = p*p;
 					for(v=0; v<4; v++) {
 						q = (double)v/4.0 + x;
-						if(p*p+q*q<r) {
+						if(p+q*q<r) {
 							c++;
 						}
 					}
 				}
 				c = (c>15)?15:c;
-				d[x] = c;
+				*pat-- = c<<20 | c<<12 | c<<4;
+/* The upper left part of a disk is needed, but generated pattern is a bottom
+ * right part. So I spin the pattern. */
 			}
-			pattern[i][3-y]= d[3]<<24 | d[2]<<20 | d[1]<<16 | d[0]<<12
-			               | d[1]<<8 | d[2]<<4 | d[3];
 		}
 	}
 }
@@ -81,8 +91,33 @@ static void makePattern()
 effect *dotRegister()
 {
 	effect *entry;
+	double scale;
 	
-	yuvTableInit();
+	if(screen_scale > 0) {
+		scale = screen_scale;
+	} else {
+		scale = (double)screen_width / video_width;
+		if(scale > (double)screen_height / video_height) {
+			scale = (double)screen_height / video_height;
+		}
+	}
+	dot_size = 8 * scale;
+	dot_size = dot_size & 0xfe;
+	dot_hsize = dot_size / 2;
+	dots_width = screen_width / dot_size;
+	dots_height = screen_height / dot_size;
+	
+	pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_hsize * sizeof(RGB32));
+	if(pattern == NULL) {
+		return NULL;
+	}
+
+	sharedbuffer_reset();
+	sampx = (int *)sharedbuffer_alloc(video_width*sizeof(int));
+	sampy = (int *)sharedbuffer_alloc(video_height*sizeof(int));
+	if(sampx == NULL || sampy == NULL) {
+		return NULL;
+	}
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -95,7 +130,6 @@ effect *dotRegister()
 	entry->draw = dotDraw;
 	entry->event = NULL;
 
-	makePalette();
 	makePattern();
 
 	return entry;
@@ -104,13 +138,10 @@ effect *dotRegister()
 int dotStart()
 {
 	screen_clear(0);
-#ifdef ENABLE_PALETTECHANGE
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_GREY))
-		return -1;
-	if(video_changesize(80, 60))
-		return -1;
-#endif
+	init_sampxy_table();
+	if(stretch) {
+		image_stretching_buffer_clear(0);
+	}
 	if(video_grabstart())
 		return -1;
 
@@ -122,79 +153,50 @@ int dotStop()
 {
 	if(state) {
 		video_grabstop();
-#ifdef ENABLE_PALETTECHANGE
-		video_setformat(format);
-		video_changesize(0, 0);
-#endif
 		state = 0;
 	}
 
 	return 0;
 }
 
-static void drawDot(int x, int y, unsigned char c, unsigned int *dest)
+static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 {
-	int v, w;
-	int i, j;
+	int x, y;
+	RGB32 *pat;
 
 	c = (c>>(8-DOTDEPTH));
-	dest = dest + y*8*SCREEN_WIDTH+x*8;
-	for(i=0; i<4; i++) {
-		v = pattern[c][i];
-		for(j=0; j<8; j++) {
-			w = v & 0xf;
-			v = v>>4;
-			dest[j] = palette[w];
+	pat = pattern + c * dot_hsize * dot_hsize;
+	dest = dest + yy * dot_size * screen_width + xx * dot_size;
+	for(y=0; y<dot_hsize; y++) {
+		for(x=0; x<dot_hsize; x++) {
+			*dest++ = *pat++;
 		}
-		dest += SCREEN_WIDTH;
+		pat -= 2;
+		for(x=0; x<dot_hsize-1; x++) {
+			*dest++ = *pat--;
+		}
+		dest += screen_width - dot_size + 1;
+		pat += dot_hsize + 1;
 	}
-	for(i=2; i>=0; i--) {
-		v = pattern[c][i];
-		for(j=0; j<8; j++) {
-			w = v & 0xf;
-			v = v>>4;
-			dest[j] = palette[w];
+	pat -= dot_hsize*2;
+	for(y=0; y<dot_hsize-1; y++) {
+		for(x=0; x<dot_hsize; x++) {
+			*dest++ = *pat++;
 		}
-		dest += SCREEN_WIDTH;
-	}
-}
-
-static void drawDotDouble(int x, int y, unsigned char c, unsigned int *dest)
-{
-	int v, w;
-	int i, j;
-
-	c = (c>>(8-DOTDEPTH));
-	dest = dest + y*8*SCREEN_WIDTH*2+x*8;
-	for(i=0; i<4; i++) {
-		v = pattern[c][i];
-		for(j=0; j<8; j++) {
-			w = v & 0xf;
-			v = v>>4;
-			dest[j] = palette[w];
+		pat -= 2;
+		for(x=0; x<dot_hsize-1; x++) {
+			*dest++ = *pat--;
 		}
-		dest += SCREEN_WIDTH*2;
-	}
-	for(i=2; i>=0; i--) {
-		v = pattern[c][i];
-		for(j=0; j<8; j++) {
-			w = v & 0xf;
-			v = v>>4;
-			dest[j] = palette[w];
-		}
-		dest += SCREEN_WIDTH*2;
+		dest += screen_width - dot_size + 1;
+		pat += -dot_hsize + 1;
 	}
 }
 
 int dotDraw()
 {
 	int x, y;
-#ifdef ENABLE_PALETTECHANGE
-	unsigned char *src;
-#else
-	unsigned int *src;
-#endif
-	unsigned int *dest;
+	int sx, sy;
+	RGB32 *src, *dest;
 
 	if(video_syncframe())
 		return -1;
@@ -203,42 +205,16 @@ int dotDraw()
 			return video_grabframe();
 		}
 	}
-#ifdef ENABLE_PALETTECHANGE
-	src = video_getaddress();
-#else
-	src = (unsigned int *)video_getaddress();
-#endif
-	dest = (unsigned int *)screen_getaddress();
+	src = (RGB32 *)video_getaddress();
+	dest = (RGB32 *)screen_getaddress();
 
-#ifdef ENABLE_PALETTECHANGE
-	if(scale == 2) {
-		for(y=0; y<60; y++) {
-			for(x=0; x<80; x++) {
-				drawDotDouble(x, y, src[y*80+x], dest);
-			}
-		}
-	} else {
-		for(y=0; y<30; y++) {
-			for(x=0; x<40; x++) {
-				drawDot(x, y, src[y*2*80+x*2], dest);
-			}
+	for(y=0; y<dots_height; y++) {
+		sy = sampy[y];
+		for(x=0; x<dots_width; x++) {
+			sx = sampx[x];
+			drawDot(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
 		}
 	}
-#else
-	if(scale == 2) {
-		for(y=0; y<60; y++) {
-			for(x=0; x<80; x++) {
-				drawDotDouble(x, y, inline_RGBtoY(src[y*4*SCREEN_WIDTH+x*4]), dest);
-			}
-		}
-	} else {
-		for(y=0; y<30; y++) {
-			for(x=0; x<40; x++) {
-				drawDot(x, y, inline_RGBtoY(src[y*8*SCREEN_WIDTH+x*8]), dest);
-			}
-		}
-	}
-#endif
 	if(screen_mustlock()) {
 		screen_unlock();
 	}

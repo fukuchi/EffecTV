@@ -12,17 +12,21 @@
 #include <SDL/SDL.h>
 
 extern SDL_Surface *screen; /* display surface */
-extern int scale;		/* screen scale */
+extern int stretch; 	/* flag for stretching requirement */
 extern int doublebuf;	/* flag for double buffering */
 extern int fullscreen;	/* flag for fullscreen mode */
 extern int hwsurface;	/* flag for hardware surface */
+extern int screen_width;
+extern int screen_height;
+extern int screen_scale;
 
 /* description of these functions are in screen.c */
-int screen_init();
+int screen_init(int w, int h, int s);
 void screen_quit();
 int screen_bpp();
 void screen_setcaption(const char *str);
 void screen_clear(int color);
+void screen_fullscreen();
 
 /* Returns memory address of the frame buffer. The value may be changed every drawing
  * phase. You have to call this function at the begining of draw function of effects. */

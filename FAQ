@@ -1,6 +1,6 @@
 FAQ
 ===
-Last updated 2001/3/12 for release 0.1.5
+Last updated 2001/4/16 for release 0.2.9
 
 Contents
 --------
@@ -26,8 +26,8 @@ $ effectv -norm pal
 ntsc, pal, secam are supported by video4linux. pal-m, pal-n, pal-nc, ntsc-jp
 are supported by latest bttv driver.
 ----------
-Q2: TV seems to work fine, but how can I change to Composite1 or any other video
-source?
+Q2: TV seems to work fine, but how can I change to Composite1 or any other
+video source?
 
 A: Try
 $ effectv -channel 1
@@ -51,7 +51,7 @@ patch to linux kernel available at there.
 ----------
 Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
 
-A: Malk Zumstrull reported as following;
+A: Malk Zumstrull wrote:
 
 >I tested EffecTV with XFree86 4.0.2, Kernel 2.4.2 and bttv 0.7.57 (works 
 >well), but when I changed to bttv 0.8.10 it stopped working. I _did_ 
@@ -71,7 +71,7 @@ a) I have only linux machine and MS-Windows machine.
 b) I dislike programming on MS-Windows.
 
 I would like to encourage people who want to port EffecTV to any other
-environment; The whole CVS tree is now served at SourceFourge. If you have
+environment; The whole CVS tree is now served at SourceForge. If you have
 interests, see http://sourceforge.net/projects/effectv/. Please let me know
 when you start you porting project, then I will make a new branch. If you
 want to maintain the CVS tree directly, get an account at SourceForge and
@@ -97,11 +97,5 @@ A: EffecTV uses 32 bits-per-pixel depth screen. When you launch EffecTV
 on any other depth screen, images are converted to that depth by SDL, and it
 makes little slow. If you use X11, try to run it in 32 bpp depth mode.
 
-If you use a capture card that employs Brooktree chip(Bt8x8) or other chip that
-support gray scaled capturing mode, you may want to make EffecTV with palette
-changing feature. Add following line to EffecTV/Makefile and remake;
-
-CONFIG = -DENABLE_PALETTECHANGE
-
-If some effects displays red screen, palette changing is not available on your
-capture card.
+If your video capturing device does not support 32bit pixel format, EffecTV
+converts captured image to 32bit format. This also makes it EffecTV slow.

@@ -2,7 +2,8 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * simura.c: color distortion and mirrored image effector
+ * SimuraTV - color distortion and mirrored image effector
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
 
@@ -24,9 +25,7 @@ static int width;
 static int hwidth;
 static int height;
 static int hheight;
-static int fulllength;
-static unsigned int *framebuf;
-static int colortable[26] = {
+static RGB32 colortable[26] = {
 	0x000080, 0x0000e0, 0x0000ff,
 	0x008000, 0x00e000, 0x00ff00,
 	0x008080, 0x00e0e0, 0x00ffff,
@@ -46,22 +45,21 @@ static const char keytable[26] = {
 	'u', 'j', 'm',
 	'i', 'k', 'o', 'l', 'p'
 };
-static void mirror_no(unsigned int *, unsigned int *);
-static void mirror_u(unsigned int *, unsigned int *);
-static void mirror_d(unsigned int *, unsigned int *);
-static void mirror_r(unsigned int *, unsigned int *);
-static void mirror_l(unsigned int *, unsigned int *);
-static void mirror_ul(unsigned int *, unsigned int *);
-static void mirror_ur(unsigned int *, unsigned int *);
-static void mirror_dl(unsigned int *, unsigned int *);
-static void mirror_dr(unsigned int *, unsigned int *);
+static void mirror_no(RGB32 *, RGB32 *);
+static void mirror_u(RGB32 *, RGB32 *);
+static void mirror_d(RGB32 *, RGB32 *);
+static void mirror_r(RGB32 *, RGB32 *);
+static void mirror_l(RGB32 *, RGB32 *);
+static void mirror_ul(RGB32 *, RGB32 *);
+static void mirror_ur(RGB32 *, RGB32 *);
+static void mirror_dl(RGB32 *, RGB32 *);
+static void mirror_dr(RGB32 *, RGB32 *);
 
 effect *simuraRegister()
 {
 	effect *entry;
 	int i;
-	int tmp[26];
-	int realscale;
+	RGB32 tmp[26];
 	
 	for(i=0; i<26; i++) {
 		tmp[keytable[i] - 'a'] = colortable[i];
@@ -70,20 +68,10 @@ effect *simuraRegister()
 		colortable[i] = tmp[i];
 	}
 
-	if(stretch) {
-		realscale = 1;
-		sharedbuffer_reset();
-		framebuf = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
-		if(framebuf == NULL)
-			return NULL;
-	} else {
-		realscale = scale;
-	}
-	width = SCREEN_WIDTH*realscale;
-	height = SCREEN_HEIGHT*realscale;
-	hwidth = width/2;
-	hheight = height/2;
-	fulllength = width*height;
+	width = video_width;
+	height = video_height;
+	hwidth = video_width/2;
+	hheight = video_height/2;
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -103,10 +91,6 @@ int simuraStart()
 {
 	color = 0;
 	mirror = 0;
-	if(hireso){
-		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
-			return -1;
-	}
 	if(video_grabstart())
 		return -1;
 
@@ -118,9 +102,6 @@ int simuraStop()
 {
 	if(stat) {
 		video_grabstop();
-		if(hireso){
-			video_changesize(0, 0);
-		}
 		stat = 0;
 	}
 
@@ -129,7 +110,7 @@ int simuraStop()
 
 int simuraDraw()
 {
-	unsigned int *src, *dest;
+	RGB32 *src, *dest;
 
 	if(video_syncframe())
 		return -1;
@@ -138,11 +119,11 @@ int simuraDraw()
 			return 0;
 		}
 	}
-	src = (unsigned int *)video_getaddress();
+	src = (RGB32 *)video_getaddress();
 	if(stretch) {
-		dest = framebuf;
+		dest = stretching_buffer;
 	} else {
-		dest = (unsigned int *)screen_getaddress();
+		dest = (RGB32 *)screen_getaddress();
 	}
 	switch(mirror) {
 	case 1:
@@ -175,7 +156,7 @@ int simuraDraw()
 		break;
 	}
 	if(stretch) {
-		image_stretch(framebuf, (unsigned int *)screen_getaddress());
+		image_stretch_to_screen();
 	}
 	if(screen_mustlock()) {
 		screen_unlock();
@@ -251,16 +232,16 @@ int simuraEvent(SDL_Event *event)
 	return 0;
 }
 
-static void mirror_no(unsigned int *src, unsigned int *dest)
+static void mirror_no(RGB32 *src, RGB32 *dest)
 {
 	int i;
 
-	for(i=0; i<fulllength; i++) {
+	for(i=0; i<video_area; i++) {
 		dest[i] = src[i] ^ color;
 	}
 }
 
-static void mirror_u(unsigned int *src, unsigned int *dest)
+static void mirror_u(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -272,7 +253,7 @@ static void mirror_u(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_d(unsigned int *src, unsigned int *dest)
+static void mirror_d(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -284,7 +265,7 @@ static void mirror_d(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_l(unsigned int *src, unsigned int *dest)
+static void mirror_l(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -296,7 +277,7 @@ static void mirror_l(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_r(unsigned int *src, unsigned int *dest)
+static void mirror_r(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -308,7 +289,7 @@ static void mirror_r(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_ul(unsigned int *src, unsigned int *dest)
+static void mirror_ul(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -322,7 +303,7 @@ static void mirror_ul(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_ur(unsigned int *src, unsigned int *dest)
+static void mirror_ur(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -336,7 +317,7 @@ static void mirror_ur(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_dl(unsigned int *src, unsigned int *dest)
+static void mirror_dl(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 
@@ -350,7 +331,7 @@ static void mirror_dl(unsigned int *src, unsigned int *dest)
 	}
 }
 
-static void mirror_dr(unsigned int *src, unsigned int *dest)
+static void mirror_dr(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 

@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * buffer.c: shared buffer
+ * buffer.c: shared buffer manager
  *
  */
 
@@ -11,15 +11,15 @@
 #include "../EffecTV.h"
 #include "utils.h"
 
-unsigned char *sharedbuffer;
+unsigned char *sharedbuffer = NULL;
 int sharedbuffer_length;
 
 static int tail;
 
-int sharedbuffer_init(int scale)
+int sharedbuffer_init()
 {
-	/* maximum size of the frame buffer is for double scaled screen x 2 */
-	sharedbuffer_length = SCREEN_WIDTH*SCREEN_HEIGHT*scale*scale*2*4;
+	/* maximum size of the frame buffer is for screen size x 2 */
+	sharedbuffer_length = screen_width * screen_height * sizeof(RGB32) * 2;
 
 	sharedbuffer = (unsigned char *)malloc(sharedbuffer_length);
 	if(sharedbuffer == NULL)
@@ -29,7 +29,7 @@ int sharedbuffer_init(int scale)
 }
 
 /* The effects uses shared buffer must call this function at first in
- * *Register()
+ * each effect registrar.
  */
 void sharedbuffer_reset()
 {
@@ -43,7 +43,7 @@ unsigned char *sharedbuffer_alloc(int size)
 {
 	unsigned char *head;
 
-	if(sharedbuffer_length-tail < size) {
+	if(sharedbuffer_length - tail < size) {
 		return NULL;
 	}
 

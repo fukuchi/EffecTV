@@ -4,12 +4,13 @@ CC = gcc
 NASM = nasm
 CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I../v4lutils `sdl-config --cflags`
 #CFLAGS = -g -Iv4lutils `sdl-config --cflags`
-LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
+LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
-		  $(EDGE) $(SHAGADELIC)
+          $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
+          $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO)
 UTILS = utils.o buffer.o yuv.o image.o
 SUBDIRS =
 
@@ -17,6 +18,10 @@ SUBDIRS =
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<
 %.o: %.nas
 	$(NASM) -f elf $<
+
+# just for checking optimized code
+%.s: %.c
+	$(CC) $(CFLAGS) -S -Wall -c -o $@ $<
 
 all-recursive:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \
@@ -42,6 +47,15 @@ SPIRAL = spiral.o
 SIMURA = simura.o
 EDGE = edge.o
 SHAGADELIC = shagadelic.o
+NOISE = noise.o
+STROBE = strobe.o
+AGING = aging.o
+TRANSFORM = transform.o
+LIFE = life.o
+SPARK = spark.o
+THREAD = thread.o
+WARP = warp.o
+HOLO = holo.o
 
 $(LIBEFFECTS): $(EFFECTS) $(UTILS)
 	ar rc $(LIBEFFECTS) $(EFFECTS) $(UTILS)
@@ -49,4 +63,9 @@ $(LIBEFFECTS): $(EFFECTS) $(UTILS)
 clean:
 	rm -f *.o $(LIBEFFECTS)
 
-$(EFFECTS): ../EffecTV.h ../screen.h ../video.h
+$(EFFECTS): ../EffecTV.h ../screen.h ../video.h utils.h
+
+
+# following rules are for only tests. Please ignore them.
+imagetest: imagetest.o image.o
+	$(CC) -o $@ imagetest.o $(UTILS) ../screen.o ../video.o ../frequencies.o ../vloopback.o ../palette.o $(LIBEFFECTS) $(LIBS)

@@ -2,22 +2,22 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * dumb.c: dumb effector
+ * DumbTV - no effect.
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
 
 #include <stdlib.h>
 #include <string.h>
 #include "../EffecTV.h"
+#include "utils.h"
 
 int dumbStart();
 int dumbStop();
 int dumbDraw();
-int dumbDrawDouble();
 
 static char *effectname = "DumbTV";
 static int state = 0;
-static int framelength;
 
 effect *dumbRegister()
 {
@@ -29,28 +29,14 @@ effect *dumbRegister()
 	entry->name = effectname;
 	entry->start = dumbStart;
 	entry->stop = dumbStop;
+	entry->draw = dumbDraw;
 	entry->event = NULL;
-	if(scale == 2) {
-		if(hireso) {
-			framelength = SCREEN_AREA*PIXEL_SIZE*4;
-			entry->draw = dumbDraw;
-		} else {
-			entry->draw = dumbDrawDouble;
-		}
-	} else {
-		framelength = SCREEN_AREA*PIXEL_SIZE;
-		entry->draw = dumbDraw;
-	}
 
 	return entry;
 }
 
 int dumbStart()
 {
-	if(hireso) {
-		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
-			return -1;
-	}
 	if(video_grabstart())
 		return -1;
 	state = 1;
@@ -61,9 +47,6 @@ int dumbStop()
 {
 	if(state) {
 		video_grabstop();
-		if(hireso){
-			video_changesize(0, 0);
-		}
 		state = 0;
 	}
 
@@ -79,42 +62,13 @@ int dumbDraw()
 			return video_grabframe();
 		}
 	}
-	bcopy(video_getaddress(), screen_getaddress(), framelength);
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-
-	if(video_grabframe())
-		return -1;
-
-	return 0;
-}
-
-int dumbDrawDouble()
-{
-	int x, y;
-	unsigned int *src, *dest;
-	unsigned int v;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
-	for(y=0; y<SCREEN_HEIGHT; y++) {
-		for(x=0; x<SCREEN_WIDTH; x++) {
-			v = *src++;
-			*dest = v;
-			dest[1] = v;
-			dest[SCREEN_WIDTH*2] = v;
-			dest[SCREEN_WIDTH*2+1] = v;
-			dest += 2;
-		}
-		dest += SCREEN_WIDTH*2;
+	if(stretch) {
+		image_stretch((RGB32 *)video_getaddress(), video_width, video_height,
+		              (RGB32 *)screen_getaddress(),
+					  screen_width, screen_height);
+	} else {
+		bcopy(video_getaddress(), screen_getaddress(),
+		      video_width * video_height * sizeof(RGB32));
 	}
 	if(screen_mustlock()) {
 		screen_unlock();

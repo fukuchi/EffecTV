@@ -2,7 +2,8 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * baltan.c: like StreakTV, but following for a long time
+ * BaltanTV - like StreakTV, but following for a long time
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
 
@@ -17,12 +18,11 @@
 int baltanStart();
 int baltanStop();
 int baltanDraw();
-int baltanDrawDouble();
 
 static char *effectname = "BaltanTV";
 static int state = 0;
-static unsigned int *buffer;
-static unsigned int *planetable[PLANES];
+static RGB32 *buffer;
+static RGB32 *planetable[PLANES];
 static int plane;
 
 effect *baltanRegister()
@@ -38,10 +38,7 @@ effect *baltanRegister()
 	entry->name = effectname;
 	entry->start = baltanStart;
 	entry->stop = baltanStop;
-	if(scale == 2)
-		entry->draw = baltanDrawDouble;
-	else
-		entry->draw = baltanDraw;
+	entry->draw = baltanDraw;
 	entry->event = NULL;
 
 	return entry;
@@ -51,11 +48,12 @@ int baltanStart()
 {
 	int i;
 
-	buffer = (unsigned int *)malloc(SCREEN_AREA*PIXEL_SIZE*PLANES);
+	buffer = (RGB32 *)malloc(video_area*sizeof(RGB32)*PLANES);
 	if(buffer == NULL)
 		return -1;
+	bzero(buffer, video_area*sizeof(RGB32)*PLANES);
 	for(i=0;i<PLANES;i++)
-		planetable[i] = &buffer[SCREEN_AREA*i];
+		planetable[i] = &buffer[video_area*i];
 
 	plane = 0;
 	if(video_grabstart())
@@ -80,73 +78,37 @@ int baltanStop()
 int baltanDraw()
 {
 	int i, cf;
-	unsigned int *src, *dest;
+	RGB32 *src, *dest;
 
 	if(video_syncframe())
 		return -1;
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
-	for(i=0; i<SCREEN_AREA; i++) {
+	src = (RGB32 *)video_getaddress();
+	for(i=0; i<video_area; i++) {
 		planetable[plane][i] = (src[i] & 0xfcfcfc)>>2;
 	}
 	if(video_grabframe())
 		return -1;
+
 	cf = plane & (STRIDE-1);
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
 			return 0;
 		}
 	}
-	for(i=0; i<SCREEN_AREA; i++) {
+	if(stretch) {
+		dest = stretching_buffer;
+	} else {
+		dest = (RGB32 *)screen_getaddress();
+	}
+	for(i=0; i<video_area; i++) {
 		dest[i] = planetable[cf][i]
 		        + planetable[cf+STRIDE][i]
 		        + planetable[cf+STRIDE*2][i]
 		        + planetable[cf+STRIDE*3][i];
 		planetable[plane][i] = (dest[i]&0xfcfcfc)>>2;
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	plane++;
-	plane = plane & (PLANES-1);
-
-	return 0;
-}
-
-int baltanDrawDouble()
-{
-	int i, x, y, cf, v;
-	unsigned int *src, *dest;
-
-	if(video_syncframe())
-		return -1;
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
-	for(i=0; i<SCREEN_AREA; i++) {
-		planetable[plane][i] = (src[i] & 0xfcfcfc)>>2;
-	}
-	if(video_grabframe())
-		return -1;
-	cf = plane & (STRIDE-1);
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	i = 0;
-	for(y=0; y<SCREEN_HEIGHT; y++) {
-		for(x=0; x<SCREEN_WIDTH; x++) {
-			v = planetable[cf][i]
-			  + planetable[cf+STRIDE][i]
-			  + planetable[cf+STRIDE*2][i]
-			  + planetable[cf+STRIDE*3][i];
-			planetable[plane][i] = (v&0xfcfcfcfc)>>2;
-			dest[y*2*SCREEN_WIDTH*2+x*2] = v;
-			dest[y*2*SCREEN_WIDTH*2+x*2+1] = v;
-			dest[(y*2+1)*SCREEN_WIDTH*2+x*2] = v;
-			dest[(y*2+1)*SCREEN_WIDTH*2+x*2+1] = v;
-			i++;
-		}
+	if(stretch) {
+		image_stretch_to_screen();
 	}
 	if(screen_mustlock()) {
 		screen_unlock();

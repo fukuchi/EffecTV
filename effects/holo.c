@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * PredatorTV - makes incoming objects invisible like the Predator.
+ * HolographicTV - Holographic vision
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
@@ -12,16 +12,17 @@
 #include "../EffecTV.h"
 #include "utils.h"
 
-int predatorStart();
-int predatorStop();
-int predatorDraw();
-int predatorEvent(SDL_Event *);
+int holoStart();
+int holoStop();
+int holoDraw();
+int holoEvent(SDL_Event *);
 
 #define MAGIC_THRESHOLD 40
 
-static char *effectname = "PredatorTV";
+static char *effectname = "HolographicTV";
 static int state = 0;
 static RGB32 *bgimage;
+static unsigned int noisepattern[256];
 
 static int setBackground()
 {
@@ -60,8 +61,8 @@ static int setBackground()
 	video_grabframe();
 /* step 5: add buffer-3 to buffer-1 */
 	for(i=0; i<video_area; i++) {
-		bgimage[i] = (bgimage[i]&tmp[i])
-			+(((bgimage[i]^tmp[i])&0xfefefe)>>1);
+		bgimage[i] = ((bgimage[i]&tmp[i])
+			+(((bgimage[i]^tmp[i])&0xfefefe)>>1))&0xfefefe;
 	}
 	image_bgset_y(bgimage);
 
@@ -92,7 +93,16 @@ static int setBackground()
 	return 0;
 }
 
-effect *predatorRegister()
+static void holoInit()
+{
+	int i;
+
+	for(i=0; i<256; i++) {
+		noisepattern[i] = i * i * i / 40000 ;
+	}
+}
+
+effect *holoRegister()
 {
 	effect *entry;
 	
@@ -101,6 +111,7 @@ effect *predatorRegister()
 	if(bgimage == NULL) {
 		return NULL;
 	}
+	holoInit();
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -108,15 +119,15 @@ effect *predatorRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = predatorStart;
-	entry->stop = predatorStop;
-	entry->draw = predatorDraw;
-	entry->event = predatorEvent;
+	entry->start = holoStart;
+	entry->stop = holoStop;
+	entry->draw = holoDraw;
+	entry->event = holoEvent;
 
 	return entry;
 }
 
-int predatorStart()
+int holoStart()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	if(video_grabstart())
@@ -128,7 +139,7 @@ int predatorStart()
 	return 0;
 }
 
-int predatorStop()
+int holoStop()
 {
 	if(state) {
 		video_grabstop();
@@ -137,18 +148,19 @@ int predatorStop()
 	return 0;
 }
 
-int predatorDraw()
+int holoDraw()
 {
+	static int phase=0;
 	int x, y;
 	unsigned char *diff;
-	RGB32 *dest, *src;
+	RGB32 *src, *dest, *bg;
+	RGB32 s, t;
+	int r, g, b;
 
 	if(video_syncframe())
 		return -1;
-	diff = image_bgsubtract_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
-	diff = image_diff_filter(diff);
+	src = (RGB32 *)video_getaddress();
+	diff = image_diff_filter(image_bgsubtract_y(src));
 
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
@@ -161,19 +173,71 @@ int predatorDraw()
 		dest = (RGB32 *)screen_getaddress();
 	}
 
-	dest += video_width;
 	diff += video_width;
-	src = bgimage + video_width;
+	dest += video_width;
+	src += video_width;
+	bg = bgimage + video_width;
 	for(y=1; y<video_height-1; y++) {
-		for(x=0; x<video_width; x++) {
-			if(*diff){
-				*dest = src[4] & 0xfcfcfc;
-			} else {
-				*dest = *src;
+		if(((y+phase) & 0x3f)<0x28) {
+			for(x=0; x<video_width; x++) {
+				if(*diff){
+					s = *src;
+					t = (s & 0xff) + ((s & 0xff00)>>7) + ((s & 0xff0000)>>16);
+					t += noisepattern[inline_fastrand()>>24];
+					r = ((s & 0xff0000)>>17) + t;
+					g = ((s & 0xff00)>>8) + t;
+					b = (s & 0xff) + t;
+					r = (r>>1)-100;
+					g = (g>>1)-100;
+					b = b>>2;
+					if(r<20) r=20;
+					if(g<20) g=20;
+					s = *bg;
+					r += (s&0xff0000)>>17;
+					g += (s&0xff00)>>9;
+					b += ((s&0xff)>>1)+40;
+					if(r>255) r = 255;
+					if(g>255) g = 255;
+					if(b>255) b = 255;
+					*dest = r<<16|g<<8|b;
+				} else {
+					*dest = *bg;
+				}
+				diff++;
+				src++;
+				dest++;
+				bg++;
 			}
-			diff++;
-			src++;
-			dest++;
+		} else {
+			for(x=0; x<video_width; x++) {
+				if(*diff){
+					s = *src;
+					t = (s & 0xff) + ((s & 0xff00)>>6) + ((s & 0xff0000)>>16);
+					t += noisepattern[inline_fastrand()>>24];
+					r = ((s & 0xff0000)>>16) + t;
+					g = ((s & 0xff00)>>8) + t;
+					b = (s & 0xff) + t;
+					r = (r>>1)-100;
+					g = (g>>1)-100;
+					b = b>>2;
+					if(r<0) r=0;
+					if(g<0) g=0;
+					s = *bg;
+					r += ((s&0xff0000)>>17) + 10;
+					g += ((s&0xff00)>>9) + 10;
+					b += ((s&0xff)>>1) + 40;
+					if(r>255) r = 255;
+					if(g>255) g = 255;
+					if(b>255) b = 255;
+					*dest = r<<16|g<<8|b;
+				} else {
+					*dest = *bg;
+				}
+				diff++;
+				src++;
+				dest++;
+				bg++;
+			}
 		}
 	}
 	if(stretch) {
@@ -182,11 +246,14 @@ int predatorDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
+	if(video_grabframe())
+		return -1;
+	phase--;
 
 	return 0;
 }
 
-int predatorEvent(SDL_Event *event)
+int holoEvent(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -7,6 +7,7 @@
  */
 
 #include <math.h>
+#include "../EffecTV.h"
 #include "utils.h"
 
 /*
@@ -27,7 +28,7 @@ int RtoY[256], RtoU[256], RtoV[256];
 int GtoY[256], GtoU[256], GtoV[256];
 int BtoY[256],            BtoV[256];
 
-int yuvTableInit()
+int yuv_init()
 {
 	static int initialized = 0;
 	int i;
@@ -53,7 +54,7 @@ int yuvTableInit()
 	return 0;
 }
 
-unsigned char RGBtoY(int rgb)
+unsigned char yuv_RGBtoY(int rgb)
 {
 	int i;
 
@@ -61,9 +62,30 @@ unsigned char RGBtoY(int rgb)
 	i += GtoY[(rgb>>8)&0xff];
 	i += BtoY[rgb&0xff];
 	i += 16;
-/* following saturation check is eliminated because i never be greater than 255
-	if(i>255)
-		return 255;
-*/
+
+	return i;
+}
+
+unsigned char yuv_RGBtoU(int rgb)
+{
+	int i;
+
+	i = RtoU[(rgb>>16)&0xff];
+	i += GtoU[(rgb>>8)&0xff];
+	i += RtoV[rgb&0xff];/* BtoU == RtoV */
+	i += 128;
+
+	return i;
+}
+
+unsigned char yuv_RGBtoV(int rgb)
+{
+	int i;
+
+	i = RtoV[(rgb>>16)&0xff];
+	i += GtoV[(rgb>>8)&0xff];
+	i += BtoV[rgb&0xff];
+	i += 128;
+
 	return i;
 }

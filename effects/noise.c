@@ -2,25 +2,21 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * MosaicTV - censors incoming objects
+ * NoiseTV - make incoming objects noisy.
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
 
 #include <stdlib.h>
-#include <string.h>
 #include "../EffecTV.h"
 #include "utils.h"
 
-#define MAGIC_THRESHOLD 50
-#define CENSOR_LEVEL 20
+int noiseStart();
+int noiseStop();
+int noiseDraw();
+int noiseEvent();
 
-int mosaicStart();
-int mosaicStop();
-int mosaicDraw();
-int mosaicEvent();
-
-static char *effectname = "MosaicTV";
+static char *effectname = "NoiseTV";
 static int stat;
 
 static int setBackground()
@@ -34,7 +30,7 @@ static int setBackground()
 	return 0;
 }
 
-effect *mosaicRegister()
+effect *noiseRegister()
 {
 	effect *entry;
 	
@@ -44,17 +40,17 @@ effect *mosaicRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = mosaicStart;
-	entry->stop = mosaicStop;
-	entry->draw = mosaicDraw;
-	entry->event = mosaicEvent;
+	entry->start = noiseStart;
+	entry->stop = noiseStop;
+	entry->draw = noiseDraw;
+	entry->event = noiseEvent;
 
 	return entry;
 }
 
-int mosaicStart()
+int noiseStart()
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
+	image_set_threshold_y(40);
 	if(video_grabstart())
 		return -1;
 	if(setBackground())
@@ -64,7 +60,7 @@ int mosaicStart()
 	return 0;
 }
 
-int mosaicStop()
+int noiseStop()
 {
 	if(stat) {
 		video_grabstop();
@@ -74,13 +70,11 @@ int mosaicStop()
 	return 0;
 }
 
-int mosaicDraw()
+int noiseDraw()
 {
-	int  x, y, xx, yy, v;
-	int count;
+	int i;
 	RGB32 *src, *dest;
-	RGB32 *p, *q;
-	unsigned char *diff, *r;
+	unsigned char *diff;
 
 	if(video_syncframe())
 		return -1;
@@ -90,40 +84,21 @@ int mosaicDraw()
 		}
 	}
 	src = (RGB32 *)video_getaddress();
-	diff = image_bgsubtract_y(src);
-
 	if(stretch) {
 		dest = stretching_buffer;
 	} else {
 		dest = (RGB32 *)screen_getaddress();
 	}
 
-	for(y=0; y<video_height-7; y+=8) {
-		for(x=0; x<video_width-7; x+=8) {
-			count = 0;
-			p = &src[y*video_width+x];
-			q = &dest[y*video_width+x];
-			r = &diff[y*video_width+x];
-			for(yy=0; yy<8; yy++) {
-				for(xx=0; xx<8; xx++) {
-					count += r[yy*video_width+xx];
-				}
-			}
-			if(count > CENSOR_LEVEL*255) {
-				v = p[3*video_width+3];
-				for(yy=0; yy<8; yy++) {
-					for(xx=0; xx<8; xx++){
-						q[yy*video_width+xx] = v;
-					}
-				}
-			} else {
-				for(yy=0; yy<8; yy++) {
-					for(xx=0; xx<8; xx++){
-						q[yy*video_width+xx] = p[yy*video_width+xx];
-					}
-				}
-			}
+	diff = image_diff_filter(image_bgsubtract_y(src));
+	for(i=0; i<video_area; i++) {
+		if(*diff++) {
+			*dest = 0 - (inline_fastrand()>>31);
+		} else {
+			*dest = *src;
 		}
+		src++;
+		dest++;
 	}
 	if(stretch) {
 		image_stretch_to_screen();
@@ -137,7 +112,7 @@ int mosaicDraw()
 	return 0;
 }
 
-int mosaicEvent(SDL_Event *event)
+int noiseEvent(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -18,20 +18,19 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 2
-#define VERSION_PATCH 0
-#define VERSION_STRING "0.2.0"
+#define VERSION_PATCH 99
+#define VERSION_STRING "0.2.99"
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-#define SCREEN_HWIDTH (SCREEN_WIDTH/2)
-#define SCREEN_HHEIGHT (SCREEN_HEIGHT/2)
-#define SCREEN_AREA (SCREEN_HEIGHT*SCREEN_WIDTH)
-#define PIXEL_SIZE (sizeof(unsigned int))
+#define DEFAULT_VIDEO_WIDTH 320
+#define DEFAULT_VIDEO_HEIGHT 240
 
 #define DEFAULT_VIDEO_DEVICE "/dev/video"
 #define DEFAULT_DEPTH 32
 #define DEFAULT_PALETTE VIDEO_PALETTE_RGB32
 #define DEFAULT_VIDEO_NORM VIDEO_MODE_NTSC
+
+typedef unsigned int RGB32;
+#define PIXEL_SIZE (sizeof(RGB32))
 
 typedef struct _effect
 {
@@ -43,5 +42,7 @@ typedef struct _effect
 } effect;
 
 typedef effect *effectRegistFunc(void);
+
+extern int debug;
 
 #endif /* __EFFECTV_H__ */

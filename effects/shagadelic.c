@@ -2,7 +2,8 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * shagadelic.c: Makes you shagadelic! Yeah baby yeah!
+ * ShagadelicTV - makes you shagadelic! Yeah baby yeah!
+ * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * Inspired by Adrian Likin's script for the GIMP.
  */
@@ -16,7 +17,6 @@
 int shagadelicStart();
 int shagadelicStop();
 int shagadelicDraw();
-int shagadelicDrawDouble();
 
 static char *effectname = "ShagadelicTV";
 static int stat;
@@ -33,8 +33,8 @@ effect *shagadelicRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	ripple = (char *)sharedbuffer_alloc(SCREEN_AREA*4);
-	spiral = (char *)sharedbuffer_alloc(SCREEN_AREA);
+	ripple = (char *)sharedbuffer_alloc(video_area*4);
+	spiral = (char *)sharedbuffer_alloc(video_area);
 	if(ripple == NULL || spiral == NULL) {
 		return NULL;
 	}
@@ -61,20 +61,19 @@ int shagadelicStart()
 	if(video_grabstart())
 		return -1;
 	i = 0;
-	for(y=0; y<SCREEN_HEIGHT*2; y++) {
-		yy = y-SCREEN_HEIGHT;
+	for(y=0; y<video_height*2; y++) {
+		yy = y - video_height;
 		yy *= yy;
-		for(x=0; x<SCREEN_WIDTH*2; x++) {
-			xx = x-SCREEN_WIDTH;
-			xx *= xx;
-			ripple[i++] = (unsigned int)(sqrt(xx+yy)*8)&255;
+		for(x=0; x<video_width*2; x++) {
+			xx = x - video_width;
+			ripple[i++] = (unsigned int)(sqrt(xx*xx+yy)*8)&255;
 		}
 	}
 	i = 0;
-	for(y=0; y<SCREEN_HEIGHT; y++) {
-		yy = y - SCREEN_HHEIGHT;
-		for(x=0; x<SCREEN_WIDTH; x++) {
-			xx = x - SCREEN_HWIDTH;
+	for(y=0; y<video_height; y++) {
+		yy = y - video_height/2;
+		for(x=0; x<video_width; x++) {
+			xx = x - video_width/2;
 			spiral[i++] = (unsigned int)
 				((atan2(xx, yy)/M_PI*256*9) + (sqrt(xx*xx+yy*yy)*5))&255;
 /* Here is another Swinger!
@@ -82,10 +81,10 @@ int shagadelicStart()
  */
 		}
 	}
-	rx = fastrand()%SCREEN_WIDTH;
-	ry = fastrand()%SCREEN_HEIGHT;
-	bx = fastrand()%SCREEN_WIDTH;
-	by = fastrand()%SCREEN_HEIGHT;
+	rx = fastrand()%video_width;
+	ry = fastrand()%video_height;
+	bx = fastrand()%video_width;
+	by = fastrand()%video_height;
 	rvx = -2;
 	rvy = -2;
 	bvx = 2;
@@ -108,9 +107,9 @@ int shagadelicStop()
 
 int shagadelicDraw()
 {
-	unsigned int *src, *dest;
+	RGB32 *src, *dest;
 	int x, y;
-	unsigned int v;
+	RGB32 v;
 	unsigned char r, g, b;
 
 	if(video_syncframe())
@@ -120,42 +119,29 @@ int shagadelicDraw()
 			return video_grabframe();
 		}
 	}
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
-	if(scale == 2) {
-		for(y=0; y<SCREEN_HEIGHT; y++) {
-			for(x=0; x<SCREEN_WIDTH; x++) {
-				v = *src++ | 0x1010100;
-				v = (v - 0x707060) & 0x1010100;
-				v -= v>>8;
-				r = (char)(ripple[(ry+y)*SCREEN_WIDTH*2+rx+x]+phase*2)>>7;
-				g = (char)(spiral[y*SCREEN_WIDTH+x]+phase*3)>>7;
-				b = (char)(ripple[(by+y)*SCREEN_WIDTH*2+bx+x]+phase)>>7;
-				v &= ((r<<16)|(g<<8)|b);
-				dest[0] = v;
-				dest[1] = v;
-				dest[SCREEN_WIDTH*2] = v;
-				dest[SCREEN_WIDTH*2+1] = v;
-				dest += 2;
-			}
-			dest += SCREEN_WIDTH*2;
-		}
+	src = (RGB32 *)video_getaddress();
+	if(stretch) {
+		dest = stretching_buffer;
 	} else {
-		for(y=0; y<SCREEN_HEIGHT; y++) {
-			for(x=0; x<SCREEN_WIDTH; x++) {
-				v = *src++ | 0x1010100;
-				v = (v - 0x707060) & 0x1010100;
-				v -= v>>8;
+		dest = (RGB32 *)screen_getaddress();
+	}
+	for(y=0; y<video_height; y++) {
+		for(x=0; x<video_width; x++) {
+			v = *src++ | 0x1010100;
+			v = (v - 0x707060) & 0x1010100;
+			v -= v>>8;
 /* Try another Babe! 
  * v = *src++;
  * *dest++ = v & ((r<<16)|(g<<8)|b);
  */
-				r = (char)(ripple[(ry+y)*SCREEN_WIDTH*2+rx+x]+phase*2)>>7;
-				g = (char)(spiral[y*SCREEN_WIDTH+x]+phase*3)>>7;
-				b = (char)(ripple[(by+y)*SCREEN_WIDTH*2+bx+x]+phase)>>7;
-				*dest++ = v & ((r<<16)|(g<<8)|b);
-			}
+			r = (char)(ripple[(ry+y)*video_width*2+rx+x]+phase*2)>>7;
+			g = (char)(spiral[y*video_width+x]+phase*3)>>7;
+			b = (char)(ripple[(by+y)*video_width*2+bx+x]+phase)>>7;
+			*dest++ = v & ((r<<16)|(g<<8)|b);
 		}
+	}
+	if(stretch) {
+		image_stretch_to_screen();
 	}
 	if(screen_mustlock()) {
 		screen_unlock();
@@ -164,10 +150,10 @@ int shagadelicDraw()
 		return -1;
 
 	phase -= 8;
-	if((rx+rvx)<0 || (rx+rvx)>=SCREEN_WIDTH) rvx =-rvx;
-	if((ry+rvy)<0 || (ry+rvy)>=SCREEN_HEIGHT) rvy =-rvy;
-	if((bx+bvx)<0 || (bx+bvx)>=SCREEN_WIDTH) bvx =-bvx;
-	if((by+bvy)<0 || (by+bvy)>=SCREEN_HEIGHT) bvy =-bvy;
+	if((rx+rvx)<0 || (rx+rvx)>=video_width) rvx =-rvx;
+	if((ry+rvy)<0 || (ry+rvy)>=video_height) rvy =-rvy;
+	if((bx+bvx)<0 || (bx+bvx)>=video_width) bvx =-bvx;
+	if((by+bvy)<0 || (by+bvy)>=video_height) bvy =-bvy;
 	rx += rvx;
 	ry += rvy;
 	bx += bvx;

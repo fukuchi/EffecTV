@@ -20,6 +20,8 @@
 
 #define DEFAULT_DEVICE "/dev/video"
 
+static int v4l_debug = 0; /* 1 = print debug message */
+
 /*
  * v4lopen - open the v4l device.
  *
@@ -32,12 +34,16 @@ int v4lopen(char *name, v4ldevice *vd)
 
 	if(name == NULL)
 		name = DEFAULT_DEVICE;
+
+	if(v4l_debug) fprintf(stderr, "v4lopen:open...\n");
 	if((vd->fd = open(name,O_RDWR)) < 0) {
 		perror("v4lopen:open");
 		return -1;
 	}
 	if(v4lgetcapability(vd))
 		return -1;
+
+	if(v4l_debug) fprintf(stderr, "v4lopen:VIDIOCGCHAN...\n");
 	for(i=0;i<vd->capability.channels;i++) {
 		vd->channel[i].channel = i;
 		if(ioctl(vd->fd, VIDIOCGCHAN, &(vd->channel[i])) < 0) {
@@ -47,6 +53,7 @@ int v4lopen(char *name, v4ldevice *vd)
 	}
 	v4lgetpicture(vd);
 	pthread_mutex_init(&vd->mutex, NULL);
+	if(v4l_debug) fprintf(stderr, "v4lopen:quit\n");
 	return 0;
 }
 
@@ -57,7 +64,9 @@ int v4lopen(char *name, v4ldevice *vd)
  */
 int v4lclose(v4ldevice *vd)
 {
+	if(v4l_debug) fprintf(stderr, "v4lclose:close...\n");
 	close(vd->fd);
+	if(v4l_debug) fprintf(stderr, "v4lclose:quit\n");
 	return 0;
 }
 
@@ -68,10 +77,12 @@ int v4lclose(v4ldevice *vd)
  */
 int v4lgetcapability(v4ldevice *vd)
 {
+	if(v4l_debug) fprintf(stderr, "v4lgetcapability:VIDIOCGCAP...\n");
 	if(ioctl(vd->fd, VIDIOCGCAP, &(vd->capability)) < 0) {
 		perror("v4lopen:VIDIOCGCAP");
 		return -1;
 	}
+	if(v4l_debug) fprintf(stderr, "v4lgetcapability:quit\n");
 	return 0;
 }
 
@@ -215,6 +226,11 @@ int v4lsetchannel(v4ldevice *vd, int ch)
 		return -1;
 	}
 	return 0;
+}
+
+int v4lmaxchannel(v4ldevice *vd)
+{
+	return vd->capability.channels;
 }
 
 /*
@@ -363,6 +379,8 @@ int v4lgrabinit(v4ldevice *vd, int width, int height)
 	vd->mmap.height = height;
 	vd->mmap.format = vd->picture.palette;
 	vd->frame = 0;
+	vd->framestat[0] = 0;
+	vd->framestat[1] = 0;
 	return 0;
 }
 
@@ -374,11 +392,16 @@ int v4lgrabinit(v4ldevice *vd, int width, int height)
  */
 int v4lgrabstart(v4ldevice *vd, int frame)
 {
+	if(v4l_debug) fprintf(stderr, "v4lgrabstart: grab frame %d.\n",frame);
+	if(vd->framestat[frame]) {
+		fprintf(stderr, "v4lgrabstart: frame %d is already used to grab.\n", frame);
+	}
 	vd->mmap.frame = frame;
 	if(ioctl(vd->fd, VIDIOCMCAPTURE, &(vd->mmap)) < 0) {
 		perror("v4lgrabstart:VIDIOCMCAPTURE");
 		return -1;
 	}
+	vd->framestat[frame] = 1;
 	return 0;
 }
 
@@ -390,10 +413,15 @@ int v4lgrabstart(v4ldevice *vd, int frame)
  */
 int v4lsync(v4ldevice *vd, int frame)
 {
+	if(v4l_debug) fprintf(stderr, "v4lsync: sync frame %d.\n",frame);
+	if(vd->framestat[frame] == 0) {
+		fprintf(stderr, "v4lsync: grabbing to frame %d is not started.\n", frame);
+	}
 	if(ioctl(vd->fd, VIDIOCSYNC, &frame) < 0) {
 		perror("v4lsync:VIDIOCSYNC");
 		return -1;
 	}
+	vd->framestat[frame] = 0;
 	return 0;
 }
 
@@ -462,6 +490,18 @@ unsigned char *v4lgetaddress(v4ldevice *vd)
 }
 
 /*
+ * v4lreadframe - grab one frame by calling read system call
+ * vd: v4l device object
+ * buf: buffer where a grabbed imaged is stored
+ */
+
+int v4lreadframe(v4ldevice *vd, unsigned char *buf)
+{
+	/* to do */
+	return -1;
+}
+
+/*
  * v4lprint - print v4l device object
  *
  * vd: v4l device object
@@ -486,4 +526,15 @@ void v4lprint(v4ldevice *vd)
 	printf("mbuf.frames: %d\n",vd->mbuf.frames);
 	printf("mbuf.offsets[0]: %08x\n",vd->mbuf.offsets[0]);
 	printf("mbuf.offsets[1]: %08x\n",vd->mbuf.offsets[1]);
+}
+
+/*
+ * v4ldebug - enable/disable debug message output
+ *
+ * flag: 0 = disable / 1 = enable
+ */
+void v4ldebug(int flag)
+{
+	fprintf(stderr, "debug: %d\n",flag);
+	v4l_debug = flag;
 }

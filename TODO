@@ -1,30 +1,46 @@
-TODO list for EffecTV 0.1.x
+TODO list for EffecTV 0.3.x
 ===========================
 
 Bug
 ---
-* I only tested EffecTV on bttv(bt848 and bt878) on Intel architecture. Please
-  send a report when EffecTV runs or not at your environment.
+* Please send us a report when EffecTV does not work on your machine.
+  The name of video capturing device, device driver version, kernel version
+  must be included at least.
+* Vloopback support is not tested hardly. Your report is welcome.
 * There may be many bugs in documents. I am not good at writing in English,
   so please revise them and tell me what is wrong. Your mail is great help
   for me who is learning English.
 
 Future works
 ------------
-* Resource sharing. Some effects have same objects separately.
-* Code sharing. Scaling, background subtraction, etc.
-* Optimizing. (MMX instractions seems well)
+* Optimizing. (MMX instructions seems well)
 * Video4Linux2 and other drivers
 * Other platform(BSD, SGI, Sun, MS-Windows, BeOS,...)
 * GUI for changing channel, tuning TV, selecting effects, etc.
-* Horizontal flip
+* I found that remote controlling is also important for VJ work...
 * Plug-in mechanism
+* Software deinterlacing
 
 New effect
 ----------
-Please send your effect!
+Automatic new effect generator;
+
+$ grep '.*tive$' /usr/share/dict/words | sed 's/tive$/TV/'
+ablaTV
+aborTV
+absorpTV
+accusaTV
+acquisiTV
+acTV
+adapTV
+addiTV
+adjecTV
+administraTV
+.
+.
+.
 
 Memo
 ----
-* I implemented background subtraction function in various ways.
-  Which is best way? How about another?
+Most impressive essence of EffecTV is interactivity. How can I add
+interactivity to AgingTV, ShagadelicTV or other?

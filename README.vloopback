@@ -1,0 +1,15 @@
+vloopback-0.83 fail to compile on linux-2.4.3 or later. Apply the following
+patch.
+
+--- vloopback.c.orig	Thu May 17 15:59:46 2001
++++ vloopback.c	Thu May 17 16:00:33 2001
+@@ -819,6 +819,9 @@
+ 
+ static struct video_device vloopback_template=
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,3)
++	owner: THIS_MODULE,
++#endif
+ 	"Video Loopback",
+ 	VID_TYPE_CAPTURE,
+ 	0,

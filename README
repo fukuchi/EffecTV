@@ -1,4 +1,4 @@
-EffecTV 0.2.0
+EffecTV 0.2.99
 
 GENERAL INFORMATION
 ===================
@@ -13,7 +13,7 @@ Requirements
 Currently, EffecTV highly depends on Intel architecture. It may not work on any
 other platform.
 
-Video capture card supported by video4linux is required.
+Video capture card or USB device supported by video4linux is required.
 
 EffecTV requires SDL library, available from http://www.libsdl.org/.
 
@@ -21,10 +21,12 @@ EffecTV uses video4linux. Your kernel should be configured with
 CONFIG_VIDEO_DEV and enable drivers for your video capture card.
 
 Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
-from http://www.strusel007.de/linux/bttv/.
+from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for video loop back feature.
 http://motion.technolust.cx/vloopback/index.html
+vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback
+and apply the patch.
 
 NASM is required to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
@@ -58,24 +60,29 @@ effectv [options...]
 Options:
 	-device FILE     use device FILE for video4linux (default is /dev/video)
 	-channel NUMBER  channel number of video source (default is 0)
-	-norm {ntsc,pal,secam,ntsc-jp}	set video norm (default is ntsc)
+	-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
+	                 set video norm (default is ntsc)
 	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
-			  europe-west,europe-east,italy,newzealand,australia,ireland,
-			  france,china-bcast}	set frequency table
-	-fullscreen      enable fullscreen mode
-	-double          doubling screen size
-	-hardware        use direct video memory(if possible)
+	          europe-west, europe-east,italy,newzealand,australia,ireland,
+		  france,china-bcast} set frequency table
+	-fullscreen      set fullscreen mode
+	-hardware        use direct video memory (if possible)
+	-doublebuffer    enable double buffering mode (if possible)
 	-fps             show frames/sec
+	-size WxH        set the size of capturing image
+	-geometry WxH    set the size of screen
+	-scale NUMBER    scaling the screen
+	-autoplay NUMBER changes effects automatically every NUMBER frames
 	-vloopback FILE  use device FILE for output of vloopback device
-	-hireso          set high resolution mode for double scaling mode
 
 Key
 ---
-Up/Down		change effect.
-Right/Left	change TV channel.
-Space		capture a background image(for FireTV, BurningTV, etc.).
+Up/Down     change effect.
+Right/Left  change TV channel.
+Space       capture a background image(for FireTV, BurningTV, etc.).
             change mode(for SpiralTV)
-Escape		Quit
+ALT+ENTER   fullscreen mode(toggle).
+Escape      Quit
 
 More details for each effects are described in documents package.
 You should download effectv-docs.tar.gz found at EffecTV web page.
@@ -112,20 +119,37 @@ EdgeTV
 	Detects edge and display it like good old computer way.
 ShagadelicTV
 	Go back to swinging '60s!
+NoiseTV
+	Makes incoming objects noisy.
+AgingTV
+	Film-aging effect.
+LifeTV
+	Conway's life game with video input interaction.
+TransFormTV
+SparkTV
+	Spark effect.
+warpTV
+HolographicTV
+	Holographic vision seen in Star Wars.
+
 
 Recording/broadcasting EffecTV
 ------------------------------
 EffecTV supports video loop back device since version 0.2.0. First, load the
 vloopback device driver module and check the input/output device file of the
-video pipe (typically it will be /dev/video1 and /dev/video2).
-Then, run EffecTV 
+video pipe (typically it may be /dev/video1 and /dev/video2).
+Then, run EffecTV.
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be get from /dev/video2. At the moment, EffecTV does
-not handle ioctl messages, so some applications do not work; indeed, EffecTV
-does not work with video pipe. XawTV and webcam that comes with XawTV works
-good.
+The effected images can be get from /dev/video2. If you want to chain EffecTV,
+type as following.
+
+$ effectv -device /dev/video2
+
+For XawTv,
+
+$ xawtv -c /dev/video2
 
 CONTACT
 =======
@@ -148,8 +172,6 @@ SourceForge
 EffecTV project page is opened at SourceForge(http://sourceforge.net/).
 
 http://sourceforge.net/projects/effectv/
-
-Some resources for collaborative work is available.
 
 Mailing list
 ------------

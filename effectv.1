@@ -1,0 +1,152 @@
+.TH EFFECTV 1 "Apr 18, 2001" "effectv"
+.SH NAME
+effectv \- real-time video effector
+.SH SYNOPSIS
+.B "effectv"
+[--help]
+[-device FILE]
+[-channel NUMBER]
+[-norm NORM]
+[-freqtab FREQTAB]
+[-fullscreen]
+[-hardware]
+[-fps]
+[-vloopback FILE]
+[-size WxH]
+[-geometry WxH]
+[-scale NUMBER]
+[-autoplay NUMBER]
+
+.SH DESCRIPTION
+EffecTV is a real-time video effector. You can enjoy movies, TV programs
+and any other video stream through the many amazing effects.
+
+.SH OPTIONS
+.TP
+.I \-help
+Show usage (help) information.
+.TP
+.I \-device FILE
+Use device FILE for video4linux (default is /dev/video).
+.TP
+.I \-channel NUMBER
+Channel number of video source (default is 0).
+.TP
+.I \-norm NORM
+Set video norm (default is ntsc). On of ntsc, pal, secam, ntsc-jp.
+.TP
+.I \-freqtab FREQTAB
+Set frequency table. On of
+us-bcast, us-cable, us-cable-hrc, japan-bcast, japan-cable,
+europe-west, europe-east, italy, newzealand, australia, ireland,
+france, china-bcast.
+.TP
+.I \-fullscreen
+Enable fullscreen mode.
+.TP
+.I \-hardware
+Use direct video memory(if possible).
+.TP
+.I \-fps
+Show frames/sec.
+.TP
+.I \-vloopback FILE
+Use device FILE for output of vloopback device.
+.TP
+.I \-size WxH
+Set the size of capturing image to WxH pixels. (default 320x240)
+.TP
+.I \-geometry WxH
+Set the size of screen to WxH pixels.
+.TP
+.I \-scale NUMBER
+Set the scaling. When the capturing size is set, the screen size is scaled by
+NUMBER.
+
+.SH KEYS
+.TP
+.I Up/Down
+Change effect.
+.TP
+.I Right/Left
+Change TV channel.
+.TP
+.I Space
+Capture a background image(for FireTV, BurningTV, etc.).
+Change mode(for SpiralTV).
+.TP
+.I TAB
+Flip images horizontally.
+.TP
+.I Escape
+Quit
+.PP
+More details for each effects are described in documents package.
+You should download effectv-docs.tar.gz found at EffecTV web page.
+
+.SH EFFECTS
+.TP
+.I QuarkTV
+Dissolves moving objects.
+.TP
+.I FireTV
+Clips incoming objects and burns it.
+.TP
+.I BurningTV
+Burns incoming objects.
+.TP
+.I RadioacTV
+Brightens moving objects and blurs it.
+.TP
+.I StreakTV
+Makes 8 afterimages.
+.TP
+.I BaltanTV
+Makes afterimages longer.
+.TP
+.I 1DTV
+Grabs a horizontal line from video every 1/30 sec.
+.TP
+.I DotTV
+Converts the picture into a set of dots.
+.TP
+.I MosaicTV
+Censors incoming objects.
+.TP
+.I PuzzleTV
+Scrambles the picture.
+.TP
+.I PredatorTV
+Makes incoming objects invisible.
+.TP
+.I SpiralTV
+Spiraling effect.
+.TP
+.I SimuraTV
+Color distortion and image mirroring.
+.TP
+.I EdgeTV
+Detects edge and display it like good old computer way.
+.TP
+.I ShagadelicTV
+Go back to swinging '60s!
+.TP
+.I NoiseTV
+Makes incoming objects noisy.
+.TP
+.I StrobeTV
+Strobe effect.
+.TP
+.I AgingTV
+Film-aging effect.
+.TP
+.I LifeTV
+Conway's life game with video input interaction.
+
+
+.SH AUTHOR
+The core of EffecTV was developed by FUKUCHI Kentarou <fukuchi@is.titech.ac.jp>.
+See the file CREWS for full list of developers.
+
+.SH SEE ALSO
+v4l-conf(1)

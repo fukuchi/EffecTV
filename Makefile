@@ -11,7 +11,7 @@ LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 VLOOPBACKOBJS = vloopback.o
 
 PROGRAM = effectv
-OBJS = main.o screen.o video.o frequencies.o $(VLOOPBACKOBJS)
+OBJS = main.o screen.o video.o frequencies.o palette.o $(VLOOPBACKOBJS)
 LIBEFFECTS = effects/libeffects.a
 SUBDIRS = effects v4lutils
 
@@ -31,7 +31,7 @@ all-am: $(PROGRAM)
 $(PROGRAM): $(OBJS) $(LIBEFFECTS) v4lutils/libv4lutils.a
 	$(CC) -o $@ $(OBJS) $(LIBEFFECTS) $(LIBS)
 
-$(OBJS): EffecTV.h
+$(OBJS): EffecTV.h screen.h video.h palette.h frequencies.h vloopback.h
 
 clean:
 	rm -f *.o $(PROGRAM)

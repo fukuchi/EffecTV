@@ -7,7 +7,16 @@
  */
 
 #include <math.h>
+#include "../EffecTV.h"
 #include "utils.h"
+
+int utils_init()
+{
+	yuv_init();
+	if(image_init())
+		return -1;
+	return 0;
+}
 
 /*
  * HSI color system utilities
@@ -22,7 +31,7 @@ static int trunc(double f)
 	return i;
 }
 
-void HSI2RGB(double H, double S, double I, int *r, int *g, int *b)
+void HSItoRGB(double H, double S, double I, int *r, int *g, int *b)
 {
 	double T,Rv,Gv,Bv;
 
@@ -43,14 +52,14 @@ void HSI2RGB(double H, double S, double I, int *r, int *g, int *b)
  *          generates 1,2,3,0,1,2,3,0...
  *          You should use high-order bits.
  */
-static unsigned int randval;
+unsigned int fastrand_val;
 
 unsigned int fastrand()
 {
-	return (randval=randval*1103515245+12345);
+	return (fastrand_val=fastrand_val*1103515245+12345);
 }
 
 void fastsrand(unsigned int seed)
 {
-	randval = seed;
+	fastrand_val = seed;
 }
