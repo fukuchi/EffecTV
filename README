@@ -26,7 +26,7 @@ from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for the video loopback feature.
 You should use vloopback-0.91 or later.
-http://motion.sourceforge.net/vloopback/index.html
+http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
 
 *NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
 distro. Vloopback support does not work on early version of libc-2.2.5. If you

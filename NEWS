@@ -6,7 +6,7 @@ Overview of Changes in EffecTV-0.3.10 (2005/2/14)
 
 * Key usage is shown on starndard out. (Thanks to Forrest Cook)
 
-* An experimental patch for IIDC1394 support.
+* An experimental patch for IIDC1394 support. (See iidc1394.patch)
 
 Overview of Changes in EffecTV-0.3.9 (2004/1/13)
 ================================================

@@ -31,7 +31,7 @@ Linux-2.2.18についてくるBttvドライバは壊れています。カーネルをバージョンアップ
 
 ビデオループバック機能を使う場合は、下記のサイトからドライバをダウンロードして
 インストールしてください。バージョン0.91以降が必要となります。
-http://motion.sourceforge.net/vloopback/index.html
+http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
 
 *注意* 初期のlibc-2.2.5上だと、ビデオループバック機能が動作しません。最新の
 libc-2.2.5のパッチか、お使いのディストリビューション用のパッケージを入手してく
