@@ -117,7 +117,7 @@ Options
 	Set the palette of capturing device. By default, it is detected
 	automatically, so you need not to set this value. Some USB devices are
 	very slow when it is used in RGB mode. Try YUV series if you feel your
-	USB deivce is too slow.
+	USB device is too slow.
 
 -vloopback FILE
 	Use device FILE for output of vloopback device.
@@ -175,7 +175,7 @@ AgingTV
 LifeTV
 	Conway's life game with video input interaction.
 TransFormTV
-	Performs positinal translations on images.
+	Performs positional translations on images.
 SparkTV
 	Spark effect.
 warpTV
@@ -195,7 +195,7 @@ Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------
 EffecTV has supported the use of a video loopback device since version 0.2.0.
 First, install the vloopback module. If you want to install vloopback from
-source package, please read 'README.vloopback' and apply the patche included.
+source package, please read 'README.vloopback' and apply the patch included.
 Then, load the vloopback device driver module and verify the input/output
 device files for the video pipe (typically /dev/video1 and /dev/video2).
 Then, run EffecTV.

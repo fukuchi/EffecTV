@@ -237,7 +237,7 @@ static void convert_YUV422toRGB32_hflip
 	width &= 0xfffffffe;
 	p = (unsigned char *)(dest + width - 2);
 	for(y=0; y<height; y++) {
-		for(x=0; x<width; x++) {
+		for(x=0; x<width; x+=2) {
 			u = src[1];
 			v = src[3];
 			gray = YtoRGB[src[0]];
@@ -251,7 +251,7 @@ static void convert_YUV422toRGB32_hflip
 			p -= 8;
 			src += 4;
 		}
-		p += width * 4;
+		p += width * 8;
 	}
 }
 

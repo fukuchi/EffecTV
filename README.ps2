@@ -1,4 +1,4 @@
-This document describes how to use EffecTV on PlayStaion2 Linux (PS2 Linux)
+This document describes how to use EffecTV on Playstation2 Linux (PS2 Linux)
 environment.
 
 Before Install
@@ -16,8 +16,8 @@ from:
 
 http://alpha.dyndns.org/ov511/download/ov511-1.43.tar.gz
 
-Extract it and apply a patch attached to the end of this docuement. You can
-apply the apatch by following command.
+Extract it and apply a patch attached to the end of this document. You can
+apply the patch by following command.
 
 $ patch -p1 < README.ps2
 

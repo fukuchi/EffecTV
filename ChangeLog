@@ -1,3 +1,7 @@
+2002/01/25	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* palette.c: Horizontal flipping of YUV422 palette converter was corrupt.
+	* README, README.ps2: Typo fixes.
+
 2001/11/27	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* vloopback.c: Typo fixes, error messages were added.
 
