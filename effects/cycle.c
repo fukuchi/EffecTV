@@ -60,7 +60,6 @@ int cycleDraw()
   int i;
   RGB32 *src,*dst;
   
-  src = video_getaddress();
   src = (RGB32 *)video_getaddress();
   if (stretch) {
     dst = stretching_buffer;
