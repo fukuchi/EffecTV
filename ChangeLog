@@ -1,3 +1,12 @@
+2001/03/27	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Many feature enhancements from BackStage Branch;
+	  * New effects: EdgeTV and ShagadelicTV.
+	  * Video loop back device support.
+	  * All effects are changed to use 320x240xRGB32 mode. Many USB cam now
+	    work fine.
+	  * New option "-hireso" was added.
+	* Changed version to 0.2.0.
+
 2001/03/19	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Changed version to 0.1.6. Many feature enhancement from BackStage Branch;
 	  * Merged TV tuning support from Matthias Kleinmann
