@@ -1,4 +1,4 @@
-EffecTV 0.3.6
+EffecTV 0.3.7
 
 序
 ==
@@ -104,7 +104,7 @@ effectv [オプション...]
 
 -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
           europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-          southafrica,argentina}
+          southafrica,argentina,canada-cable,australia-optus}
 	TV入力を見る時に使う、周波数表を指定します。日本ではjapan-bcast(地上波)
 	かjapan-cable(ケーブルTV?)を選択してください。
 
@@ -227,6 +227,10 @@ RevTV
 	波形モニタのような効果を表示します。
 RandomDotStereoTV
 	ランダムドットステレオグラムを生成します。
+LensTV
+	懐しのレンズ効果。
+DiffTV
+	フレーム間の差分を強調表示します。
 
 Vloopback機能の使い方 - EffecTVの出力を録画・放送するには
 ---------------------------------------------------------
