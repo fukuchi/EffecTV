@@ -1,3 +1,7 @@
+2002/07/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* frequencies.c: Added Australian Optus cable TV channels
+	  (imported from xawtv-3.76).
+
 2002/07/06	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/rev.c: A out of range memory error has been fixed.
 
