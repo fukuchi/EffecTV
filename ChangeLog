@@ -1,3 +1,6 @@
+2002/06/18	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* video.c: Typo fixes.
+
 2002/06/16	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/nervous.c: Added another nervous mode. An event handler was
 	  added.

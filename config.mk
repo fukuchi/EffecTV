@@ -26,7 +26,7 @@ USE_MMX = yes
 USE_NASM = yes
 
 ### vloopback
-## comment out the next two lines if you want to disable vloopback support.
+## comment out next line if you want to disable vloopback support.
 USE_VLOOPBACK = yes
 
 ## choose vloopback version (only one).
