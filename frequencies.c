@@ -5,6 +5,9 @@
 */
 
 #include "frequencies.h"
+/*
+#include "grab-ng.h"
+*/
 
 /* --------------------------------------------------------------------- */
 
@@ -931,6 +934,21 @@ static struct CHANLIST pal_bcast_cn[] = {
 };
 
 /* --------------------------------------------------------------------- */
+/* South Africa Broadcast */
+
+static struct CHANLIST pal_bcast_za[] ={
+    { "1", 175250 },
+    { "2", 183250 },
+    { "3", 191250 },
+    { "4", 199250 },
+    { "5", 207250 },
+    { "6", 215250 },
+    { "7", 223250 },
+    { "8", 231250 },
+    FREQ_UHF
+};
+
+/* --------------------------------------------------------------------- */
 
 
 struct CHANLISTS chanlists[] = {
@@ -947,6 +965,7 @@ struct CHANLISTS chanlists[] = {
     { "ireland",          pal_ireland,       CHAN_COUNT(pal_ireland)       },
     { "france",           secam_france,      CHAN_COUNT(secam_france)      },
     { "china-bcast",      pal_bcast_cn,      CHAN_COUNT(pal_bcast_cn)      },
+    { "southafrica",      pal_bcast_za,      CHAN_COUNT(pal_bcast_za)      },
     { NULL, NULL, 0 } /* EOF */
 };
 /*
@@ -964,6 +983,7 @@ struct STRTAB chanlist_names[] = {
     { 10, "ireland" },
     { 11, "france" },
     { 12, "china-bcast" },	
+    { 13, "southafrica" },
     { -1, NULL }
 };
 

@@ -1,3 +1,8 @@
+2001/05/26	FUKUCHI	Kentarou	<fukuchi@is.titech.ac.jp>
+	* main.c,frequencies.c,README,effectv.1: newest frequencie table from
+	  xawtv-3.48. (freq. table for south africa was added)
+	* main.c: debug flag was set to 0.
+
 2001/05/24	Sam Mertens		<smertens@effectv.sourceforge.net>
 	* Edited text files FAQ, README, and README.vloopback for syntax
 	* Carried over a minor spiral.c fix from EffecTV-BSB.  Also,
