@@ -81,6 +81,7 @@ static effectRegisterFunc *effects_register_list[] =
 	warholRegister,
 	matrixRegister,
 	pupRegister,
+	chameleonRegister,
 };
 
 static effect **effectsList;

@@ -1,3 +1,9 @@
+2003/12/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/pup.c:
+	  - Changed default effect.
+	* effects/fire.c:
+	  - Changed key asign.
+
 2003/12/26	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/noise.c:
 	  - The noise pattern has been changed.
@@ -6,6 +12,8 @@
 	* effects/blurzoom.c:
 	  - Additional color palettes have been added.
 	  - Removed an unused variable.
+	* effects/chameleon.c:
+	  - New effect ChameleonTV has been added.
 
 2003/12/24	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{matrix.c,pup.c,effect.h,Makefile}, main.c:

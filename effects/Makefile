@@ -13,7 +13,8 @@ EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
 		  $(SIMURA) $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) $(TRANSFORM) \
 		  $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
           $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(RDS) \
-          $(LENS) $(DIFF) $(SCROLL) $(WARHOL) $(MATRIX) $(PUP)
+          $(LENS) $(DIFF) $(SCROLL) $(WARHOL) $(MATRIX) $(PUP) \
+		  $(CHAMELEON)
 
 SUBDIRS =
 
@@ -76,6 +77,7 @@ SCROLL = scroll.o
 WARHOL = warhol.o
 MATRIX = matrix.o
 PUP = pup.o
+CHAMELEON = chameleon.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)

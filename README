@@ -263,6 +263,9 @@ MatrixTV
 PUPTV
     Comes from "Partial UPdate", certain part of image is updated at a frame.
 
+ChameleonTV
+	Vanishing into the wall...
+
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

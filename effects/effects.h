@@ -46,3 +46,4 @@ extern effectRegisterFunc scrollRegister;
 extern effectRegisterFunc warholRegister;
 extern effectRegisterFunc matrixRegister;
 extern effectRegisterFunc pupRegister;
+extern effectRegisterFunc chameleonRegister;
