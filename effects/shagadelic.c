@@ -149,7 +149,7 @@ int shagadelicDraw()
  */
 			r = (char)(ripple[(ry+y)*video_width*2+rx+x]+phase*2)>>7;
 			g = (char)(spiral[y*video_width+x]+phase*3)>>7;
-			b = (char)(ripple[(by+y)*video_width*2+bx+x]+phase)>>7;
+			b = (char)(ripple[(by+y)*video_width*2+bx+x]-phase)>>7;
 			*dest++ = v & ((r<<16)|(g<<8)|b);
 		}
 	}

@@ -53,8 +53,11 @@ int quarkStart()
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 	plane = PLANES - 1;
-	if(video_grabstart())
+	if(video_grabstart()) {
+		free(buffer);
+		buffer = NULL;
 		return -1;
+	}
 
 	state = 1;
 	return 0;
@@ -64,8 +67,10 @@ int quarkStop()
 {
 	if(state) {
 		video_grabstop();
-		if(buffer)
+		if(buffer) {
 			free(buffer);
+			buffer = NULL;
+		}
 		state = 0;
 	}
 
