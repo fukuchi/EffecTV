@@ -51,7 +51,7 @@ $ effectv -palette yuv420p
 
 TODO
 ====
-折角だから、EmotionEngnieが持つMME命令を使った最適化を試みたいところです。
+折角だから、EmotionEngineが持つMME命令を使った最適化を試みたいところです。
 
 パッチ
 ======

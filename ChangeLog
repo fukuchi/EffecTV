@@ -1,3 +1,6 @@
+2001/10/30	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
+	* doc.japanese/README.ps2: Typo fix.
+
 2001/10/28	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* Makefile, config.mk: Added new macro variable "CONFIG.arch".
 	* effects/{shagadelic.c,warp.c,spiral.c}: Added some extra code for PS2.
