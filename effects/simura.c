@@ -19,7 +19,7 @@ int simuraEvent();
 
 static char *effectname = "SimuraTV";
 static int stat;
-static int color;
+static RGB32 color;
 static int mirror;
 static int width;
 static int hwidth;
