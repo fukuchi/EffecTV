@@ -1,3 +1,6 @@
+2003/10/16      Sam Mertens             <smertens@users.sourceforge.net>
+	* config.mk: Changed deprecated -mpentiumpro to -march=pentiumpro
+	  (Tested with both gcc 2.95, gcc 3.3)
 2003/02/17	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* tools/Makefile, v4lutils/Makefile: Now includes config.mk. This is taken
 	  from a patch for Solaris by Bt8x8 driver for Solraris team:

@@ -43,7 +43,7 @@ VLOOPBACK_VERSION = 90
 ## i686-linux
 ifeq ($(ARCH), i686-linux)
 CONFIG.arch = -DI686
-CFLAGS.opt = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops
+CFLAGS.opt = -march=pentiumpro -O3 -fomit-frame-pointer -funroll-loops
 endif
 
 ## PlayStaion2
