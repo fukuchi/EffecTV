@@ -17,6 +17,7 @@
 int shagadelicStart();
 int shagadelicStop();
 int shagadelicDraw();
+int shagadelicEvent();
 
 static char *effectname = "ShagadelicTV";
 static int stat;
@@ -27,6 +28,7 @@ static int rx, ry;
 static int bx, by;
 static int rvx, rvy;
 static int bvx, bvy;
+static int mask;
 
 effect *shagadelicRegister()
 {
@@ -48,7 +50,7 @@ effect *shagadelicRegister()
 	entry->start = shagadelicStart;
 	entry->stop = shagadelicStop;
 	entry->draw = shagadelicDraw;
-	entry->event = NULL;
+	entry->event = shagadelicEvent;
 
 	return entry;
 }
@@ -61,6 +63,8 @@ int shagadelicStart()
 #else
 	double xx, yy;
 #endif
+
+	mask = 0xffffff;
 
 	if(video_grabstart())
 		return -1;
@@ -124,6 +128,7 @@ int shagadelicDraw()
 	int x, y;
 	RGB32 v;
 	unsigned char r, g, b;
+	char *pr, *pg, *pb;
 
 	if(video_syncframe())
 		return -1;
@@ -138,6 +143,11 @@ int shagadelicDraw()
 	} else {
 		dest = (RGB32 *)screen_getaddress();
 	}
+
+	pr = &ripple[ry*video_width*2 + rx];
+	pg = spiral;
+	pb = &ripple[by*video_width*2 + bx];
+
 	for(y=0; y<video_height; y++) {
 		for(x=0; x<video_width; x++) {
 			v = *src++ | 0x1010100;
@@ -147,11 +157,16 @@ int shagadelicDraw()
  * v = *src++;
  * *dest++ = v & ((r<<16)|(g<<8)|b);
  */
-			r = (char)(ripple[(ry+y)*video_width*2+rx+x]+phase*2)>>7;
-			g = (char)(spiral[y*video_width+x]+phase*3)>>7;
-			b = (char)(ripple[(by+y)*video_width*2+bx+x]-phase)>>7;
-			*dest++ = v & ((r<<16)|(g<<8)|b);
+			r = (char)(*pr+phase*2)>>7;
+			g = (char)(*pg+phase*3)>>7;
+			b = (char)(*pb-phase)>>7;
+			*dest++ = v & ((r<<16)|(g<<8)|b) & mask;
+			pr++;
+			pg++;
+			pb++;
 		}
+		pr += video_width;
+		pb += video_width;
 	}
 	if(stretch) {
 		image_stretch_to_screen();
@@ -172,5 +187,39 @@ int shagadelicDraw()
 	bx += bvx;
 	by += bvy;
 
+	return 0;
+}
+
+int shagadelicEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_1:
+			mask &= 0xffff00;
+			break;
+		case SDLK_2:
+			mask &= 0xff00ff;
+			break;
+		case SDLK_3:
+			mask &= 0xffff;
+			break;
+		default:
+			break;
+		}
+	} else if(event->type == SDL_KEYUP) {
+		switch(event->key.keysym.sym) {
+		case SDLK_1:
+			mask |= 0xff;
+			break;
+		case SDLK_2:
+			mask |= 0xff00;
+			break;
+		case SDLK_3:
+			mask |= 0xff0000;
+			break;
+		default:
+			break;
+		}
+	}
 	return 0;
 }
