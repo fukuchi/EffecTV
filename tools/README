@@ -1,0 +1,13 @@
+Small tools for various purposes.
+
+AddEffect.pl
+	Perl script to add a new effect to EffecTV
+
+palettecheck
+	Lists supported pixel format by the v4l driver. Because EffecTV does not
+	support all of formats, sometimes EffecTV failes on a certain hardware.
+	If you got failed, Please attach the output of 'palettecheck' to a bug
+	report mail.
+	Compiling and run:
+	$ make palettecheck
+	$ ./palettecheck
