@@ -40,6 +40,8 @@ ARCH = ps2-linux
 
 というように、"ARCH = ps2-linux"を有効にしてください。あとはmakeするだけです。
 コンパイルにはSDL(1.2.1以降)が必須です。詳しくはEffecTVの文書を読んでください。
+PS2 Linux用のSDLのRPMパッケージは以下の場所で公開されています。
+http://playstation2-linux.com/projects/libsdl
 
 動かし方
 ========
