@@ -197,10 +197,18 @@ static int event(SDL_Event *event)
 			mode = 3;
 			break;
 		case SDLK_INSERT:
-			speedInc = 1;
+			if(speed >= 0) {
+				speedInc = 1;
+			} else {
+				speedInc = -1;
+			}
 			break;
 		case SDLK_DELETE:
-			speedInc = -1;
+			if(speed >= 0) {
+				speedInc = -1;
+			} else {
+				speedInc = 1;
+			}
 			break;
 		case SDLK_SPACE:
 			speed = -speed;

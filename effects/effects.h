@@ -48,3 +48,4 @@ extern effectRegisterFunc matrixRegister;
 extern effectRegisterFunc pupRegister;
 extern effectRegisterFunc chameleonRegister;
 extern effectRegisterFunc opRegister;
+extern effectRegisterFunc nervousHalfRegister;

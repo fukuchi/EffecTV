@@ -1,3 +1,9 @@
+2004/11/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/half.c:
+	  - New effect NervousHalf has been added.
+	* effects/op.c:
+	  - Ins/Del key hadnling has been fixed.
+
 2004/07/29	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/op.c:
 	  - Anti aliased.

@@ -2,10 +2,6 @@ Since version 0.3.9, EffecTV supports only vloopback-0.91 or later. Older
 version doesn't work correctly without a hack, and the latest vloopback module
 fixes the problem. The latest vloopback can be downloaded from:
 
-http://motion.sourceforge.net/vloopback/
+http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
 
-The latest vloopback can not be compiled with Linux kernel 2.6.x. A patch was
-posted to Motion mailing list (see the following URL). Please note that you
-should be a member of the list to access the article.
-
-http://lists.frogtown.com/cgi-bin/mailman/private/motion/2004-May/004277.html
+If you use Linux kernel 2.6.x, you should download version 0.93-snap1 or later.

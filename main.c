@@ -83,6 +83,7 @@ static effectRegisterFunc *effects_register_list[] =
 	pupRegister,
 	chameleonRegister,
 	opRegister,
+	nervousHalfRegister,
 };
 
 static effect **effectsList;
@@ -119,6 +120,23 @@ static void usage()
 #ifdef USE_VLOOPBACK
 	printf("  -vloopback FILE  use device FILE for output of vloopback device\n");
 #endif
+}
+
+static void keyUsage()
+{
+	printf( "---------------\n"
+			"Key description\n"
+			"Up/Down     change effect.\n"
+			"Right/Left  change TV channel.\n"
+			"Space       capture a background image(for FireTV, BurningTV, etc.).\n"
+			"            change mode(for SpiralTV, TransFormTV)\n"
+			"ALT+Enter   fullscreen mode(toggle).\n"
+			"TAB         Horizontal flipping(toggle).\n"
+			"Escape      Quit\n"
+			"F1/F2       increase/decrease brightness of video input.\n"
+			"F3/F4       increase/decrease hue.\n"
+			"F5/F6       increase/decrease color balance.\n"
+			"F7/F8       increase/decrease contrast.\n");
 }
 
 static int parse_geometry(const char *str, int *w, int *h)
@@ -441,6 +459,12 @@ static int startTV(char *startEffect)
 						screen_fullscreen();
 					}
 					break;
+				case SDLK_SLASH:
+					puts("/");
+					break;
+				case SDLK_QUESTION:
+					puts("?");
+					break;
 				case SDLK_ESCAPE:
 					flag = 0;
 					break;
@@ -673,6 +697,7 @@ int main(int argc, char **argv)
 	}
 
 //	showTitle();
+	keyUsage();
 	startTV(startEffect);
 
 #ifdef MEM_DEBUG

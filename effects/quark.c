@@ -80,7 +80,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	memcpy(planetable[plane], src, video_area * PIXEL_SIZE);
 
 	for(i=0; i<video_area; i++) {
-		cf = (plane + (inline_fastrand()>>24))&(PLANES-1);
+		cf = (inline_fastrand()>>24)&(PLANES-1);
 		dest[i] = (planetable[cf])[i];
 		/* The reason why I use high order 8 bits is written in utils.c
 		(or, 'man rand') */

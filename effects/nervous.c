@@ -41,7 +41,6 @@ effect *nervousRegister()
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
-		free(buffer);
 		return NULL;
 	}
 
