@@ -32,6 +32,8 @@ static void diagonalPup(RGB32 *);
 static void diagonalPup2(RGB32 *);
 static void verticalPup(RGB32 *);
 static void horizontalPup(RGB32 *);
+static void rasterPup(RGB32 *);
+//static void sonicPup(RGB32 *);
 
 static int resetBuffer(RGB32 *src)
 {
@@ -100,6 +102,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 		case 4:
 			randomPup(src);
 			break;
+		case 5:
+			rasterPup(src);
+			break;
 		default:
 			break;
 	}
@@ -121,7 +126,7 @@ static int event(SDL_Event *event)
 		case SDLK_3:
 		case SDLK_4:
 		case SDLK_5:
-//		case SDLK_6:
+		case SDLK_6:
 //		case SDLK_7:
 //		case SDLK_8:
 //		case SDLK_9:
@@ -132,7 +137,7 @@ static int event(SDL_Event *event)
 		case SDLK_KP3:
 		case SDLK_KP4:
 		case SDLK_KP5:
-//		case SDLK_KP6:
+		case SDLK_KP6:
 //		case SDLK_KP7:
 //		case SDLK_KP8:
 //		case SDLK_KP9:
@@ -294,3 +299,77 @@ static void horizontalPup(RGB32 *src)
 		phase -= step;
 	}
 }
+
+static void rasterPup(RGB32 *src)
+{
+	static int phase = 0;
+	static int step = 16;
+	int x, y;
+	unsigned int offset;
+	RGB32 *dest;
+
+	if(paramInc != 0) {
+		step += paramInc;
+		if(step < 2) step = 2;
+		if(step > video_height) step = video_height;
+		phase %= step;
+	}
+
+	offset = 0;
+
+	dest = buffer;
+	for(y=0; y<video_height; y++) {
+		if(y&1) {
+			for(x=phase; x<video_width; x+=step) {
+				dest[x] = src[x];
+			}
+		} else {
+			for(x=video_width-1-phase;x>=0; x-=step) {
+				dest[x] = src[x];
+			}
+		}
+		src += video_width;
+		dest += video_width;
+	}
+
+	phase++;
+	while(phase >= step) {
+		phase -= step;
+	}
+}
+
+#if 0
+static void sonicPup(RGB32 *src)
+{
+	static int phase = 0;
+	static int step = 16;
+	int x, y;
+	unsigned int offset;
+	RGB32 *dest;
+
+	if(paramInc != 0) {
+		step += paramInc;
+		if(step < 2) step = 2;
+		if(step > video_height) step = video_height;
+		phase %= step;
+	}
+
+	offset = 0;
+
+	dest = buffer;
+	for(y=0; y<video_height; y++) {
+		x = ((offset >> 16) + phase)% step;
+		for(; x<video_width; x+=step) {
+			dest[x] = src[x];
+		}
+		src += video_width;
+		dest += video_width;
+		offset = offset*1103515245+12345;
+	}
+
+	phase++;
+	while(phase >= step) {
+		phase -= step;
+	}
+}
+#endif
