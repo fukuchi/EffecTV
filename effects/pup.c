@@ -30,6 +30,8 @@ static int paramInc = 0;
 static void randomPup(RGB32 *);
 static void diagonalPup(RGB32 *);
 static void diagonalPup2(RGB32 *);
+static void verticalPup(RGB32 *);
+static void horizontalPup(RGB32 *);
 
 static int resetBuffer(RGB32 *src)
 {
@@ -84,12 +86,18 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 	switch(mode) {
 		case 0:
-			diagonalPup(src);
+			verticalPup(src);
 			break;
 		case 1:
-			diagonalPup2(src);
+			horizontalPup(src);
 			break;
 		case 2:
+			diagonalPup(src);
+			break;
+		case 3:
+			diagonalPup2(src);
+			break;
+		case 4:
 			randomPup(src);
 			break;
 		default:
@@ -111,8 +119,8 @@ static int event(SDL_Event *event)
 		case SDLK_1:
 		case SDLK_2:
 		case SDLK_3:
-//		case SDLK_4:
-//		case SDLK_5:
+		case SDLK_4:
+		case SDLK_5:
 //		case SDLK_6:
 //		case SDLK_7:
 //		case SDLK_8:
@@ -122,8 +130,8 @@ static int event(SDL_Event *event)
 		case SDLK_KP1:
 		case SDLK_KP2:
 		case SDLK_KP3:
-//		case SDLK_KP4:
-//		case SDLK_KP5:
+		case SDLK_KP4:
+		case SDLK_KP5:
 //		case SDLK_KP6:
 //		case SDLK_KP7:
 //		case SDLK_KP8:
@@ -228,4 +236,61 @@ static void diagonalPup2(RGB32 *src)
 	phase++;
 	if(phase >= step)
 		phase = 0;
+}
+
+static void verticalPup(RGB32 *src)
+{
+	static int phase = 0;
+	static int step = 16;
+	int x, y;
+	RGB32 *dest;
+
+	if(paramInc != 0) {
+		step += paramInc;
+		if(step < 2) step = 2;
+		if(step > video_width) step = video_width;
+		phase %= step;
+	}
+
+	dest = buffer;
+	for(y=0; y<video_height; y++) {
+		for(x=phase; x<video_width; x+=step) {
+			dest[x] = src[x];
+		}
+		src += video_width;
+		dest += video_width;
+	}
+
+	phase++;
+	while(phase >= step) {
+		phase -= step;
+	}
+}
+
+static void horizontalPup(RGB32 *src)
+{
+	static int phase = 0;
+	static int step = 16;
+	int y;
+	RGB32 *dest;
+
+	if(paramInc != 0) {
+		step += paramInc;
+		if(step < 2) step = 2;
+		if(step > video_height) step = video_height;
+		phase %= step;
+	}
+
+	src += video_width * phase;
+	dest = buffer + video_width * phase;
+	for(y=phase; y<video_height; y+=step) {
+		memcpy(dest, src, video_width * PIXEL_SIZE);
+		src += video_width * step;
+		dest += video_width * step;
+	}
+
+	phase++;
+	while(phase >= step) {
+		phase -= step;
+	}
 }

@@ -1,3 +1,14 @@
+2003/12/31	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* TODO:
+	  - Added notes on overlay-patch and solaris-patch.
+
+2003/12/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/chameleon.c:
+	  - Added "Appearing Mode".
+	* effects/pup.c:
+	  - Added HorizontalPup.
+	  - Key assign was changed.
+
 2003/12/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/pup.c:
 	  - Changed default effect.

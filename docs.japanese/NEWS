@@ -13,7 +13,7 @@ EffecTV-0.3.9における主な変更点
   の後にイフェクトの名前を記すと起動時のイフェクトを変更できる。大文字小文字の
   区別はされず、また最後の"TV"は省略できる。
 
-* FireTV, BurningTV, SparkTVに新モードが追加された。
+* FireTV, BurningTV, RadioacTV, SparkTVに新機能が追加された。
 
 * PuzzleTVにおいて、ピースの移動が滑らかになった。
 
