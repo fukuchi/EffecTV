@@ -190,6 +190,8 @@ DiceTV
 	A 'dicing' effect.
 VertigoTV
 	Alpha blending with zoomed and rotated images.
+DeinterlaceTV
+	Deinterlacing video images.
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------
