@@ -56,7 +56,11 @@ effect *shagadelicRegister()
 int shagadelicStart()
 {
 	int i, x, y;
+#ifdef PS2
+	float xx, yy;
+#else
 	double xx, yy;
+#endif
 
 	if(video_grabstart())
 		return -1;
@@ -66,7 +70,11 @@ int shagadelicStart()
 		yy *= yy;
 		for(x=0; x<video_width*2; x++) {
 			xx = x - video_width;
-			ripple[i++] = (unsigned int)(sqrt(xx*xx+yy)*8)&255;
+#ifdef PS2
+			ripple[i++] = ((unsigned int)(sqrtf(xx*xx+yy)*8))&255;
+#else
+			ripple[i++] = ((unsigned int)(sqrt(xx*xx+yy)*8))&255;
+#endif
 		}
 	}
 	i = 0;
@@ -74,8 +82,13 @@ int shagadelicStart()
 		yy = y - video_height/2;
 		for(x=0; x<video_width; x++) {
 			xx = x - video_width/2;
-			spiral[i++] = (unsigned int)
-				((atan2(xx, yy)/M_PI*256*9) + (sqrt(xx*xx+yy*yy)*5))&255;
+#ifdef PS2
+			spiral[i++] = ((unsigned int)
+				((atan2f(xx, yy)/((float)M_PI)*256*9) + (sqrtf(xx*xx+yy*yy)*5)))&255;
+#else
+			spiral[i++] = ((unsigned int)
+				((atan2(xx, yy)/M_PI*256*9) + (sqrt(xx*xx+yy*yy)*5)))&255;
+#endif
 /* Here is another Swinger!
  * ((atan2(xx, yy)/M_PI*256) + (sqrt(xx*xx+yy*yy)*10))&255;
  */

@@ -1,7 +1,7 @@
 # Makefile for v4lutils
 
 CC = gcc
-CFLAGS = $(CONFIG) $(CFLAGS.opt)
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt)
 #CFLAGS = -g -Wall
 LIBS =
 

@@ -16,8 +16,13 @@ ARCH = i686-linux
 ## Linux for Playstation2
 # ARCH = ps2-linux
 
+### Multimedia extension code set
+## MMX
+## comment out next line if you want not to enable MMX operation.
+USE_MMX = yes
+
 ### NASM
-## comment out the next two lines if you want not to use NASM.
+## comment out next line if you want not to use NASM.
 USE_NASM = yes
 
 ### vloopback
@@ -37,19 +42,27 @@ VLOOPBACK_VERSION = 83
 ## architecture dependent settings
 ## i686-linux
 ifeq ($(ARCH), i686-linux)
+CONFIG.arch = -DI686
 CFLAGS.opt = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops
 endif
 
 ## Playstaion2
 ifeq ($(ARCH), ps2-linux)
+CONFIG.arch = -DPS2
 CFLAGS.opt = -O3 -fomit-frame-pointer -funroll-loops
 USE_NASM = no
+USE_MMX = no
 CONFIG += -DRGB_BGR_CONVERSION
 endif
 
 ifeq ($(USE_NASM), yes)
 CONFIG += -DUSE_NASM
 endif
+
+ifeq ($(USE_MMX), yes)
+CONFIG += -DUSE_MMX
+endif
+
 ifeq ($(USE_VLOOPBACK), yes)
 CONFIG += -DUSE_VLOOPBACK
 CONFIG += -DVLOOPBACK_VERSION=$(VLOOPBACK_VERSION)

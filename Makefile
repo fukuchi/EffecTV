@@ -6,7 +6,7 @@ CC = gcc
 NASM = nasm
 INSTALL = /usr/bin/install -c
 
-CFLAGS = $(CONFIG) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
 #CFLAGS = $(CONFIG) -g -Iv4lutils `sdl-config --cflags`
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 

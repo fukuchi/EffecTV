@@ -506,7 +506,11 @@ void spiralCreateMap()
         
 		for(x=0; x<video_width; x++) {
             rel_x = (g_focus_x - x) * x_ratio;
+#ifdef PS2
+            v = ((int)sqrtf(yy + rel_x*rel_x)) & WAVE_LENGTH_MASK;
+#else
             v = ((int)sqrt(yy + rel_x*rel_x)) & WAVE_LENGTH_MASK;
+#endif
             depthmap[i++] = g_wave_table[wave_offset + v] >> g_depth_shift;
 		}
 	}
@@ -520,7 +524,11 @@ WaveEl* spiralDefineWaves()
     int     i;
     int     w;
     int     iw;
+#ifdef PS2
+    float  sinus_val = M_PI/2.0;
+#else
     double  sinus_val = M_PI/2.0;
+#endif
 
     // This code feels a little like a hack, but at least it contains
     // all like-minded hacks in one place.
@@ -563,8 +571,13 @@ WaveEl* spiralDefineWaves()
         
         wave_table[WAVE_LENS_OFFSET + i] = i >> 3;
 
+#ifdef PS2
+        wave_table[WAVE_SINUS_OFFSET + i] = ((PLANES/2) +
+                                             (int)((PLANES/2 - 1) * sinf(sinus_val))) & PLANE_MASK;
+#else
         wave_table[WAVE_SINUS_OFFSET + i] = ((PLANES/2) +
                                              (int)((PLANES/2 - 1) * sin(sinus_val))) & PLANE_MASK;
+#endif
         sinus_val += M_PI/PLANES;
     }
     

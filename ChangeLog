@@ -1,3 +1,8 @@
+2001/10/28	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
+	* Makefile, config.mk: Added new macro variable "CONFIG.arch".
+	* effects/{shagadelic.c,warp.c,spiral.c}: Added some extra code for PS2.
+	* README.ps2, doc.japanese/README.ps2: Changed 'TODO' section.
+
 2001/10/22	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* README.ps2, doc.japanese/README.ps2: Changed section name.
 	* debian/*: Fixed copyright description, rules and dir.

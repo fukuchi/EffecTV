@@ -714,7 +714,6 @@ static void convert_RGB32toYUV422
 			dest[1] = RtoV[q[0]] + GtoU[q[1]] + RtoU[q[2]] + 128;
 			dest[3] = BtoV[q[0]] + GtoV[q[1]] + RtoV[q[2]] + 128;
 			dest[2] = BtoY[q[4]] + GtoY[q[5]] + RtoY[q[6]] + 16;
-//			dest[0] = 255;dest[1] = 0; dest[2] = 0; dest[3] = 0;
 			dest += 4;
 			q += 8;
 		}

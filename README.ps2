@@ -49,9 +49,8 @@ $ effectv -palette yuv420p
 
 TODO
 ====
-Double precision floating point operation on PS2 is very slow. Especially,
-ShagadelicTV gets affected. It seems that libm must be rebuilt (atan2()
-outputs wrong results...).
+It will be nice when the codes are optimized with Multimedia Extension ops of
+EmotionEngine.
 
 Patch
 =====
