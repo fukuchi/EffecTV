@@ -264,7 +264,7 @@ static void mirror_d()
 
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	for(y=hheight; y<height-1; y++) {
+	for(y=hheight; y<height; y++) {
 		for(x=0; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
 			dest[(height-y-1)*width+x] = src[y*width+x] ^ color;
@@ -295,7 +295,7 @@ static void mirror_r()
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<height; y++) {
-		for(x=hwidth; x<width-1; x++) {
+		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
 			dest[y*width+(width-x-1)] = src[y*width+x] ^ color;
 		}
@@ -327,7 +327,7 @@ static void mirror_ur()
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<hheight; y++) {
-		for(x=hwidth; x<width-1; x++) {
+		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
 			dest[y*width+(width-x-1)] = src[y*width+x] ^ color;
 			dest[(height-y-1)*width+x] = src[y*width+x] ^ color;
@@ -343,7 +343,7 @@ static void mirror_dl()
 
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	for(y=hheight; y<height-1; y++) {
+	for(y=hheight; y<height; y++) {
 		for(x=0; x<hwidth; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
 			dest[y*width+(width-x-1)] = src[y*width+x] ^ color;
@@ -360,8 +360,8 @@ static void mirror_dr()
 
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	for(y=hheight; y<height-1; y++) {
-		for(x=hwidth; x<width-1; x++) {
+	for(y=hheight; y<height; y++) {
+		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
 			dest[y*width+(width-x-1)] = src[y*width+x] ^ color;
 			dest[(height-y-1)*width+x] = src[y*width+x] ^ color;
