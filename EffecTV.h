@@ -15,8 +15,8 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
-#define VERSION_PATCH 4
-#define VERSION_STRING "0.1.4"
+#define VERSION_PATCH 5
+#define VERSION_STRING "0.1.5"
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240

@@ -1,16 +1,17 @@
-EffecTV 0.1.4
+EffecTV 0.1.5
 
 GENERAL INFORMATION
 ===================
-EffecTV is a real-time video effector. It runs on SDL and video4linux.
+EffecTV is a real-time video effector. You can enjoy movies, TV programs and
+any other video stream through the many amazing effects. 
 
 INSTALL
 =======
 
 Requirements
 ------------
-Currently, EffecTV highly depends on Intel architecture. It may not
-work on any other platform.
+Currently, EffecTV highly depends on Intel architecture. It may not work on any
+other platform.
 
 Video capture card supported by video4linux is required.
 
@@ -72,9 +73,9 @@ You should download effectv-docs.tar.gz found at EffecTV web page.
 Summary of effects
 ------------------
 QuarkTV
-	Disolves movin objects.
+	Dissolves moving objects.
 FireTV
-	Clips incoming obects and burns it.
+	Clips incoming objects and burns it.
 BurningTV
 	Burns incoming objects.
 RadioacTV
@@ -103,22 +104,47 @@ Web
 ---
 See http://matsu-www.is.titech.ac.jp/~fukuchi/rooms/EffecTV/index.html
 
-Mailing list
-------------
-If you want to join EffecTV crews mailing list, send a mail to:
-
-fukuchi-effectvjoin@is.titech.ac.jp
-
-The ML is not automated, I will add your address to the ML by hand.
-Please write the address where you want to receive messages at.
-
 Bug-reporting & Suggestions
 ---------------------------
 Welcome! Send a mail to:
 
 fukuchi-effectv@is.titech.ac.jp
 
-The message send to this address is delivered to EffecTV crews.
+or, post a message to EffecTV open discussion forums at EffecTV project
+page at SourceForge (URL is in next section).
+
+SourceForge
+===========
+EffecTV project page is opened at SourceForge(http://sourceforge.net/).
+
+http://sourceforge.net/projects/effectv/
+
+Some resources for collaborative work is available.
+
+Mailing list
+------------
+If you want to subscribe EffecTV crews mailing list, read the description
+at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
+
+Discussion forum
+----------------
+There are three open discussion forum, "Help", "Effects coders forum" and
+"Open discussion".
+
+Help
+	Questions and problems should be posted here.
+Effects coders forum
+	Discussion space for effects coders.
+Open Discussion
+	Free discussion space.
+
+CVS
+---
+CVS repository of EffecTV can be checked out from project page. A short
+description for CVS access can be found at there.
+
+If you want to access as a developer, you should be the member of EffecTV
+developers group. Please ask me to join to developers group.
 
 LICENSING INFORMATION
 =====================
