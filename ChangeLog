@@ -1,3 +1,6 @@
+2001/09/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* tools/palettecheck.c: bug fixes.
+
 2001/09/04	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* tools/{Makefile,README,palettecheck.c}: Added a capability checking tool.
 	* video.c, palette.c: Added some error messages.

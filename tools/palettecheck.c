@@ -81,7 +81,7 @@ int video_init(char *file)
 
 	for(i=0; i<16; i++) {
 		if(video_grab_check(i+1) == 0) {
-			printf("%s\n",palette_name[i+1]);
+			printf("%s\n",palette_name[i]);
 		}
 	}
 
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 	char *devfile = NULL;
 
 	if(argc > 1) {
-		if(strncmp(argv[1], "device", 6) == 0) {
+		if(strncmp(argv[1], "-device", 7) == 0) {
 			if(argc > 2) {
 				devfile = argv[2];
 			} else {
