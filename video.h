@@ -27,6 +27,7 @@ extern int video_area;
 int video_init(char *file, int channel, int norm, int freq, int w, int h);
 void video_quit();
 int video_setformat(int palette);
+int video_grab_check(int palette);
 int video_set_grabformat();
 int video_grabstart();
 int video_grabstop();

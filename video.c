@@ -101,16 +101,16 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h)
 	if(v4lmaxchannel(&vd)) {
 		if(v4lsetchannel(&vd, channel)) return -1;
 	}
-	if(video_set_grabformat()) return -1;
-	if(converter) {
-		if(palette_init()) return -1;
-	}
 	if(v4lmmap(&vd)) return -1;
 	if(v4lgrabinit(&vd, video_width, video_height)) return -1;
 /* quick hack for v4l driver that does not support double buffer capturing */
 	if(vd.mbuf.frames < 2) {
 		fprintf(stderr, "video_init: double buffer capturing with mmap is not supported.\n");
 		return -1;
+	}
+	if(video_set_grabformat()) return -1;
+	if(converter) {
+		if(palette_init()) return -1;
 	}
 
 	atexit(video_quit);
@@ -132,9 +132,28 @@ int video_setformat(int palette)
 }
 
 /* check supported pixel format */
+int video_grab_check(int palette)
+{
+	int ret;
+
+	v4lseterrorlevel(V4L_PERROR_NONE);
+	if(video_setformat(palette)) {
+		ret = -1;
+		goto EXIT;
+	}
+	if(v4lgrabstart(&vd, 0) <0) {
+		ret = -1;
+		goto EXIT;
+	}
+	ret = v4lsync(&vd, 0);
+EXIT:
+	v4lseterrorlevel(V4L_PERROR_ALL);
+	return ret;
+}
+
 int video_set_grabformat()
 {
-	if(v4lsetpalette(&vd, DEFAULT_PALETTE) == 0) {
+	if(video_grab_check(DEFAULT_PALETTE) == 0) {
 		converter = NULL;
 		return 0;
 	}

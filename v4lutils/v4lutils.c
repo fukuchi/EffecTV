@@ -22,6 +22,20 @@
 
 static int v4l_debug = 0; /* 1 = print debug message */
 
+static int v4lperror_level = V4L_PERROR_ALL;
+
+/*
+ * v4lperror - inhouse perror.
+ *
+ * name: device file
+ * vd: v4l device object
+ */
+static void v4lperror(const char *str)
+{
+	if(v4lperror_level >= V4L_PERROR_ALL)
+		perror(str);
+}
+
 /*
  * v4lopen - open the v4l device.
  *
@@ -37,7 +51,7 @@ int v4lopen(char *name, v4ldevice *vd)
 
 	if(v4l_debug) fprintf(stderr, "v4lopen:open...\n");
 	if((vd->fd = open(name,O_RDWR)) < 0) {
-		perror("v4lopen:open");
+		v4lperror("v4lopen:open");
 		return -1;
 	}
 	if(v4lgetcapability(vd))
@@ -47,7 +61,7 @@ int v4lopen(char *name, v4ldevice *vd)
 	for(i=0;i<vd->capability.channels;i++) {
 		vd->channel[i].channel = i;
 		if(ioctl(vd->fd, VIDIOCGCHAN, &(vd->channel[i])) < 0) {
-			perror("v4lopen:VIDIOCGCHAN");
+			v4lperror("v4lopen:VIDIOCGCHAN");
 			return -1;
 		}
 	}
@@ -79,7 +93,7 @@ int v4lgetcapability(v4ldevice *vd)
 {
 	if(v4l_debug) fprintf(stderr, "v4lgetcapability:VIDIOCGCAP...\n");
 	if(ioctl(vd->fd, VIDIOCGCAP, &(vd->capability)) < 0) {
-		perror("v4lopen:VIDIOCGCAP");
+		v4lperror("v4lopen:VIDIOCGCAP");
 		return -1;
 	}
 	if(v4l_debug) fprintf(stderr, "v4lgetcapability:quit\n");
@@ -114,7 +128,7 @@ int v4lsetdefaultnorm(v4ldevice *vd, int norm)
 int v4lgetsubcapture(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		perror("v4lgetsubcapture:VIDIOCGCAPTURE");
+		v4lperror("v4lgetsubcapture:VIDIOCGCAPTURE");
 		return -1;
 	}
 	return 0;
@@ -139,7 +153,7 @@ int v4lsetsubcapture(v4ldevice *vd, int x, int y, int width, int height, int dec
 	vd->capture.decimation = decimation;
 	vd->capture.flags = flags;
 	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		perror("v4lsetsubcapture:VIDIOCSCAPTURE");
+		v4lperror("v4lsetsubcapture:VIDIOCSCAPTURE");
 		return -1;
 	}
 	return 0;
@@ -153,7 +167,7 @@ int v4lsetsubcapture(v4ldevice *vd, int x, int y, int width, int height, int dec
 int v4lgetframebuffer(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCGFBUF, &(vd->buffer)) < 0) {
-		perror("v4lgetframebuffer:VIDIOCGFBUF");
+		v4lperror("v4lgetframebuffer:VIDIOCGFBUF");
 		return -1;
 	}
 	return 0;
@@ -177,7 +191,7 @@ int v4lsetframebuffer(v4ldevice *vd, void *base, int width, int height, int dept
 	vd->buffer.depth = depth;
 	vd->buffer.bytesperline = bpl;
 	if(ioctl(vd->fd, VIDIOCSFBUF, &(vd->buffer)) < 0) {
-		perror("v4lsetframebuffer:VIDIOCSFBUF");
+		v4lperror("v4lsetframebuffer:VIDIOCSFBUF");
 		return -1;
 	}
 	return 0;
@@ -191,7 +205,7 @@ int v4lsetframebuffer(v4ldevice *vd, void *base, int width, int height, int dept
 int v4loverlaystart(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCCAPTURE, 1) < 0) {
-		perror("v4loverlaystart:VIDIOCCAPTURE");
+		v4lperror("v4loverlaystart:VIDIOCCAPTURE");
 		return -1;
 	}
 	vd->overlay = 1;
@@ -206,7 +220,7 @@ int v4loverlaystart(v4ldevice *vd)
 int v4loverlaystop(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCCAPTURE, 0) < 0) {
-		perror("v4loverlaystop:VIDIOCCAPTURE");
+		v4lperror("v4loverlaystop:VIDIOCCAPTURE");
 		return -1;
 	}
 	vd->overlay = 0;
@@ -222,7 +236,7 @@ int v4loverlaystop(v4ldevice *vd)
 int v4lsetchannel(v4ldevice *vd, int ch)
 {
 	if(ioctl(vd->fd, VIDIOCSCHAN, &(vd->channel[ch])) < 0) {
-		perror("v4lsetchannel:VIDIOCSCHAN");
+		v4lperror("v4lsetchannel:VIDIOCSCHAN");
 		return -1;
 	}
 	return 0;
@@ -243,7 +257,7 @@ int v4lsetfreq(v4ldevice *vd, int freq)
 {
 	unsigned long longfreq=(freq*16)/1000;
 	if(ioctl(vd->fd, VIDIOCSFREQ, &longfreq) < 0) {
-		perror("v4lsetchannel:VIDIOCSFREQ");
+		v4lperror("v4lsetchannel:VIDIOCSFREQ");
 		return -1;
 	}
 	return 0;
@@ -270,7 +284,7 @@ int v4lsetchannelnorm(v4ldevice *vd, int ch, int norm)
 int v4lgetpicture(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCGPICT, &(vd->picture)) < 0) {
-		perror("v4lgetpicture:VIDIOCGPICT");
+		v4lperror("v4lgetpicture:VIDIOCGPICT");
 		return -1;
 	}
 	return 0;
@@ -299,7 +313,7 @@ int v4lsetpicture(v4ldevice *vd, int br, int hue, int col, int cont, int white)
 	if(white>=0)
 		vd->picture.whiteness = white;
 	if(ioctl(vd->fd, VIDIOCSPICT, &(vd->picture)) < 0) {
-		perror("v4lsetpicture:VIDIOCSPICT");
+		v4lperror("v4lsetpicture:VIDIOCSPICT");
 		return -1;
 	}
 	return 0;
@@ -316,7 +330,7 @@ int v4lsetpalette(v4ldevice *vd, int palette)
 	vd->picture.palette = palette;
 	vd->mmap.format = palette;
 	if(ioctl(vd->fd, VIDIOCSPICT, &(vd->picture)) < 0) {
-		perror("v4lsetpalette:VIDIOCSPICT");
+		v4lperror("v4lsetpalette:VIDIOCSPICT");
 		return -1;
 	}
 	return 0;
@@ -330,7 +344,7 @@ int v4lsetpalette(v4ldevice *vd, int palette)
 int v4lgetmbuf(v4ldevice *vd)
 {
 	if(ioctl(vd->fd, VIDIOCGMBUF, &(vd->mbuf))<0) {
-		perror("v4lgetmbuf:VIDIOCGMBUF");
+		v4lperror("v4lgetmbuf:VIDIOCGMBUF");
 		return -1;
 	}
 	return 0;
@@ -346,7 +360,7 @@ int v4lmmap(v4ldevice *vd)
 	if(v4lgetmbuf(vd)<0)
 		return -1;
 	if((vd->map = mmap(0, vd->mbuf.size, PROT_READ|PROT_WRITE, MAP_SHARED, vd->fd, 0)) < 0) {
-		perror("v4lmmap:mmap");
+		v4lperror("v4lmmap:mmap");
 		return -1;
 	}
 	return 0;
@@ -360,7 +374,7 @@ int v4lmmap(v4ldevice *vd)
 int v4lmunmap(v4ldevice *vd)
 {
 	if(munmap(vd->map, vd->mbuf.size) < 0) {
-		perror("v4lmunmap:munmap");
+		v4lperror("v4lmunmap:munmap");
 		return -1;
 	}
 	return 0;
@@ -398,7 +412,7 @@ int v4lgrabstart(v4ldevice *vd, int frame)
 	}
 	vd->mmap.frame = frame;
 	if(ioctl(vd->fd, VIDIOCMCAPTURE, &(vd->mmap)) < 0) {
-		perror("v4lgrabstart:VIDIOCMCAPTURE");
+		v4lperror("v4lgrabstart:VIDIOCMCAPTURE");
 		return -1;
 	}
 	vd->framestat[frame] = 1;
@@ -418,7 +432,7 @@ int v4lsync(v4ldevice *vd, int frame)
 		fprintf(stderr, "v4lsync: grabbing to frame %d is not started.\n", frame);
 	}
 	if(ioctl(vd->fd, VIDIOCSYNC, &frame) < 0) {
-		perror("v4lsync:VIDIOCSYNC");
+		v4lperror("v4lsync:VIDIOCSYNC");
 		return -1;
 	}
 	vd->framestat[frame] = 0;
@@ -526,6 +540,16 @@ void v4lprint(v4ldevice *vd)
 	printf("mbuf.frames: %d\n",vd->mbuf.frames);
 	printf("mbuf.offsets[0]: %08x\n",vd->mbuf.offsets[0]);
 	printf("mbuf.offsets[1]: %08x\n",vd->mbuf.offsets[1]);
+}
+
+/*
+ * v4lseterrorlevel - enable/disable perror message output
+ *
+ * flag: V4L_PERROR_NONE or V4L_PERROR_ALL(default)
+ */
+void v4lseterrorlevel(int flag)
+{
+	v4lperror_level = flag;
 }
 
 /*

@@ -270,7 +270,7 @@ void palette_get_supported_converter_toRGB32
 	int i;
 
 	for(i=0; converter_toRGB32_list[i].palette>=0; i++) {
-		if(video_setformat(converter_toRGB32_list[i].palette)) continue;
+		if(video_grab_check(converter_toRGB32_list[i].palette)) continue;
 		*conv = converter_toRGB32_list[i].converter;
 		*conv_hflip = converter_toRGB32_list[i].converter_hflip;
 		if(debug) {

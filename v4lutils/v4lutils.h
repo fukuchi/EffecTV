@@ -14,6 +14,12 @@
 #include <pthread.h>
 
 /*
+ * Error message displaying level
+ */
+#define V4L_PERROR_NONE (0)
+#define V4L_PERROR_ALL (1)
+
+/*
  * Video4Linux Device Structure
  */
 struct _v4ldevice
@@ -69,6 +75,7 @@ extern int v4lgrabf(v4ldevice *);
 extern unsigned char *v4lgetaddress(v4ldevice *);
 extern int v4lreadframe(v4ldevice *, unsigned char *);
 extern void v4lprint(v4ldevice *);
+extern void v4lseterrorlevel(int);
 extern void v4ldebug(int);
 
 #endif /* __V4LUTILS_H__ */

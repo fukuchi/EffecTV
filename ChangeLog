@@ -1,4 +1,9 @@
 2001/06/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* video.c: Changed the logic of detecting supported pixel format.
+	  Restricted error message displaying while this sequence.
+	* Changed version to 0.3.1.
+
+2001/06/16	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Some utility functions(utils.[ch], yuv.c, image.c buffer.o ) were moved
 	  from effects/ to the top directory.
 	* palette.c: convert_YUV422toRGB32() and convert_RGB32toYUV422() were
@@ -18,7 +23,7 @@
 	guarantees, but it works for me.
 	
 2001/06/09	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
-	* Changed verstion to 0.3.0.
+	* Changed version to 0.3.0.
 
 2001/06/07	FUKUCHI	Kentarou	<fukuchi@is.titech.ac.jp>
 	* README, effectv.1: added short description for key binding.
