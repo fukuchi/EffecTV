@@ -20,6 +20,9 @@ static RGB32 *GB65table;
 static RGB32 *GB55table;
 #define CLIP 320
 static unsigned char clip[256 + CLIP * 2];
+static RGB32 *buffer = NULL;
+static int buffer_width = 0;
+static int buffer_height = 0;
 
 int palette_init()
 {
@@ -53,6 +56,22 @@ int palette_init()
 		clip[i] = 255;
 
 	return 0;
+}
+
+static inline void check_buffer(int width, int height)
+{
+	if(buffer_width != width || buffer_height != height) {
+		if(buffer != NULL) {
+			free(buffer);
+		}
+		buffer = (RGB32 *)malloc(width * height * PIXEL_SIZE);
+		if(buffer == NULL) {
+			fprintf(stderr, "Memory allocation failed.\n");
+			exit(1);
+		}
+		buffer_width = width;
+		buffer_height = height;
+	}
 }
 
 static void convert_RGB565toRGB32
@@ -744,12 +763,84 @@ static void convert_RGB32toYUV422
 	}
 }
 
+static void convert_RGB32toYUV422P
+(RGB32 *src, int src_width, int src_height,
+ unsigned char *dest, int dest_width, int dest_height)
+{
+	int length;
+	int i;
+	unsigned char *p, *Y, *U, *V;
+
+	if(src_width == dest_width && src_height == dest_height) {
+		p = (unsigned char *)src;
+	} else {
+		check_buffer(dest_width, dest_height);
+		image_stretch(src, src_width, src_height, buffer, dest_width, dest_height);
+		p = (unsigned char *)buffer;
+	}
+
+	length = dest_width * dest_height / 2;
+	Y = dest;
+	U = dest + dest_width * dest_height;
+	V = U + length;
+
+	for(i=length; i>0; i--) {
+		Y[0] = BtoY[p[0]] + GtoY[p[1]] + RtoY[p[2]] + 16;
+		Y[1] = BtoY[p[4]] + GtoY[p[5]] + RtoY[p[6]] + 16;
+		*U = RtoV[p[0]] + GtoU[p[1]] + RtoU[p[2]] + 128;
+		*V = BtoV[p[0]] + GtoV[p[1]] + RtoV[p[2]] + 128;
+		Y += 2;
+		U++;
+		V++;
+		p += 8;
+	}
+}
+
+static void convert_RGB32toYUV420P
+(RGB32 *src, int src_width, int src_height,
+ unsigned char *dest, int dest_width, int dest_height)
+{
+	int x, y;
+	unsigned char *p, *Y, *U, *V;
+
+	if(src_width == dest_width && src_height == dest_height) {
+		p = (unsigned char *)src;
+	} else {
+		check_buffer(dest_width, dest_height);
+		image_stretch(src, src_width, src_height, buffer, dest_width, dest_height);
+		p = (unsigned char *)buffer;
+	}
+
+	Y = dest;
+	U = dest + dest_width * dest_height;
+	V = U + dest_width * dest_height / 4;
+
+	for(y=0; y<dest_height; y+=2) {
+		for(x=0; x<dest_width; x+=2) {
+			Y[0] = BtoY[p[0]] + GtoY[p[1]] + RtoY[p[2]] + 16;
+			Y[1] = BtoY[p[4]] + GtoY[p[5]] + RtoY[p[6]] + 16;
+			*U = RtoV[p[0]] + GtoU[p[1]] + RtoU[p[2]] + 128;
+			*V = BtoV[p[0]] + GtoV[p[1]] + RtoV[p[2]] + 128;
+			Y += 2;
+			U++;
+			V++;
+			p += 8;
+		}
+		for(x=0; x<dest_width; x++) {
+			*Y++ = BtoY[p[0]] + GtoY[p[1]] + RtoY[p[2]] + 16;
+			p += 4;
+		}
+	}
+}
+
 static const struct palette_converter_fromRGB32_map converter_fromRGB32_list[] = {
 	{VIDEO_PALETTE_RGB32, convert_RGB32toRGB32},
 	{VIDEO_PALETTE_RGB24, convert_RGB32toRGB24},
 	{VIDEO_PALETTE_RGB565, convert_RGB32toRGB565},
 	{VIDEO_PALETTE_RGB555, convert_RGB32toRGB555},
 	{VIDEO_PALETTE_YUV422, convert_RGB32toYUV422},
+	{VIDEO_PALETTE_YUV422P, convert_RGB32toYUV422P},
+	{VIDEO_PALETTE_YUV420P, convert_RGB32toYUV420P},
 	{-1, NULL}
 };
 

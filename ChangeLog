@@ -1,4 +1,7 @@
 2002/08/19	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* palette.c: Added RGB32toYUV422P and RGB32toYUV420P converters.
+
+2002/08/19	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* docs.japanese/README.{1ban,vloopback,vloopback83}: Follows english docs.
 	* main.c, effects/{scroll.c,hintdepint.c}: New effects BrokenTV and
 	  HintDePint.c were added.
