@@ -1,3 +1,6 @@
+2001/11/27	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
+	* vloopback.c: Typo fixes, error messages were added.
+
 2001/10/31	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* debian/rules: Target directory for effectv.1 was changed.
 
