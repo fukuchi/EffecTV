@@ -1,4 +1,4 @@
-EffecTV 0.3.6
+EffecTV 0.3.7
 
 GENERAL INFORMATION
 ===================
@@ -86,7 +86,7 @@ Options
 
 -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
           europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-          southafrica,argentina}
+          southafrica,argentina,canada-cable,australia-optus}
 	Set frequency table of TV tuner. Choose one of them if you want to watch
 	TV on EffecTV.
 
@@ -211,6 +211,10 @@ RevTV
 	Waveform monitor effect.
 RandomDotStereoTV
 	Makes random dot stereo stream from video input.
+LensTV
+	Old school demo lens effect.
+DiffTV
+	Hilights interframe differences.
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------
