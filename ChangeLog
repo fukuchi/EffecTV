@@ -2,6 +2,8 @@
 	* README.ps2: A patch for ov511-1.62 was added.
 	* effects/lens.c: Now lens[] is allocated dynamically. Some optimizations.
 
+	* EffecTV-0.3.7 has been released.
+
 2002/08/08	Sam Mertens		<smertens@users.sf.net>
 	* effects/diff.c: Removed extraneous 'tol: xx,xx,xx' output
 	messages.
