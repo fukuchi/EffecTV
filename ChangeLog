@@ -1,3 +1,7 @@
+2005/01/28	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* main.c:
+	  - Added names of options to all error messages of themselves.
+
 2004/11/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/half.c:
 	  - New effect NervousHalf has been added.

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * utils.c: utilities
  *
@@ -40,10 +40,9 @@ void HSItoRGB(double H, double S, double I, int *r, int *g, int *b)
 {
 	double T,Rv,Gv,Bv;
 
-	T=H;
-	Rv=1+S*sin(T-2*M_PI/3);
-	Gv=1+S*sin(T);
-	Bv=1+S*sin(T+2*M_PI/3);
+	Rv=1+S*sin(H-2*M_PI/3);
+	Gv=1+S*sin(H);
+	Bv=1+S*sin(H+2*M_PI/3);
 	T=255.999*I/2;
 	*r=trunc(Rv*T);
 	*g=trunc(Gv*T);

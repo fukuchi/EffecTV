@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * utils.h: header file for utils
  *
@@ -16,6 +16,7 @@
 #define BLUE(n)  ((n>>0) & 0x000000FF)
 #define RGB(r,g,b) ((0<<24) + (r<<16) + (g <<8) + (b))
 #define INTENSITY(n)	( ( (RED(n)+GREEN(n)+BLUE(n))/3))
+
 /*
  * utils.c
  */
@@ -29,14 +30,24 @@ unsigned int fastrand(void);
 void fastsrand(unsigned int);
 #define inline_fastrand() (fastrand_val=fastrand_val*1103515245+12345)
 
+
 /*
  * buffer.c
  */
 
 int sharedbuffer_init(void);
 void sharedbuffer_end(void);
+
+/* The effects uses shared buffer must call this function at first in
+ * each effect registrar.
+ */
 void sharedbuffer_reset(void);
+
+/* Allocates size bytes memory in shared buffer and returns a pointer to the
+ * memory. NULL is returned when the rest memory is not enough for the request.
+ */
 unsigned char *sharedbuffer_alloc(int);
+
 
 /*
  * image.c
@@ -65,6 +76,7 @@ unsigned char *image_y_under(RGB32 *src);
 unsigned char *image_edge(RGB32 *src);
 
 void image_hflip(RGB32 *src, RGB32 *dest, int width, int height);
+
 
 /*
  * yuv.c

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * palette.c: pixel format converter
  *
@@ -646,18 +646,21 @@ int palette_check_supported_converter_toRGB32
 
 	for(i=0; converter_toRGB32_list[i].palette>=0; i++) {
 		if(palette != converter_toRGB32_list[i].palette) continue;
+
 		if(video_grab_check(converter_toRGB32_list[i].palette)) {
 			*conv = NULL;
 			*conv_hflip = NULL;
 			return 0;
+		} else {
+			*conv = converter_toRGB32_list[i].converter;
+			*conv_hflip = converter_toRGB32_list[i].converter_hflip;
+			if(debug) {
+				printf("format: %d\n",converter_toRGB32_list[i].palette);
+			}
+			return 1;
 		}
-		*conv = converter_toRGB32_list[i].converter;
-		*conv_hflip = converter_toRGB32_list[i].converter_hflip;
-		if(debug) {
-			printf("format: %d\n",converter_toRGB32_list[i].palette);
-		}
-		return 1;
 	}
+
 	return 0;
 }
 

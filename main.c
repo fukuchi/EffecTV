@@ -1,6 +1,8 @@
 /*
  * EffecTV - Realtime Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ *
+ * main.c: start up module
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * main.c: start up module
  *
  */
 
@@ -526,29 +526,29 @@ int main(int argc, char **argv)
 			if(i<argc) {
 				channel = atoi(argv[i]);
 			} else {
-				fprintf(stderr, "missing channel number.\n");
+				fprintf(stderr, "-channel: missing channel number.\n");
 				exit(1);
 			}
 		} else if(strcmp(option, "norm") == 0) {
 			i++;
 			if(i<argc) {
 				if((norm = videox_getnorm(argv[i])) < 0) {
-					fprintf(stderr, "norm %s is not supported.\n", argv[i]);
+					fprintf(stderr, "-norm: norm %s is not supported.\n", argv[i]);
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing norm.\n");
+				fprintf(stderr, "-norm: missing norm.\n");
 				exit(1);
 			}
 		} else if(strcmp(option, "freqtab") == 0) {
 			i++;
 			if(i<argc) {
 				if((freqtab = videox_getfreq(argv[i])) < 0) {
-					fprintf(stderr, "frequency table %s is not supported.\n", argv[i]);
+					fprintf(stderr, "-freqtab: frequency table %s is not supported.\n", argv[i]);
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing frequency table.\n");
+				fprintf(stderr, "-freqtab: missing frequency table.\n");
 				exit(1);
 			}
 		} else if(strncmp(option, "device", 6) == 0) {
@@ -556,7 +556,7 @@ int main(int argc, char **argv)
 			if(i<argc) {
 				devfile = argv[i];
 			} else {
-				fprintf(stderr, "missing device file.\n");
+				fprintf(stderr, "-device: missing device file.\n");
 				exit(1);
 			}
 #ifdef USE_VLOOPBACK
@@ -566,7 +566,7 @@ int main(int argc, char **argv)
 				vloopbackfile = argv[i];
 				vloopback = 1;
 			} else {
-				fprintf(stderr, "missing device file.\n");
+				fprintf(stderr, "-vloopback: missing device file.\n");
 				exit(1);
 			}
 #endif
@@ -583,11 +583,11 @@ int main(int argc, char **argv)
 			if(i<argc) {
 				autoplay = atoi(argv[i]);
 				if(autoplay <= 0) {
-					fprintf(stderr, "interval frames must be greater than 0.\n");
+					fprintf(stderr, "-autoplay: interval frames must be greater than 0.\n");
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing a number of interval frames.\n");
+				fprintf(stderr, "-autoplay: missing a number of interval frames.\n");
 				exit(1);
 			}
 		} else if(strcmp(option, "size") == 0) {
@@ -597,7 +597,7 @@ int main(int argc, char **argv)
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing capturing size specification.\n");
+				fprintf(stderr, "-size: missing capturing size specification.\n");
 				exit(1);
 			}
 		} else if(strcmp(option, "geometry") == 0) {
@@ -607,7 +607,7 @@ int main(int argc, char **argv)
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing screen size specification.\n");
+				fprintf(stderr, "-geometry: missing screen size specification.\n");
 				exit(1);
 			}
 		} else if(strcmp(option, "scale") == 0) {
@@ -615,22 +615,22 @@ int main(int argc, char **argv)
 			if(i<argc) {
 				ss = atoi(argv[i]);
 				if(ss <= 0) {
-					fprintf(stderr, "scale value must be greater than 0.\n");
+					fprintf(stderr, "-scale: scale value must be greater than 0.\n");
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing a scale value.\n");
+				fprintf(stderr, "-scale: missing a scale value.\n");
 				exit(1);
 			}
 		} else if(strncmp(option, "palette", 3) == 0) {
 			i++;
 			if(i<argc) {
 				if((palette = palettex_getpalette(argv[i])) < 0) {
-					fprintf(stderr, "palette %s is not supported.\n",argv[i]);
+					fprintf(stderr, "-palette: palette %s is not supported.\n",argv[i]);
 					exit(1);
 				}
 			} else {
-				fprintf(stderr, "missing palette name.\n");
+				fprintf(stderr, "-palette: missing palette name.\n");
 				exit(1);
 			}
 		} else if(strncmp(option, "debug", 5) == 0) {

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * palette.h: header for pixel format converter
  *
@@ -29,6 +29,7 @@ int palette_check_supported_converter_toRGB32(int, palette_converter_toRGB32 **,
 void palette_get_supported_converter_toRGB32(palette_converter_toRGB32 **, palette_converter_toRGB32 **);
 palette_converter_fromRGB32 *palette_get_supported_converter_fromRGB32(int);
 
+/* palettex - a palette support function */
 
 struct palettelist
 {

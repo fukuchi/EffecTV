@@ -1,12 +1,11 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * yuv.c: YUV(YCbCr) color system utilities
  *
  */
 
-#include <math.h>
 #include "EffecTV.h"
 #include "utils.h"
 
@@ -30,27 +29,24 @@ int BtoY[256],            BtoV[256];
 
 int yuv_init()
 {
-	static int initialized = 0;
 	int i;
 
-	if(!initialized) {
-		for(i=0; i<256; i++) {
-			YtoRGB[i] =  1.164*(i-16);
-			VtoR[i] =  1.596*(i-128);
-			VtoG[i] = -0.813*(i-128);
-			UtoG[i] = -0.391*(i-128);
-			UtoB[i] =  2.018*(i-128);
-			RtoY[i] =  0.257*i;
-			RtoU[i] = -0.148*i;
-			RtoV[i] =  0.439*i;
-			GtoY[i] =  0.504*i;
-			GtoU[i] = -0.291*i;
-			GtoV[i] = -0.368*i;
-			BtoY[i] =  0.098*i;
-			BtoV[i] = -0.071*i;
-		}
-		initialized = 1;
+	for(i=0; i<256; i++) {
+		YtoRGB[i] =  1.164*(i-16);
+		VtoR[i] =  1.596*(i-128);
+		VtoG[i] = -0.813*(i-128);
+		UtoG[i] = -0.391*(i-128);
+		UtoB[i] =  2.018*(i-128);
+		RtoY[i] =  0.257*i;
+		RtoU[i] = -0.148*i;
+		RtoV[i] =  0.439*i;
+		GtoY[i] =  0.504*i;
+		GtoU[i] = -0.291*i;
+		GtoV[i] = -0.368*i;
+		BtoY[i] =  0.098*i;
+		BtoV[i] = -0.071*i;
 	}
+
 	return 0;
 }
 
@@ -58,10 +54,10 @@ unsigned char yuv_RGBtoY(int rgb)
 {
 	int i;
 
-	i = RtoY[(rgb>>16)&0xff];
-	i += GtoY[(rgb>>8)&0xff];
-	i += BtoY[rgb&0xff];
-	i += 16;
+	i =  RtoY[(rgb>>16)&0xff]
+	   + GtoY[(rgb>>8)&0xff]
+	   + BtoY[rgb&0xff]
+	   + 16;
 
 	return i;
 }
@@ -70,10 +66,10 @@ unsigned char yuv_RGBtoU(int rgb)
 {
 	int i;
 
-	i = RtoU[(rgb>>16)&0xff];
-	i += GtoU[(rgb>>8)&0xff];
-	i += RtoV[rgb&0xff];/* BtoU == RtoV */
-	i += 128;
+	i =  RtoU[(rgb>>16)&0xff]
+	   + GtoU[(rgb>>8)&0xff]
+	   + RtoV[rgb&0xff] /* BtoU == RtoV */
+	   + 128;
 
 	return i;
 }
@@ -82,10 +78,10 @@ unsigned char yuv_RGBtoV(int rgb)
 {
 	int i;
 
-	i = RtoV[(rgb>>16)&0xff];
-	i += GtoV[(rgb>>8)&0xff];
-	i += BtoV[rgb&0xff];
-	i += 128;
+	i =  RtoV[(rgb>>16)&0xff]
+	   + GtoV[(rgb>>8)&0xff]
+	   + BtoV[rgb&0xff]
+	   + 128;
 
 	return i;
 }
