@@ -98,4 +98,4 @@ on any other depth screen, images are converted to that depth by SDL, and it
 makes little slow. If you use X11, try to run it in 32 bpp depth mode.
 
 If your video capturing device does not support 32bit pixel format, EffecTV
-converts captured image to 32bit format. This also makes it EffecTV slow.
+converts captured image to 32bit format. This also makes EffecTV slow.
