@@ -1,3 +1,18 @@
+2003/12/19	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/simura.c:
+	  - Default mirroring mode changed.
+	* image.c:
+	  - Two utility functions "image_y_{over,under}()" have been added.
+	* effects/burn.c:
+	  - Added a new mode.
+	* effects/puzzle.c:
+	  - Added auto solver.
+	  - Made block sliding smooth.
+
+2003/12/17	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/{burn,fire,mosaic,noise,ripple,spart}.c:
+	  - Now they grab a background image in draw(), not in start().
+
 2003/12/15	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* Updated Copyrights years to 2003.
 	* EffecTV.h, effect.h, effects/Makefile:

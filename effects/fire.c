@@ -27,14 +27,12 @@ static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];
 static int mode = 0;
+static int bgIsSet;
 
-static int setBackground()
+static int setBackground(RGB32 *src)
 {
-	if(video_syncframe())
-		return -1;
-	image_bgset_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	image_bgset_y(src);
+	bgIsSet = 1;
 
 	return 0;
 }
@@ -87,8 +85,7 @@ static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	memset(buffer, 0, video_area);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -105,6 +102,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	int i, x, y;
 	unsigned char v;
 	unsigned char *diff;
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	switch(mode) {
 		case 0:
@@ -161,7 +162,7 @@ static int event(SDL_Event *event)
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
 			if(mode == 0) {
-				setBackground();
+				bgIsSet = 0;
 			}
 			break;
 		case SDLK_1:

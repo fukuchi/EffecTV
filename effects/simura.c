@@ -90,7 +90,7 @@ effect *simuraRegister()
 static int start()
 {
 	color = 0;
-	mirror = 0;
+	mirror = 1;
 
 	stat = 1;
 	return 0;

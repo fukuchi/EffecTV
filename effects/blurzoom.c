@@ -38,6 +38,7 @@ static char *effectname = "RadioacTV";
 static int stat;
 static RGB32 palette[COLORS];
 static int mode = 0; /* 0=normal/1=strobe/2=strobe2/3=trigger */
+static int bgmode = 0; /* 0=motion / 1=edge */
 static int snapTime = 0;
 static int snapInterval = 3;
 static RGB32 *snapframe;

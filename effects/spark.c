@@ -20,6 +20,7 @@ static int event();
 
 static char *effectname = "SparkTV";
 static int stat;
+static int bgIsSet = 0;
 
 struct shortvec {
 	int x1;
@@ -325,13 +326,10 @@ static struct shortvec detectEdgePoints(unsigned char *diff)
 	}
 }
 
-static int setBackground()
+static int setBackground(RGB32 *src)
 {
-	if(video_syncframe())
-		return -1;
-	image_bgset_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	image_bgset_y(src);
+	bgIsSet = 1;
 
 	return 0;
 }
@@ -366,8 +364,7 @@ static int start()
 	}
 	sparks_head = 0;
 	image_set_threshold_y(40);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	stat = 1;
 	return 0;
@@ -384,6 +381,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	int i;
 	unsigned char *diff;
 	struct shortvec sv;
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	diff = image_diff_filter(image_bgsubtract_y(src));
 	memcpy(dest, src, video_area * sizeof(RGB32));
@@ -411,7 +412,7 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			setBackground();
+			bgIsSet = 0;
 			break;
 		default:
 			break;

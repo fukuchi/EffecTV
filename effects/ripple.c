@@ -33,6 +33,7 @@ static const int point = 16;
 static const int impact = 2;
 static const int decay = 8;
 static const int loopnum = 2;
+static int bgIsSet = 0;
 
 static void setTable()
 {
@@ -46,13 +47,10 @@ static void setTable()
 	}
 }
 
-static int setBackground()
+static int setBackground(RGB32 *src)
 {
-	if(video_syncframe())
-		return -1;
-	image_bgset_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	image_bgset_y(src);
+	bgIsSet = 1;
 
 	return 0;
 }
@@ -95,8 +93,7 @@ static int start()
 	map1 = map;
 	map2 = map + map_h*map_w;
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	stat = 1;
 	return 0;
@@ -114,6 +111,10 @@ static void motiondetect(RGB32 *src)
 	int width;
 	int *p, *q;
 	int x, y, h;
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	diff = image_bgsubtract_update_y(src);
 	width = video_width;

@@ -26,6 +26,8 @@ static char *effectname = "BurningTV";
 static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];
+static int bgIsSet = 0;
+static int mode = 1;
 
 static void makePalette()
 {
@@ -45,13 +47,10 @@ static void makePalette()
 	}
 }
 
-static int setBackground()
+static int setBackground(RGB32 *src)
 {
-	if(video_syncframe())
-		return -1;
-	image_bgset_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	image_bgset_y(src);
+	bgIsSet = 1;
 
 	return 0;
 }
@@ -86,8 +85,7 @@ static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	memset(buffer, 0, video_area);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -106,7 +104,16 @@ static int draw(RGB32 *src, RGB32 *dest)
 	RGB32 a, b;
 	unsigned char *diff;
 
-	diff = image_bgsubtract_y(src);
+	if(!bgIsSet) {
+		setBackground(src);
+	}
+
+	if(mode == 0) {
+		diff = image_bgsubtract_y(src);
+	} else {
+		diff = image_y_over(src);
+	}
+
 	for(x=1; x<video_width-1; x++) {
 		v = 0;
 		for(y=0; y<video_height-1; y++) {
@@ -146,7 +153,17 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			setBackground();
+			if(mode == 0) {
+				bgIsSet = 0;
+			}
+			break;
+		case SDLK_1:
+		case SDLK_KP1:
+			mode = 0;
+			break;
+		case SDLK_2:
+		case SDLK_KP2:
+			mode = 1;
 			break;
 		default:
 			break;

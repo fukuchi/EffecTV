@@ -22,14 +22,12 @@ static int event();
 
 static char *effectname = "MosaicTV";
 static int stat;
+static int bgIsSet = 0;
 
-static int setBackground()
+static int setBackground(RGB32 *src)
 {
-	if(video_syncframe())
-		return -1;
-	image_bgset_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	image_bgset_y(src);
+	bgIsSet = 1;
 
 	return 0;
 }
@@ -55,8 +53,7 @@ effect *mosaicRegister()
 static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	stat = 1;
 	return 0;
@@ -74,6 +71,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	int count;
 	RGB32 *p, *q;
 	unsigned char *diff, *r;
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	diff = image_bgsubtract_y(src);
 
@@ -113,7 +114,7 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			setBackground();
+			bgIsSet = 0;
 			break;
 		default:
 			break;
