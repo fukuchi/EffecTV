@@ -1,4 +1,5 @@
 2005/02/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* iidc1394.patch: An experimental IIDC1394 support patch has been added.
 	* EffecTV-0.3.10 has been released.
 
 2005/02/13	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
