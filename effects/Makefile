@@ -14,7 +14,7 @@ EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
 		  $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
           $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(RDS) \
           $(LENS) $(DIFF) $(SCROLL) $(WARHOL) $(MATRIX) $(PUP) \
-		  $(CHAMELEON) $(OP) $(HALF)
+		  $(CHAMELEON) $(OP) $(HALF) $(SLOFAST)
 
 SUBDIRS =
 
@@ -80,6 +80,7 @@ PUP = pup.o
 CHAMELEON = chameleon.o
 OP = op.o
 HALF = half.o
+SLOFAST = slofast.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)

@@ -84,6 +84,7 @@ static effectRegisterFunc *effects_register_list[] =
 	chameleonRegister,
 	opRegister,
 	nervousHalfRegister,
+	slofastRegister,
 };
 
 static effect **effectsList;
