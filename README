@@ -64,7 +64,8 @@ Options:
 	                 set video norm (default is ntsc)
 	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
 	          europe-west, europe-east,italy,newzealand,australia,ireland,
-		  france,china-bcast} set frequency table
+	          france,china-bcast,southafrica}
+	                 set frequency table
 	-fullscreen      set fullscreen mode
 	-hardware        use direct video memory (if possible)
 	-doublebuffer    enable double buffering mode (if possible)
@@ -131,7 +132,6 @@ SparkTV
 warpTV
 HolographicTV
 	Holographic vision seen in Star Wars.
-
 
 Recording/broadcasting EffecTV
 ------------------------------
@@ -207,9 +207,15 @@ developers group.  Please ask me to join the developers group.
 
 LICENSING INFORMATION
 =====================
-EffecTV is free software. We release this product under the terms of the GPL.
+EffecTV is free software. We release this product under the terms of the
+GNU General Public License version 2. The license is included in the file
+COPYING.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 ---
-FUKUCHI kentarou
+FUKUCHI, kentarou
 E-mail: fukuchi@is.titech.ac.jp
 Web: http://matsu-www.is.titech.ac.jp/~fukuchi/
