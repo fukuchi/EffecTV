@@ -1,3 +1,6 @@
+2002/03/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/cycle.c: Removed meaningless video_getaddress().
+
 2002/03/10	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* main.c: alt_pressed was deprecated. Now it uses SDL_GetModState().
 	* main.c, video.[ch]: Added quite ugly hack to tune video image.
