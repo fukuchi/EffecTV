@@ -22,13 +22,18 @@
 int nervousStart();
 int nervousStop();
 int nervousDraw();
-static int firstflag=1;
+int nervousEvent();
 
 static char *effectname = "NervousTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *planetable[PLANES];
+static int mode = 0;
 static int plane;
+static int stock;
+static int timer;
+static int stride;
+static int readplane;
 
 effect *nervousRegister()
 {
@@ -44,7 +49,7 @@ effect *nervousRegister()
 	entry->start = nervousStart;
 	entry->stop = nervousStop;
 	entry->draw = nervousDraw;
-	entry->event = NULL;
+	entry->event = nervousEvent;
 
 	return entry;
 }
@@ -61,7 +66,9 @@ int nervousStart()
 		planetable[i] = &buffer[video_area*i];
 
 	plane = 0;
-	firstflag=1;
+	stock = 0;
+	timer = 0;
+	readplane = 0;
 	if(video_grabstart())
 		return -1;
 
@@ -83,26 +90,36 @@ int nervousStop()
 
 int nervousDraw()
 {
-	int i, readplane;
 	RGB32 *src, *dest;
 
 	if(video_syncframe())
 		return -1;
+
 	src = (RGB32 *)video_getaddress();
 	memcpy(planetable[plane], src, video_area * PIXEL_SIZE);
+	if(stock < PLANES) {
+		stock++;
+	}
+
 	if(video_grabframe())
 		return -1;
 
-	if (firstflag==1){
-		for(i=0; i<PLANES ; i++){
-			if(i != plane) {
-				memcpy(planetable[i], planetable[plane], video_area * PIXEL_SIZE);
-			}
+	if(mode) {
+		if(timer) {
+			readplane = readplane + stride;
+			while(readplane < 0) readplane += stock;
+			while(readplane >= stock) readplane -= stock;
+			timer--;
+		} else {
+			readplane = inline_fastrand() % stock;
+			stride = inline_fastrand() % 5 - 2;
+			if(stride >= 0) stride++;
+			timer = inline_fastrand() % 6 + 2;
 		}
-		firstflag=0;
+	} else {
+		if(stock > 0)
+			readplane = inline_fastrand() % stock;
 	}
-
-	readplane = inline_fastrand()%PLANES;
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
 			return 0;
@@ -123,5 +140,19 @@ int nervousDraw()
 	plane++;
 	if (plane == PLANES) plane=0;
 
+	return 0;
+}
+
+int nervousEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_SPACE:
+			mode ^= 1;
+			break;
+		default:
+			break;
+		}
+	}
 	return 0;
 }

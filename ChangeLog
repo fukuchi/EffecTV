@@ -1,3 +1,7 @@
+2002/06/16	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/nervous.c: Added another nervous mode. An event handler was
+	  added.
+
 2002/06/03	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/shagadelic.c: Added event handler. Now each RGB plane can be
 	  masked by pressing 1,2,3 key. Some speed-up-hack were added.
