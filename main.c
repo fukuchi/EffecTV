@@ -72,8 +72,10 @@ static effectRegistFunc *effects_register_list[] =
 	rndmRegister,
 	revRegister,
 	rdsRegister,
-    lensRegister,
-    diffRegister
+	lensRegister,
+	diffRegister,
+	scrollRegister,
+	hintdepintRegister
 };
 
 static effect **effectsList;
