@@ -253,7 +253,7 @@ unsigned char *video_getaddress()
 }
 
 /* Change the size of captured image. When both width and height are 0,
- * the size is set to defautl size. */
+ * the size is set to default size. */
 int video_changesize(int width, int height)
 {
 	if(width == 0 || height == 0) {
