@@ -1,3 +1,8 @@
+2002/01/31	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/shagadelic.c: Blue ripple now shrinks.
+	* effects/{baltan.c,streak.c,quark.c}: Memory leak error fixes.
+	* effects/Deinterlace.c: Now it handles stretching buffer correctly.
+
 2002/01/28	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, docs.japanese/README: Added DeinterlaceTV.
 	* CREWS: Added Casandro.
