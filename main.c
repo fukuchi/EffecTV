@@ -62,7 +62,8 @@ static effectRegistFunc *effects_register_list[] =
 	sparkRegister,
 	warpRegister,
 	holoRegister,
-	cycleRegister
+	cycleRegister,
+	rippleRegister
 };
 
 static effect **effectsList;

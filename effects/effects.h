@@ -34,4 +34,4 @@ extern effectRegistFunc sparkRegister;
 extern effectRegistFunc warpRegister;
 extern effectRegistFunc holoRegister;
 extern effectRegistFunc cycleRegister;
-
+extern effectRegistFunc rippleRegister;

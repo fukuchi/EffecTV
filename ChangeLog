@@ -1,12 +1,20 @@
+2001/09/17	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/warp.c: Copied from BSB. (Non maintainer update)
+
+2001/09/16	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/ripple.c: Added RippleTV(experimental).
+
 2001/09/14	Buddy Smith 		<nullset@dookie.net>
 	* Added cycle.c, added
 	  RGB(),RED(),GREEN(),BLUE(),INTENSITY() defines to utils.h
+
 2001/09/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* palette.c: YUV422P,YUV411P,YUV410P format support were added.
 	* effects/spark.c: Visual of sparks was enhanced.
 
 2001/09/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* tools/palettecheck.c: bug fixes. Thanks to Frederic Logier.
+
 2001/09/04	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* tools/{Makefile,README,palettecheck.c}: Added a capability checking tool.
 	* video.c, palette.c: Added some error messages.

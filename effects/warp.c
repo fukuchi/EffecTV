@@ -24,7 +24,7 @@ void initWarp();
 void disposeWarp ();
 void doWarp (int xw, int yw, int cw); 
 
-void *offstable;
+int *offstable;
 Sint32 *disttable;
 Sint32 ctable[1024];
 Sint32 sintable[1024+256];
@@ -87,17 +87,10 @@ void initSinTable () {
 }
 
 void initOffsTable () {
-	Sint32	width, height, len, y;
-	Uint32	*source;
-	void	**offptr;
+	int y;
 	
-	offptr = offstable;
-	width  = video_width; height = video_height;
-	source = (Uint32 *) video_getaddress();
-	len    = video_width;
-	for (y = 0; y < height; y++) {
-		*offptr++ = (void *) source;
-		source += len;
+	for (y = 0; y < video_height; y++) {
+		offstable[y] = y * video_width;
 	}
 }
       
@@ -120,7 +113,7 @@ void initDistTable () {
 
 void initWarp () {
 
-  offstable = malloc (video_height * sizeof (char *));      
+  offstable = (int *)malloc (video_height * sizeof (int));      
   disttable = malloc (video_width * video_height * sizeof (int));
   initSinTable ();
   initOffsTable ();
@@ -170,13 +163,14 @@ void doWarp (int xw, int yw, int cw) {
         Sint32 c,i, x,y, dx,dy, maxx, maxy;
         Sint32 width, height, skip, *ctptr, *distptr;
         Uint32 *destptr;
-	Uint32 **offsptr;
+//	Uint32 **offsptr;
+	RGB32 *src;
 
         ctptr = ctable;
         distptr = disttable;
         width = video_width;
         height = video_height;
-	offsptr = (Uint32 **) offstable;
+	src = (RGB32 *)video_getaddress();
         destptr = (stretch?stretching_buffer:(Uint32 *) screen_getaddress());
 	skip = 0 ; /* video_width*sizeof(RGB32)/4 - video_width;; */
         c = 0;
@@ -202,7 +196,7 @@ void doWarp (int xw, int yw, int cw) {
  	   else if (dy > maxy) dy = maxy; 
 /* 	   printf("f:%d\n",dy); */
 	   /*	   printf("%d\t%d\n",dx,dy); */
- 	   *destptr++ = * (offsptr[dy] + dx); 
+ 	   *destptr++ = src[offstable[dy]+dx]; 
 	 }
 	 destptr += skip;
 	}
