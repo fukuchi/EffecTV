@@ -1,3 +1,6 @@
+2001/09/20	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/ripple.c: More beautification.
+
 2001/09/19	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* frequencies.c: Fixed Italy frequency table, Added Argentina frequency
 	  table. (imported from xawtv-3.62)
