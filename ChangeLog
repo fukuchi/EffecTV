@@ -1,3 +1,10 @@
+2001/02/23	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* global variable "videoinfo" is renamed to "screeninfo" to avoid
+	  confusion.
+
+2001/02/21	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Some global variables for screen setting are move to screen.c
+
 2001/02/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* REAME is renamed to README. (ashamed)
 	* New flags is added: fullscreen, doublebuf, hwsurface.

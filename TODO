@@ -13,10 +13,10 @@ Future works
 ------------
 * Resource sharing. Some effects have same objects separately.
 * Code sharing. Scaling, background subtraction, etc.
-* Optimizing (MMX instractions seems well)
+* Optimizing. (MMX instractions seems well)
 * SDL-1.2
-* Video4Linux2
-* Other platform(BSD, SGI, Sun, MS-Windows,...)
+* Video4Linux2 and other drivers
+* Other platform(BSD, SGI, Sun, MS-Windows, BeOS,...)
 * GUI for changing channel, tuning TV, selecting effects, etc.
 * Horizontal flip
 * Plug-in mechanism

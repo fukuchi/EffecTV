@@ -34,19 +34,26 @@ make
 
 and copy "effectv" to anywhere.
 
-The device file (typically "/dev/video") must be readable and writable
-for you.
+The device file (typically "/dev/video") must be readable and writable for you.
 
 USING
 =====
+
+Before using
+------------
+Before starting up EffecTV, you have to know about your setting.
+* Video norm(NTSC, PAL, etc.) of your video camera or player
+* Channel number of the Video source
+* Video4linux device file name
+You can adjust these settings with command line options. See the next section.
 
 Synopsis
 --------
 effectv [options...]
 
 Options:
-	-device FILE     use device FILE for video4linux
-	-channel NUMBER  channel number of video source
+	-device FILE     use device FILE for video4linux (default is /dev/video)
+	-channel NUMBER  channel number of video source (default is 0)
 	-norm {ntsc,pal,secam,ntsc-jp}	set video norm (default is ntsc)
 	-fullscreen      enable fullscreen mode
 	-double          doubling screen size

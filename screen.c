@@ -15,23 +15,50 @@
 #include "EffecTV.h"
 #include "screen.h"
 
+/* Main screen for displaying video image */
 SDL_Surface *screen = NULL;
-const SDL_VideoInfo *videoinfo;
+
+/* Screeninfo contains some properties of the screen */
+static const SDL_VideoInfo *screeninfo;
 
 /*
- * screen_init - initialize screen
- *
- * depth: bits per pixel
- * flags: screen flags
- * scale: scale of screen size
+ * Screen properties. These variables are immutable after calling screen_init()
  */
-int screen_init(int flags, int scale)
+ /* Scale of screen. Screen size is described in EffecTV.h */
+int scale = 1;
+
+/* Flag for double buffering mode. */
+int doublebuf = 0;
+
+/* Flag for hardware surface mode. */
+int hwsurface = 0;
+
+/* Flag for fullscreen mode. */
+int fullscreen = 0;
+
+/* Screen initialization.
+ * Before calling this function, screen properties(scale, doublebuf, hwsurface,
+ * fullscreen) must be set. In the initializing process, those variables may be
+ * reset and they are never changed again during run time.
+ */
+int screen_init()
 {
+	int flags = 0;
+
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return -1;
 	}
 
+	if(hwsurface) {
+		flags |= SDL_HWSURFACE;
+	}
+	if(fullscreen) {
+		flags |= SDL_FULLSCREEN;
+	}
+	if(doublebuf) {
+		flags |= SDL_DOUBLEBUF;
+	}
 	screen = SDL_SetVideoMode(SCREEN_WIDTH*scale, SCREEN_HEIGHT*scale,
 	                          DEFAULT_DEPTH, flags);
 	if(screen == NULL) {
@@ -55,16 +82,19 @@ int screen_init(int flags, int scale)
 	}
 	SDL_ShowCursor(0);
 	atexit(screen_quit);
-	videoinfo = SDL_GetVideoInfo();
+	screeninfo = SDL_GetVideoInfo();
 	return 0;
 }
 
+/* screen_quit() is called automatically when the process terminates.
+ * This function is registerd in screen_init() by callint atexit(). */
 void screen_quit()
 {
 	SDL_ShowCursor(1);
 	SDL_Quit();
 }
 
+/* Returns bits-per-pixel value. */
 int screen_bpp()
 {
 	if(screen) {
@@ -74,13 +104,17 @@ int screen_bpp()
 	}
 }
 
+/* Set the caption. Typically, captions is displayed in the title bar of
+ * main screen when EffecTV runs in a windowing system. */
 void screen_setcaption(const char *str)
 {
-	if(videoinfo->wm_available) {
+	if(screeninfo->wm_available) {
 		SDL_WM_SetCaption(str, NULL);
 	}
 }
 
+/* Fill the screen with the color. When double buffering mode is enable,
+ * both buffers are cleared. */
 void screen_clear(int color)
 {
 	SDL_FillRect(screen, NULL, color);

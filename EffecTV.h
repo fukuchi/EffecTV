@@ -37,9 +37,4 @@ typedef struct _effect
 
 typedef effect *effectRegistFunc(void);
 
-extern int scale;		/* screen scale */
-extern int doublebuf;	/* flag for doublebuffering */
-extern int fullscreen;	/* flag for fullscreen mode */
-extern int hwsurface;	/* flag for hardware surface */
-
 #endif /* __EFFECTV_H__ */

@@ -21,7 +21,8 @@ static normlist normlists[] =
 	{"ntsc"   , VIDEO_MODE_NTSC},
 	{"pal"    , VIDEO_MODE_PAL},
 	{"secam"  , VIDEO_MODE_SECAM},
-	{"auto"   , 3},
+	{"auto"   , VIDEO_MODE_AUTO},
+/* following values are supproted by bttv driver. */
 	{"pal-nc" , 3},
 	{"pal-m"  , 4},
 	{"pal-n"  , 5},
@@ -58,6 +59,7 @@ int video_setformat(int palette)
 	return v4lsetpalette(&vd, palette);
 }
 
+/* start the continuous grabbing */
 int video_grabstart()
 {
 	if(v4lgrabstart(&vd, 0) < 0)
@@ -67,6 +69,7 @@ int video_grabstart()
 	return 0;
 }
 
+/* stop the continuous grabbing */
 int video_grabstop()
 {
 	if(v4lsync(&vd, 0) < 0)
@@ -76,6 +79,8 @@ int video_grabstop()
 	return 0;
 }
 
+/* change the size of captured image. When both width and height are 0,
+ * the size is set to defautl size. */
 int video_changesize(int width, int height)
 {
 	if(width == 0 || height == 0) {
@@ -89,6 +94,8 @@ int video_changesize(int width, int height)
  * videox_ series are the utility for using video capturing layer.
  * They don't touch a v4ldevice.
  */
+
+/* returns the norm number described in video4linux drivers. */
 int videox_getnorm(char *name)
 {
 	int i;

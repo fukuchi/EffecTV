@@ -1,5 +1,5 @@
 /*
- * EffecTV - Realtime Digital Video Effector
+ * EffecTV - Realtime Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * main.c: start up module
@@ -19,10 +19,6 @@
 #include "effects/utils.h"
 
 int debug = 0;
-int scale = 1;
-int doublebuf = 0;
-int hwsurface = 0;
-int fullscreen = 0;
 
 static effectRegistFunc *effects_register_list[] =
 {
@@ -48,7 +44,7 @@ static int fps = 0;
 
 static void usage()
 {
-	printf("EffecTV - Realtime Digital Video Effector\n");
+	printf("EffecTV - Realtime Video Effector\n");
 	printf("Version: %s\n", VERSION_STRING);
 	printf("Usage: effectv [options...]\n");
 	printf("Options:\n");
@@ -178,7 +174,6 @@ int main(int argc, char **argv)
 	char *option;
 	int channel = 0;
 	int norm = DEFAULT_VIDEO_NORM;
-	int screen_flags = 0;
 	char *devfile = NULL;
 
 	for(i=1;i<argc;i++) {
@@ -214,13 +209,10 @@ int main(int argc, char **argv)
 			}
 		} else if(strncmp(option, "hardware", 8) == 0) {
 			hwsurface = 1;
-			screen_flags |= SDL_HWSURFACE;
 		} else if(strncmp(option, "fullscreen", 4) == 0) {
 			fullscreen = 1;
-			screen_flags |= SDL_FULLSCREEN;
 		} else if(strncmp(option, "doublebuffer", 9) == 0) {
 			doublebuf = 1;
-			screen_flags |= SDL_DOUBLEBUF;
 		} else if(strncmp(option, "double", 6) == 0) {
 			scale = 2;
 		} else if(strncmp(option, "fps", 3) == 0) {
@@ -246,7 +238,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
 	}
-	if(screen_init(screen_flags, scale)) {
+	if(screen_init()) {
 		fprintf(stderr, "Screen initialization failed.\n");
 		exit(1);
 	}
