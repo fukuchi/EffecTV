@@ -178,6 +178,8 @@ static void pits(RGB32 *dest)
 		for(j=0; j<size; j++) {
 			x = x + fastrand()%3-1;
 			y = y + fastrand()%3-1;
+			if(x<0 || x>=width) break;
+			if(y<0 || y>=height) break;
 			dest[y*width + x] = 0xc0c0c0;
 		}
 	}
