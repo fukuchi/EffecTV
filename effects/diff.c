@@ -223,7 +223,7 @@ int diffEvent(SDL_Event *event)
             g_tolerance[2] -= TOLERANCE_STEP;
             g_tolerance[2] &= 0xFF;
             
-            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
+//            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
             break;
         case SDLK_v:
             g_tolerance[0] += TOLERANCE_STEP;
@@ -235,7 +235,7 @@ int diffEvent(SDL_Event *event)
             g_tolerance[2] += TOLERANCE_STEP;
             g_tolerance[2] &= 0xFF;
             
-            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
+//            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
             break;
 		case SDLK_SPACE:
 			break;
