@@ -16,9 +16,9 @@ Future works
 * Optimizing. (MMX instructions seems well)
 * Video4Linux2 and other drivers
 * Other platform(BSD, SGI, Sun, MS-Windows, BeOS,...)
-* GUI for changing channel, tuning TV, selecting effects, etc.
+* GUI for changing channel, tuning TV, selecting effects, etc. (ongoing in BSB)
 * I found that remote controlling is also important for VJ work...
-* Plug-in mechanism
+* Plug-in mechanism (ongoing in BSB)
 * Software deinterlacing
 
 New effect
