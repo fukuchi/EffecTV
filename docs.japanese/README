@@ -41,8 +41,7 @@ libc-2.2.5のパッチか、お使いのディストリビューション用のパッケージを入手してく
 が解決されていますので、それをインストールしてください。
 
 一部のイフェクトの作成に、NASMというアセンブラを使います。NASMについては
-http://www.web-sites.co.uk/nasm
-ftp://ftp.kernel.org/pub/software/devel/nasm/
+http://nasm.sourceforge.net/
 を参照してください。主要なLinuxディストリビューションではパッケージが出ていま
 すので、そちらを利用されると良いでしょう。NASMを使用しない場合は、"config.mk"
 を修正する必要があります。
