@@ -2,8 +2,8 @@
 
 CC = gcc
 NASM = nasm
-CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I../v4lutils `sdl-config --cflags`
-#CFLAGS = -g -Iv4lutils `sdl-config --cflags`
+CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I.. -I../v4lutils `sdl-config --cflags`
+#CFLAGS = -g -I.. -I../v4lutils `sdl-config --cflags`
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 
 LIBEFFECTS = libeffects.a
@@ -11,7 +11,6 @@ EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO)
-UTILS = utils.o buffer.o yuv.o image.o
 SUBDIRS =
 
 %.o: %.c
@@ -57,15 +56,10 @@ THREAD = thread.o
 WARP = warp.o
 HOLO = holo.o
 
-$(LIBEFFECTS): $(EFFECTS) $(UTILS)
-	ar rc $(LIBEFFECTS) $(EFFECTS) $(UTILS)
+$(LIBEFFECTS): $(EFFECTS)
+	ar rc $(LIBEFFECTS) $(EFFECTS)
 
 clean:
 	rm -f *.o $(LIBEFFECTS)
 
-$(EFFECTS): ../EffecTV.h ../screen.h ../video.h utils.h
-
-
-# following rules are for only tests. Please ignore them.
-imagetest: imagetest.o image.o
-	$(CC) -o $@ imagetest.o $(UTILS) ../screen.o ../video.o ../frequencies.o ../vloopback.o ../palette.o $(LIBEFFECTS) $(LIBS)
+$(EFFECTS): ../EffecTV.h ../screen.h ../video.h ../utils.h
