@@ -44,3 +44,5 @@ extern effectRegisterFunc lensRegister;
 extern effectRegisterFunc diffRegister;
 extern effectRegisterFunc scrollRegister;
 extern effectRegisterFunc warholRegister;
+extern effectRegisterFunc matrixRegister;
+extern effectRegisterFunc pupRegister;
