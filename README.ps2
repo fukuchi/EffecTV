@@ -14,7 +14,7 @@ ov511 device driver
 If you want to use ov511 based USB camera, you need to download a new driver
 from:
 
-http://alpha.dyndns.org/ov511/download/ov511-1.60.tar.gz
+http://alpha.dyndns.org/ov511/download/ov511-1.62.tar.gz
 
 Extract it and apply a patch attached to the end of this document. You can
 apply the patch by following command.
@@ -58,9 +58,9 @@ EmotionEngine.
 Patch
 =====
 ----------from here----------
-diff -ruN ov511-1.60.orig/Makefile ov511-1.60/Makefile
---- ov511-1.60.orig/Makefile	Tue Apr  9 19:29:00 2002
-+++ ov511-1.60/Makefile	Sun May  5 09:52:18 2002
+diff -ruN ov511-1.62.orig/Makefile ov511-1.62/Makefile
+--- ov511-1.62.orig/Makefile	Tue Jul 30 19:19:15 2002
++++ ov511-1.62/Makefile	Fri Aug  9 06:26:35 2002
 @@ -1,9 +1,10 @@
  #################################### OPTIONS ##################################
  # Change this to /usr/include if you get header file errors
@@ -74,10 +74,10 @@ diff -ruN ov511-1.60.orig/Makefile ov511-1.60/Makefile
  
  CC = gcc
  
-diff -ruN ov511-1.60.orig/ov511.c ov511-1.60/ov511.c
---- ov511-1.60.orig/ov511.c	Wed Apr 10 17:21:54 2002
-+++ ov511-1.60/ov511.c	Sun May  5 09:53:04 2002
-@@ -158,6 +158,20 @@
+diff -ruN ov511-1.62.orig/ov511.c ov511-1.62/ov511.c
+--- ov511-1.62.orig/ov511.c	Tue Jul 30 19:25:16 2002
++++ ov511-1.62/ov511.c	Fri Aug  9 06:26:35 2002
+@@ -143,6 +143,20 @@
  
  #define FATAL_ERROR(rc) ((rc) < 0 && (rc) != -EPERM)
  
@@ -98,7 +98,7 @@ diff -ruN ov511-1.60.orig/ov511.c ov511-1.60/ov511.c
  /**********************************************************************
   * Module Parameters
   * (See ov511.txt for detailed descriptions of these)
-@@ -508,6 +522,11 @@
+@@ -487,6 +501,11 @@
  }
  
  #else	/* if LINUX_VERSION_CODE <= KERNEL_VERSION(2, 4, 18) */
@@ -110,15 +110,15 @@ diff -ruN ov511-1.60.orig/ov511.c ov511-1.60/ov511.c
  
  /* Given PGD from the address space's page table, return the kernel
   * virtual mapping of the physical memory mapped at ADR.
-diff -ruN ov511-1.60.orig/ov511.h ov511-1.60/ov511.h
---- ov511-1.60.orig/ov511.h	Thu Mar 28 09:26:43 2002
-+++ ov511-1.60/ov511.h	Sun May  5 09:52:18 2002
+diff -ruN ov511-1.62.orig/ov511.h ov511-1.62/ov511.h
+--- ov511-1.62.orig/ov511.h	Tue Jul 30 14:34:40 2002
++++ ov511-1.62/ov511.h	Fri Aug  9 06:27:35 2002
 @@ -6,6 +6,8 @@
  #include <linux/smp_lock.h>
  #include <linux/usb.h>
  
 +#define VID_HARDWARE_OV511 27
 +
- #ifdef OV511_ENABLE_I2C
- 	#include <linux/i2c.h>
- 	#include "i2c-algo-usb.h"
+ #define OV511_DEBUG	/* Turn on debug messages */
+ 
+ #ifdef OV511_DEBUG
