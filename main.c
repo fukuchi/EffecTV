@@ -545,7 +545,7 @@ int main(int argc, char **argv)
 #ifdef USE_VLOOPBACK
 	if(vloopback) {
 		if(vloopback_init(vloopbackfile)) {
-			fprintf(stderr, "Vloopback initialization failed\n");
+			fprintf(stderr, "Vloopback initialization failed.\n");
 			exit(1);
 		}
 	}
