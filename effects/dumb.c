@@ -13,10 +13,10 @@
 int dumbStart();
 int dumbStop();
 int dumbDraw();
+int dumbDrawDouble();
 
 static char *effectname = "DumbTV";
 static int state = 0;
-static int format;
 static int framelength;
 
 effect *dumbRegister()
@@ -29,12 +29,17 @@ effect *dumbRegister()
 	entry->name = effectname;
 	entry->start = dumbStart;
 	entry->stop = dumbStop;
-	entry->draw = dumbDraw;
 	entry->event = NULL;
 	if(scale == 2) {
-		framelength = SCREEN_AREA*PIXEL_SIZE*4;
+		if(hireso) {
+			framelength = SCREEN_AREA*PIXEL_SIZE*4;
+			entry->draw = dumbDraw;
+		} else {
+			entry->draw = dumbDrawDouble;
+		}
 	} else {
 		framelength = SCREEN_AREA*PIXEL_SIZE;
+		entry->draw = dumbDraw;
 	}
 
 	return entry;
@@ -42,9 +47,7 @@ effect *dumbRegister()
 
 int dumbStart()
 {
-	format = video_getformat();
-	video_setformat(VIDEO_PALETTE_RGB32);
-	if(scale == 2){
+	if(hireso) {
 		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
 			return -1;
 	}
@@ -58,8 +61,7 @@ int dumbStop()
 {
 	if(state) {
 		video_grabstop();
-		video_setformat(format);
-		if(scale == 2){
+		if(hireso){
 			video_changesize(0, 0);
 		}
 		state = 0;
@@ -70,8 +72,8 @@ int dumbStop()
 
 int dumbDraw()
 {
-	video_syncframe();
-
+	if(video_syncframe())
+		return -1;
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
 			return video_grabframe();
@@ -81,6 +83,45 @@ int dumbDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
-	return video_grabframe();
+
+	if(video_grabframe())
+		return -1;
+
+	return 0;
+}
+
+int dumbDrawDouble()
+{
+	int x, y;
+	unsigned int *src, *dest;
+	unsigned int v;
+
+	if(video_syncframe())
+		return -1;
+	if(screen_mustlock()) {
+		if(screen_lock() < 0) {
+			return video_grabframe();
+		}
+	}
+	src = (unsigned int *)video_getaddress();
+	dest = (unsigned int *)screen_getaddress();
+	for(y=0; y<SCREEN_HEIGHT; y++) {
+		for(x=0; x<SCREEN_WIDTH; x++) {
+			v = *src++;
+			*dest = v;
+			dest[1] = v;
+			dest[SCREEN_WIDTH*2] = v;
+			dest[SCREEN_WIDTH*2+1] = v;
+			dest += 2;
+		}
+		dest += SCREEN_WIDTH*2;
+	}
+	if(screen_mustlock()) {
+		screen_unlock();
+	}
+
+	if(video_grabframe())
+		return -1;
+
+	return 0;
 }

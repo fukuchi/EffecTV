@@ -21,6 +21,12 @@ v4ldevice vd;
 /* Is TV tuner enabled? */
 int hastuner = 0;
 
+/* Flag for high resolution capturing mode */
+int hireso = 0;
+/* This flag is set when double scaliing is enabled and high resolution mode
+   is disabled */
+int stretch = 0;
+
 static normlist normlists[] =
 {
 	{"ntsc"   , VIDEO_MODE_NTSC},
@@ -38,6 +44,11 @@ static normlist normlists[] =
 static int frequency_table = 0;
 static int TVchannel = 0;
 
+#define MAXWIDTH (vd.capability.maxwidth)
+#define MAXHEIGHT (vd.capability.maxheight)
+#define MINWIDTH (vd.capability.minwidth)
+#define MINHEIGHT (vd.capability.minheight)
+
 /* Channel and norm is determined at initialization time. */
 int video_init(char *file, int channel, int norm, int freq)
 {
@@ -54,6 +65,22 @@ int video_init(char *file, int channel, int norm, int freq)
 		frequency_table = freq;
 		TVchannel = 0;
 		video_setfreq(0);
+	}
+	if(MAXWIDTH < SCREEN_WIDTH || MAXHEIGHT < SCREEN_HEIGHT || MINWIDTH > SCREEN_WIDTH || MINHEIGHT > SCREEN_HEIGHT) {
+		fprintf(stderr, "320x240 capturing mode is not supported.");
+		return -1;
+	}
+	if(scale < 2) {
+		hireso = 0;
+	}
+	if((scale == 2) && !hireso) {
+		stretch = 1;
+	}
+	if(hireso) {
+		if(MAXWIDTH < SCREEN_WIDTH*2 || MAXHEIGHT < SCREEN_HEIGHT*2) {
+			hireso = 0;
+			fprintf(stderr, "Couldn't set high resolution mode.\n");
+		}
 	}
 
 	if(v4lsetchannel(&vd, channel)) return -1;

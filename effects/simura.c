@@ -25,6 +25,7 @@ static int hwidth;
 static int height;
 static int hheight;
 static int fulllength;
+static unsigned int *framebuf;
 static int colortable[26] = {
 	0x000080, 0x0000e0, 0x0000ff,
 	0x008000, 0x00e000, 0x00ff00,
@@ -45,21 +46,22 @@ static const char keytable[26] = {
 	'u', 'j', 'm',
 	'i', 'k', 'o', 'l', 'p'
 };
-static void mirror_no();
-static void mirror_u();
-static void mirror_d();
-static void mirror_r();
-static void mirror_l();
-static void mirror_ul();
-static void mirror_ur();
-static void mirror_dl();
-static void mirror_dr();
+static void mirror_no(unsigned int *, unsigned int *);
+static void mirror_u(unsigned int *, unsigned int *);
+static void mirror_d(unsigned int *, unsigned int *);
+static void mirror_r(unsigned int *, unsigned int *);
+static void mirror_l(unsigned int *, unsigned int *);
+static void mirror_ul(unsigned int *, unsigned int *);
+static void mirror_ur(unsigned int *, unsigned int *);
+static void mirror_dl(unsigned int *, unsigned int *);
+static void mirror_dr(unsigned int *, unsigned int *);
 
 effect *simuraRegister()
 {
 	effect *entry;
 	int i;
 	int tmp[26];
+	int realscale;
 	
 	for(i=0; i<26; i++) {
 		tmp[keytable[i] - 'a'] = colortable[i];
@@ -68,8 +70,17 @@ effect *simuraRegister()
 		colortable[i] = tmp[i];
 	}
 
-	width = SCREEN_WIDTH*scale;
-	height = SCREEN_HEIGHT*scale;
+	if(stretch) {
+		realscale = 1;
+		sharedbuffer_reset();
+		framebuf = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
+		if(framebuf == NULL)
+			return NULL;
+	} else {
+		realscale = scale;
+	}
+	width = SCREEN_WIDTH*realscale;
+	height = SCREEN_HEIGHT*realscale;
 	hwidth = width/2;
 	hheight = height/2;
 	fulllength = width*height;
@@ -92,7 +103,7 @@ int simuraStart()
 {
 	color = 0;
 	mirror = 0;
-	if(scale == 2){
+	if(hireso){
 		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
 			return -1;
 	}
@@ -107,7 +118,7 @@ int simuraStop()
 {
 	if(stat) {
 		video_grabstop();
-		if(scale == 2){
+		if(hireso){
 			video_changesize(0, 0);
 		}
 		stat = 0;
@@ -118,6 +129,8 @@ int simuraStop()
 
 int simuraDraw()
 {
+	unsigned int *src, *dest;
+
 	if(video_syncframe())
 		return -1;
 	if(screen_mustlock()) {
@@ -125,40 +138,48 @@ int simuraDraw()
 			return 0;
 		}
 	}
+	src = (unsigned int *)video_getaddress();
+	if(stretch) {
+		dest = framebuf;
+	} else {
+		dest = (unsigned int *)screen_getaddress();
+	}
 	switch(mirror) {
 	case 1:
-		mirror_l();
+		mirror_l(src, dest);
 		break;
 	case 2:
-		mirror_r();
+		mirror_r(src, dest);
 		break;
 	case 3:
-		mirror_d();
+		mirror_d(src, dest);
 		break;
 	case 4:
-		mirror_dl();
+		mirror_dl(src, dest);
 		break;
 	case 5:
-		mirror_dr();
+		mirror_dr(src, dest);
 		break;
 	case 6:
-		mirror_u();
+		mirror_u(src, dest);
 		break;
 	case 7:
-		mirror_ul();
+		mirror_ul(src, dest);
 		break;
 	case 8:
-		mirror_ur();
+		mirror_ur(src, dest);
 		break;
 	case 0:
 	default:
-		mirror_no();
+		mirror_no(src, dest);
 		break;
+	}
+	if(stretch) {
+		image_stretch(framebuf, (unsigned int *)screen_getaddress());
 	}
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	if(video_grabframe())
 		return -1;
 
@@ -230,25 +251,19 @@ int simuraEvent(SDL_Event *event)
 	return 0;
 }
 
-static void mirror_no()
+static void mirror_no(unsigned int *src, unsigned int *dest)
 {
 	int i;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(i=0; i<fulllength; i++) {
 		dest[i] = src[i] ^ color;
 	}
 }
 
-static void mirror_u()
+static void mirror_u(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<hheight; y++) {
 		for(x=0; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -257,13 +272,10 @@ static void mirror_u()
 	}
 }
 
-static void mirror_d()
+static void mirror_d(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=hheight; y<height; y++) {
 		for(x=0; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -272,13 +284,10 @@ static void mirror_d()
 	}
 }
 
-static void mirror_l()
+static void mirror_l(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<height; y++) {
 		for(x=0; x<hwidth; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -287,13 +296,10 @@ static void mirror_l()
 	}
 }
 
-static void mirror_r()
+static void mirror_r(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<height; y++) {
 		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -302,13 +308,10 @@ static void mirror_r()
 	}
 }
 
-static void mirror_ul()
+static void mirror_ul(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<hheight; y++) {
 		for(x=0; x<hwidth; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -319,13 +322,10 @@ static void mirror_ul()
 	}
 }
 
-static void mirror_ur()
+static void mirror_ur(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=0; y<hheight; y++) {
 		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -336,13 +336,10 @@ static void mirror_ur()
 	}
 }
 
-static void mirror_dl()
+static void mirror_dl(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=hheight; y<height; y++) {
 		for(x=0; x<hwidth; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;
@@ -353,13 +350,10 @@ static void mirror_dl()
 	}
 }
 
-static void mirror_dr()
+static void mirror_dr(unsigned int *src, unsigned int *dest)
 {
 	int x, y;
-	unsigned int *src, *dest;
 
-	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
 	for(y=hheight; y<height; y++) {
 		for(x=hwidth; x<width; x++) {
 			dest[y*width+x] = src[y*width+x] ^ color;

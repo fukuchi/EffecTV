@@ -19,6 +19,8 @@ typedef struct _normlist
 
 extern v4ldevice vd;
 extern int hastuner;
+extern int hireso;
+extern int stretch;
 
 int video_init(char *file, int channel, int norm, int freq);
 void video_quit();

@@ -4,9 +4,9 @@ Last updated 2001/3/12 for release 0.1.5
 
 Contents
 --------
-Q1: I got a distorted/still/shrinked/gray scale image.
-Q2: TV seems to work fine, but how can I change to Composite1 or any other video
-    source?
+Q1: I got a distorted/still/gray scale/shrinked image.
+Q2: TV seems to work fine, but how can I change to Composite1 or any other
+    video source?
 Q3: Some effects do not work.
 Q4: EffecTV is freezed.
 Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
@@ -15,7 +15,7 @@ Q7: How can I capture the video output from EffecTV to harddisk?
 Q8: EffecTV is slow.
 
 ----------
-Q1: I got a distorted/still/shrinked/gray scale image.
+Q1: I got a distorted/still/gray scale/shrinked image.
 
 A: Check the norm of the video source. The option "-norm" changes the norm
 setting of EffecTV. For example, when you have a video camera which employs
@@ -32,8 +32,8 @@ source?
 A: Try
 $ effectv -channel 1
 
-Typically, meaning of number is; 0=TV/1=Composite1/2=S-Video/3=Composite2.
-This depends on the implementation of the video capturing driver. Try several
+Typically, meaning of the number is; 0=TV/1=Composite1/2=S-Video/3=Composite2.
+This depends on the implementation of the video capturing card. Try several
 numbers to detect the right one.
 ----------
 Q3: Some effects do not work.
@@ -77,8 +77,17 @@ tell me your ID. I will add your ID to EffecTV developers group.
 ----------
 Q7: How can I capture the video output from EffecTV to harddisk?
 
-A: Currently capturing to movie file is not supported.
-Porting effects to GStreamer(http://gstreamer.net/) is underway.
+A: EffecTV can output the effected images to loop back device since version
+0.2.0. First, you should download Jeroen Vreeken's vloopback driver from
+http://motion.technolust.cx/vloopback/index.html, and install the module.
+Then, load the module and check the input and output device file of the video
+pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
+
+$ effectv -vloopback /dev/video1
+
+The effected images can be get from /dev/video2. At the moment, EffecTV does
+not handle ioctl messages, so some applications do not work; indeed, EffecTV
+does not work with video pipe.
 ----------
 Q8: EffecTV is slow.
 

@@ -30,6 +30,8 @@ static int blocknum;
 static int spacepos;
 static int spacex;
 static int spacey;
+static int *framebuf;
+static int realscale;
 
 effect *puzzleRegister()
 {
@@ -47,12 +49,22 @@ effect *puzzleRegister()
 	entry->draw = puzzleDraw;
 	entry->event = puzzleEvent;
 
-	blockw = scale*SCREEN_WIDTH/BLOCKSIZE;
-	blockh = scale*SCREEN_HEIGHT/BLOCKSIZE;
+	if(stretch) {
+		realscale = 1;
+		sharedbuffer_reset();
+		framebuf = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
+		if(framebuf == NULL)
+			return NULL;
+	} else {
+		realscale = scale;
+	}
+	blockw = realscale*SCREEN_WIDTH/BLOCKSIZE;
+	blockh = realscale*SCREEN_HEIGHT/BLOCKSIZE;
 	blocknum = blockw*blockh;
 	for(y=0; y<blockh; y++) {
 		for(x=0; x<blockw; x++) {
-			blockoffset[y*blockw+x] = y*BLOCKSIZE*SCREEN_WIDTH*scale + x*BLOCKSIZE;
+			blockoffset[y*blockw+x] = y*BLOCKSIZE*SCREEN_WIDTH*realscale
+			                        + x*BLOCKSIZE;
 		}
 	}
 
@@ -77,7 +89,7 @@ int puzzleStart()
 	spacepos = blocknum-1;
 	spacex = blockw-1;
 	spacey = blockh-1;
-	if(scale == 2){
+	if(hireso){
 		if(video_changesize(SCREEN_WIDTH*2, SCREEN_HEIGHT*2))
 			return -1;
 	}
@@ -91,7 +103,7 @@ int puzzleStop()
 {
 	if(stat) {
 		video_grabstop();
-		if(scale == 2){
+		if(hireso){
 			video_changesize(0, 0);
 		}
 		stat = 0;
@@ -114,7 +126,11 @@ int puzzleDraw()
 		}
 	}
 	src = (unsigned int *)video_getaddress();
-	dest = (unsigned int *)screen_getaddress();
+	if(stretch) {
+		dest = framebuf;
+	} else {
+		dest = (unsigned int *)screen_getaddress();
+	}
 
 	i = 0;
 	for(y=0; y<blockh; y++) {
@@ -126,24 +142,26 @@ int puzzleDraw()
 					for(xx=0; xx<BLOCKSIZE; xx++) {
 						q[xx] = 0;
 					}
-					q += SCREEN_WIDTH*scale;
+					q += SCREEN_WIDTH*realscale;
 				}
 			} else {
 				for(yy=0; yy<BLOCKSIZE; yy++) {
 					for(xx=0; xx<BLOCKSIZE; xx++) {
 						q[xx] = p[xx];
 					}
-					q += SCREEN_WIDTH*scale;
-					p += SCREEN_WIDTH*scale;
+					q += SCREEN_WIDTH*realscale;
+					p += SCREEN_WIDTH*realscale;
 				}
 			}
 			i++;
 		}
 	}
+	if(stretch) {
+		image_stretch(framebuf, (unsigned int *)screen_getaddress());
+	}
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	if(video_grabframe())
 		return -1;
 

@@ -61,7 +61,9 @@ unsigned char RGBtoY(int rgb)
 	i += GtoY[(rgb>>8)&0xff];
 	i += BtoY[rgb&0xff];
 	i += 16;
+/* following saturation check is eliminated because i never be greater than 255
 	if(i>255)
 		return 255;
+*/
 	return i;
 }

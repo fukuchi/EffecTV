@@ -12,11 +12,14 @@
 #include <SDL/SDL.h>
 #include "screen.h"
 #include "video.h"
+#ifdef VLOOPBACK
+#include "vloopback.h"
+#endif
 
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 1
-#define VERSION_PATCH 6
-#define VERSION_STRING "0.1.6"
+#define VERSION_MINOR 2
+#define VERSION_PATCH 0
+#define VERSION_STRING "0.2.0"
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240

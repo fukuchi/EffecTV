@@ -24,7 +24,6 @@ static int state = 0;
 static unsigned int *buffer;
 static unsigned int *planetable[PLANES];
 static int plane;
-static int format;
 
 effect *baltanRegister()
 {
@@ -59,9 +58,6 @@ int baltanStart()
 		planetable[i] = &buffer[SCREEN_AREA*i];
 
 	plane = 0;
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 
@@ -73,7 +69,6 @@ int baltanStop()
 {
 	if(state) {
 		video_grabstop();
-		video_setformat(format);
 		if(buffer)
 			free(buffer);
 		state = 0;
@@ -112,7 +107,6 @@ int baltanDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane++;
 	plane = plane & (PLANES-1);
 
@@ -157,7 +151,6 @@ int baltanDrawDouble()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane++;
 	plane = plane & (PLANES-1);
 

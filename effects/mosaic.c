@@ -22,7 +22,6 @@ int mosaicEvent();
 
 static char *effectname = "MosaicTV";
 static int stat;
-static int format;
 static unsigned int *background;
 static unsigned char abstable[65536];
 
@@ -80,9 +79,6 @@ effect *mosaicRegister()
 
 int mosaicStart()
 {
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 	if(setBackground())
@@ -96,7 +92,6 @@ int mosaicStop()
 {
 	if(stat) {
 		video_grabstop();
-		video_setformat(format);
 		stat = 0;
 	}
 
@@ -145,7 +140,6 @@ int mosaicDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	if(video_grabframe())
 		return -1;
 
@@ -203,7 +197,6 @@ int mosaicDrawDouble()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	if(video_grabframe())
 		return -1;
 

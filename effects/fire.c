@@ -23,11 +23,25 @@ int fireEvent(SDL_Event *);
 
 static char *effectname = "FireTV";
 static int state = 0;
-static int format;
 static unsigned char *background;
 static unsigned char *buffer;
 static unsigned int palette[256];
 static unsigned char abstable[65536];
+#ifdef ENABLE_PALETTECHANGE
+static int format;
+#endif
+
+#ifndef ENABLE_PALETTECHANGE
+inline static unsigned char inline_RGBtoY(int rgb)
+{
+	int i;
+
+	i = RtoY[(rgb>>16)&0xff];
+	i += GtoY[(rgb>>8)&0xff];
+	i += BtoY[rgb&0xff];
+	return i;
+}
+#endif
 
 static void makeAbstable()
 {
@@ -63,9 +77,21 @@ static void makePalette()
 
 static int setBackground()
 {
+#ifndef ENABLE_PALETTECHANGE
+	int i;
+	unsigned int *src;
+#endif
+
 	if(video_syncframe())
 		return -1;
+#ifdef ENABLE_PALETTECHANGE
 	bcopy(video_getaddress(), background, SCREEN_AREA);
+#else
+	src = (unsigned int *)video_getaddress();
+	for(i=0; i<SCREEN_AREA; i++) {
+		background[i] = inline_RGBtoY(src[i]);
+	}
+#endif
 	if(video_grabframe())
 		return -1;
 
@@ -83,6 +109,8 @@ effect *fireRegister()
 		return NULL;
 	}
 	bzero(buffer, SCREEN_AREA);
+
+	yuvTableInit();
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -105,9 +133,11 @@ int fireStart()
 {
 	bzero(buffer, SCREEN_AREA);
 	screen_clear(0);
+#ifdef ENABLE_PALETTECHANGE
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_GREY))
 		return -1;
+#endif
 	if(video_grabstart())
 		return -1;
 	if(setBackground())
@@ -121,7 +151,9 @@ int fireStop()
 {
 	if(state) {
 		video_grabstop();
+#ifdef ENABLE_PALETTECHANGE
 		video_setformat(format);
+#endif
 		state = 0;
 	}
 
@@ -141,7 +173,12 @@ int fireDraw()
 	dest = (unsigned int *)screen_getaddress();
 
 	for(i=0; i<SCREEN_WIDTH*(SCREEN_HEIGHT-1); i++) {
+#ifdef ENABLE_PALETTECHANGE
 		buffer[i] |= abstable[src[i]<<8|background[i]];
+#else
+		v = inline_RGBtoY(((unsigned int *)src)[i]);
+		buffer[i] |= abstable[v<<8|background[i]];
+#endif
 	}
 	if(video_grabframe())
 		return -1;
@@ -183,7 +220,6 @@ int fireDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 
 	return 0;
 }

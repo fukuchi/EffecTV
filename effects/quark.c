@@ -23,7 +23,6 @@ static int state = 0;
 static unsigned int *buffer;
 static unsigned int *planetable[PLANES];
 static int plane;
-static int format;
 
 effect *quarkRegister()
 {
@@ -56,9 +55,6 @@ int quarkStart()
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[SCREEN_AREA*i];
 	plane = PLANES - 1;
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 
@@ -70,7 +66,6 @@ int quarkStop()
 {
 	if(state) {
 		video_grabstop();
-		video_setformat(format);
 		if(buffer)
 			free(buffer);
 		state = 0;
@@ -106,7 +101,6 @@ int quarkDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane--;
 	if(plane<0)
 		plane = PLANES - 1;
@@ -146,7 +140,6 @@ int quarkDrawDouble()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane--;
 	if(plane<0)
 		plane = PLANES - 1;

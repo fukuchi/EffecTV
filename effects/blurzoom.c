@@ -20,7 +20,6 @@
 int blurzoomStart();
 int blurzoomStop();
 int blurzoomDraw();
-int blurzoomDrawDouble();
 
 extern void blurzoomcore();
 
@@ -30,7 +29,6 @@ int blurzoomy[SCREEN_HEIGHT];
 
 static char *effectname = "RadioacTV";
 static int stat;
-static int format;
 static unsigned int *background;
 static unsigned int palette[COLORS];
 static unsigned char abstable[65536];
@@ -126,9 +124,6 @@ effect *blurzoomRegister()
 int blurzoomStart()
 {
 	bzero(blurzoombuf, SCREEN_AREA*2);
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 	if(video_syncframe())
@@ -144,7 +139,6 @@ int blurzoomStop()
 {
 	if(stat) {
 		video_grabstop();
-		video_setformat(format);
 		stat = 0;
 	}
 
@@ -205,7 +199,6 @@ int blurzoomDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 
 	return 0;
 }

@@ -23,6 +23,12 @@ void sharedbuffer_reset();
 unsigned char *sharedbuffer_alloc(int);
 
 /*
+ * image.c
+ */
+
+void image_stretch(unsigned int *, unsigned int *);
+
+/*
  * yuv.c
  */
 

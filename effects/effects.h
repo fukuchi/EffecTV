@@ -22,3 +22,5 @@ extern effectRegistFunc puzzleRegister;
 extern effectRegistFunc predatorRegister;
 extern effectRegistFunc spiralRegister;
 extern effectRegistFunc simuraRegister;
+extern effectRegistFunc edgeRegister;
+extern effectRegistFunc shagadelicRegister;

@@ -23,7 +23,6 @@ int burnEvent(SDL_Event *);
 
 static char *effectname = "BurningTV";
 static int state = 0;
-static int format;
 static unsigned char *background;
 static unsigned char *buffer;
 static unsigned int palette[256];
@@ -62,6 +61,7 @@ static int setBackground()
 {
 	int i;
 	unsigned char *src;
+
 	if(video_syncframe())
 		return -1;
 	src = video_getaddress();
@@ -106,9 +106,6 @@ effect *burnRegister()
 int burnStart()
 {
 	bzero(buffer, SCREEN_AREA);
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 	if(setBackground())
@@ -122,7 +119,6 @@ int burnStop()
 {
 	if(state) {
 		video_grabstop();
-		video_setformat(format);
 		state = 0;
 	}
 	return 0;
@@ -195,7 +191,6 @@ int burnDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 
 	return 0;
 }

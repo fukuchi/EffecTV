@@ -39,7 +39,6 @@ static int state = 0;
 static unsigned int *buffer;
 static unsigned int *planetable[PLANES];
 static int plane;
-static int format;
 static int *phasetable;
 static int *ptab;
 static int mode = 0;
@@ -110,9 +109,6 @@ int spiralStart()
     
 	plane = PLANE_MAX;
 	ptab = phasetable + mode*SCREEN_AREA;
-	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32))
-		return -1;
 	if(video_grabstart())
 		return -1;
 
@@ -146,7 +142,6 @@ int spiralStop()
 {
 	if(state) {
 		video_grabstop();
-		video_setformat(format);
 		if(buffer)
 			free(buffer);
 		state = 0;
@@ -186,7 +181,6 @@ int spiralDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane--;
 	plane &= PLANE_MASK;
 
@@ -224,7 +218,6 @@ int spiralDrawDouble()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 	plane--;
 	plane &= PLANE_MASK;
 

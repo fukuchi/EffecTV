@@ -20,17 +20,24 @@ int predatorEvent(SDL_Event *);
 
 static char *effectname = "PredatorTV";
 static int state = 0;
-static int format;
 static unsigned int *bgimage;
 static unsigned char *bgvalue;
 static unsigned char *buffer;
+#ifdef ENABLE_PALETTECHANGE
+static int format;
+#endif
 
-static unsigned int trunc(int v)
+#ifndef ENABLE_PALETTECHANGE
+inline static unsigned char inline_RGBtoY(int rgb)
 {
-	if(v<0) return 0;
-	if(v>255) return 255;
-	return v;
+	int i;
+
+	i = RtoY[(rgb>>16)&0xff];
+	i += GtoY[(rgb>>8)&0xff];
+	i += BtoY[rgb&0xff];
+	return i;
 }
+#endif
 
 static int setBackground()
 {
@@ -41,11 +48,13 @@ static int setBackground()
 	screen_clear(0);
 	dest = (unsigned int *)bgvalue;
 
+#ifdef ENABLE_PALETTECHANGE
 	video_grabstop();
 	if(video_setformat(VIDEO_PALETTE_RGB32))
 		return -1;
 	if(video_grabstart())
 		return -1;
+#endif
 /*
  * grabs 4 frames and composites them to get a quality background image
  */
@@ -74,14 +83,20 @@ static int setBackground()
 /* step 5: add buffer-3 to buffer-1 */
 	for(i=0; i<SCREEN_AREA; i++) {
 		bgimage[i] = (bgimage[i]&dest[i])+(((bgimage[i]^dest[i])&0xfefefe)>>1);
+#ifdef ENABLE_PALETTECHANGE
 		bgvalue[i] = RGBtoY(bgimage[i]);
+#else
+		bgvalue[i] = inline_RGBtoY(bgimage[i]);
+#endif
 	}
+#ifdef ENABLE_PALETTECHANGE
 	if(video_grabstop())
 		return -1;
 	if(video_setformat(VIDEO_PALETTE_GREY))
 		return -1;
 	if(video_grabstart())
 		return -1;
+#endif
 
 	for(i=0; i<2; i++) {
 		if(screen_mustlock()) {
@@ -144,7 +159,9 @@ effect *predatorRegister()
 
 int predatorStart()
 {
+#ifdef ENABLE_PALETTE_CHANGE
 	format = video_getformat();
+#endif
 	if(video_grabstart())
 		return -1;
 	if(setBackground())
@@ -158,7 +175,9 @@ int predatorStop()
 {
 	if(state) {
 		video_grabstop();
+#ifdef ENABLE_PALETTECHANGE
 		video_setformat(format);
+#endif
 		state = 0;
 	}
 	return 0;
@@ -168,16 +187,28 @@ int predatorDraw()
 {
 	int i, x, y;
 	unsigned int v;
+#ifdef ENABLE_PALETTECHANGE
 	unsigned char *src;
+#else
+	unsigned int *src;
+#endif
 	unsigned int *dest;
 
 	if(video_syncframe())
 		return -1;
+#ifdef ENABLE_PALETTECHANGE
 	src = video_getaddress();
+#else
+	src = (unsigned int *)video_getaddress();
+#endif
 	dest = (unsigned int *)screen_getaddress();
 
 	for(i=0; i<SCREEN_AREA; i++) {
+#ifdef ENABLE_PALETTECHANGE
 		v = ((int)src[i] - (int)bgvalue[i] + MAGIC_THRESHOLD)&0x7fffffff;
+#else
+		v = ((int)(inline_RGBtoY(src[i])) - (int)bgvalue[i] + MAGIC_THRESHOLD)&0x7fffffff;
+#endif
 		buffer[i] = (v - MAGIC_THRESHOLD*2)>>31;
 	}
 	if(video_grabframe())
@@ -224,7 +255,6 @@ int predatorDraw()
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
-	screen_update();
 
 	return 0;
 }

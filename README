@@ -1,4 +1,4 @@
-EffecTV 0.1.6
+EffecTV 0.2.0
 
 GENERAL INFORMATION
 ===================
@@ -22,6 +22,9 @@ CONFIG_VIDEO_DEV and enable drivers for your video capture card.
 
 Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.strusel007.de/linux/bttv/.
+
+Vloopback device driver is required for video loop back feature.
+http://motion.technolust.cx/vloopback/index.html
 
 NASM is required to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
@@ -63,12 +66,15 @@ Options:
 	-double          doubling screen size
 	-hardware        use direct video memory(if possible)
 	-fps             show frames/sec
+	-vloopback FILE  use device FILE for output of vloopback device
+	-hireso          set high resolution mode for double scaling mode
 
 Key
 ---
 Up/Down		change effect.
 Right/Left	change TV channel.
-Space		capture a background image(for FireTV, BurningTV and PredatorTV).
+Space		capture a background image(for FireTV, BurningTV, etc.).
+            change mode(for SpiralTV)
 Escape		Quit
 
 More details for each effects are described in documents package.
@@ -98,10 +104,28 @@ PuzzleTV
 	Scrambles the picture.
 PredatorTV
 	Makes incoming objects invisible.
-SimuraTV
-	Color distortion and image mirroring.
 SpiralTV
 	Spiraling effect.
+SimuraTV
+	Color distortion and image mirroring.
+EdgeTV
+	Detects edge and display it like good old computer way.
+ShagadelicTV
+	Go back to swinging '60s!
+
+Recording/broadcasting EffecTV
+------------------------------
+EffecTV supports video loop back device since version 0.2.0. First, load the
+vloopback device driver module and check the input/output device file of the
+video pipe (typically it will be /dev/video1 and /dev/video2).
+Then, run EffecTV 
+
+$ effectv -vloopback /dev/video1
+
+The effected images can be get from /dev/video2. At the moment, EffecTV does
+not handle ioctl messages, so some applications do not work; indeed, EffecTV
+does not work with video pipe. XawTV and webcam that comes with XawTV works
+good.
 
 CONTACT
 =======
@@ -144,10 +168,16 @@ Effects coders forum
 Open Discussion
 	Free discussion space.
 
+BackStage Branch
+----------------
+BackStage Branch is the experimental development branch of EffecTV. New
+effects and new features come here at first.
+
 CVS
 ---
-CVS repository of EffecTV can be checked out from project page. A short
-description for CVS access can be found at there.
+CVS repository of EffecTV can be checked out from project page. Both main trunc
+and BackStage Branch are stored at there. A short description for CVS access
+can be found at there.
 
 If you want to access as a developer, you should be the member of EffecTV
 developers group. Please ask me to join to developers group.

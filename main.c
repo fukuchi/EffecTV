@@ -35,7 +35,9 @@ static effectRegistFunc *effects_register_list[] =
 	puzzleRegister,
 	predatorRegister,
 	spiralRegister,
-	simuraRegister
+	simuraRegister,
+	edgeRegister,
+	shagadelicRegister
 };
 
 static effect **effectsList;
@@ -50,17 +52,22 @@ static void usage()
 	printf("Version: %s\n", VERSION_STRING);
 	printf("Usage: effectv [options...]\n");
 	printf("Options:\n");
-	printf("\tdevice FILE\tuse device FILE for video4linux\n");
-	printf("\tchannel NUMBER\tchannel number of video source\n");
-	printf("\tnorm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}\tset video norm\n");
-	printf("\tfreqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,
-		japan-cable,europe-west,europe-east,italy,newzealand,
-		australia,ireland,france,china-bcast}\tset frequency table\n");
-	printf("\tfullscreen\tenable fullscreen mode\n");
-	printf("\tdouble\t\tdoubling screen size\n");
-	printf("\thardware\tuse direct video memory(if possible)\n");
-	printf("\tdoublebuffer\tenable double buffering mode(if possible)\n");
-	printf("\tfps\t\tshow frames/sec\n");
+	printf("  device FILE     use device FILE for video4linux\n");
+	printf("  channel NUMBER  channel number of video source\n");
+	printf("  norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
+                  set video norm\n");
+	printf("  freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
+           europe-east,italy,newzealand,australia,ireland,france,china-bcast}
+                  set frequency table\n");
+	printf("  fullscreen      enable fullscreen mode\n");
+	printf("  double          doubling screen size\n");
+	printf("  hardware        use direct video memory(if possible)\n");
+	printf("  doublebuffer    enable double buffering mode(if possible)\n");
+	printf("  fps             show frames/sec\n");
+#ifdef VLOOPBACK
+	printf("  vloopback FILE  use device FILE for output of vloopback device\n");
+#endif
+	printf("  hireso          set high resolution mode for double scaling mode\n");
 }
 
 static void drawErrorPattern()
@@ -131,7 +138,16 @@ static int startTV()
 	}
 	while(flag) {
 		if(flag == 1) {
-			flag = (currentEffect->draw())?2:1;
+			if(currentEffect->draw()) {
+				flag = 2;
+			} else {
+#ifdef VLOOPBACK
+				if(vloopback) {
+					vloopback_push();
+				}
+#endif
+				screen_update();
+			}
 		}
 		if (flag == 2) {
 			drawErrorPattern();
@@ -188,6 +204,9 @@ int main(int argc, char **argv)
 	int norm = DEFAULT_VIDEO_NORM;
 	int freqtab = 0;
 	char *devfile = NULL;
+#ifdef VLOOPBACK
+	char *vloopbackfile = NULL;
+#endif
 
 	for(i=1;i<argc;i++) {
 		option = argv[i];
@@ -231,6 +250,17 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing device file.\n");
 				exit(1);
 			}
+#ifdef VLOOPBACK
+		} else if(strncmp(option, "vloopback", 5) == 0) {
+			i++;
+			if(i<argc) {
+				vloopbackfile = argv[i];
+				vloopback = 1;
+			} else {
+				fprintf(stderr, "missing device file.\n");
+				exit(1);
+			}
+#endif
 		} else if(strcmp(option, "hardware") == 0) {
 			hwsurface = 1;
 		} else if(strncmp(option, "fullscreen", 4) == 0) {
@@ -239,6 +269,8 @@ int main(int argc, char **argv)
 			doublebuf = 1;
 		} else if(strcmp(option, "double") == 0) {
 			scale = 2;
+		} else if(strcmp(option, "hireso") == 0) {
+			hireso = 1;
 		} else if(strcmp(option, "fps") == 0) {
 			fps = 1;
 		} else if(strncmp(option, "help", 1) == 0) {
@@ -266,6 +298,14 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Screen initialization failed.\n");
 		exit(1);
 	}
+#ifdef VLOOPBACK
+	if(vloopback) {
+		if(vloopback_init(vloopbackfile)) {
+			fprintf(stderr, "Vloopback initialization failed\n");
+			exit(1);
+		}
+	}
+#endif
 	if(registEffects() == 0) {
 		fprintf(stderr, "No available effect.\n");
 		exit(1);
