@@ -25,6 +25,7 @@
 #include "utils.h"
 
 
+#ifndef PS2
 int nemoStart();
 int nemoStop();
 int nemoDraw();
@@ -47,7 +48,7 @@ static int g_cursor_local = SDL_DISABLE;
 
 void nemoSetName()
 {
-            sprintf(effectname, "Nemo");
+            sprintf(effectname, "NemoTV");
             screen_setcaption(effectname);
 }
     
@@ -229,3 +230,10 @@ int nemoEvent(SDL_Event *event)
 }
 #endif
 // end
+#else /* PS2 */
+effect *nemoRegister()
+{
+	fprintf(stderr, "Sorry, NemoTV is not supported on PS2.\n");
+	return NULL;
+}
+#endif /* PS2 */

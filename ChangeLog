@@ -1,3 +1,7 @@
+2002/04/01	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/nemo.c: Fixed the title. Added contional macro to disable this
+	  effect if the target architecture is set to ps2-linux.
+
 2002/03/31	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README.vloopback90: Revised the patch included.
 	* Makefile, config.mk: New macro variable LIBS.extra was added for non x86

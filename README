@@ -30,7 +30,7 @@ vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback.
 
 *NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
 distro. Vloopback support does not work on early version of libc-2.2.5. If you
-are Debian GNU/Linux user and installed "woody", install libc-6_2.2.5-4 or
+are Debian GNU/Linux user and installed "woody", install libc6_2.2.5-4 or
 later.
 
 NASM can be used to assemble some modules. See following URL:
