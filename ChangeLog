@@ -1,8 +1,14 @@
+2001/08/29	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* burn.c: a bug fix of the little optimization.
+
+2001/08/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* burn.c: A little optimization.
+
 2001/07/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* EffecTV.h: Added definitions of SDL_DISABLE and SDL_ENABLE for SDL-1.1.x
 	  (those macro values are defined since SDL-1.2.0).
 	  Thanks to Kazuyuki Shudo.
-	* screen. c: Now it uses SDL_DISABLE and SDL_ENABLE instead of 0 and 1.
+	* screen.c: Now it uses SDL_DISABLE and SDL_ENABLE instead of 0 and 1.
 	* effectv.1: typo fixed.
 
 2001/07/7	FUKUCHI	Kentafou	<fukuchi@is.titech.ac.jp>

@@ -33,7 +33,7 @@ static void makePalette()
 
 	for(i=0; i<MaxColor; i++) {
 		HSItoRGB(4.6-1.5*i/MaxColor, (double)i/MaxColor, (double)i/MaxColor, &r, &g, &b);
-		palette[i] = (r<<16)|(g<<8)|b;
+		palette[i] = ((r<<16)|(g<<8)|b) & 0xfefeff;
 	}
 	for(i=MaxColor; i<256; i++) {
 		if(r<255)r++;if(r<255)r++;if(r<255)r++;
@@ -41,7 +41,7 @@ static void makePalette()
 		if(g<255)g++;
 		if(b<255)b++;
 		if(b<255)b++;
-		palette[i] = (r<<16)|(g<<8)|b;
+		palette[i] = ((r<<16)|(g<<8)|b) & 0xfefeff;
 	}
 }
 
@@ -153,9 +153,7 @@ int burnDraw()
 	i = 1;
 	for(y=0; y<video_height; y++) {
 		for(x=1; x<video_width-1; x++) {
-			a = src[i] & 0xfefeff;
-			b = palette[buffer[i]] & 0xfefeff;
-			a += b;
+			a = (src[i] & 0xfefeff) + palette[buffer[i]];
 			b = a & 0x1010100;
 			dest[i] = a | (b - (b >> 8));
 			i++;
