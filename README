@@ -70,7 +70,7 @@ Options:
 	                 set video norm (default is ntsc)
 	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
 	          europe-west, europe-east,italy,newzealand,australia,ireland,
-	          france,china-bcast,southafrica}
+	          france,china-bcast,southafrica,argentina}
 	                 set frequency table
 	-fullscreen      set fullscreen mode
 	-hardware        use direct video memory (if possible)

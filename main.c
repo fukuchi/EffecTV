@@ -85,7 +85,7 @@ static void usage()
                    set video norm\n");
 	printf("  -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
             europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-            southafrica}
+            southafrica,argentina}
                    set frequency table\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");
