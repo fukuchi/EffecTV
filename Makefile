@@ -46,8 +46,8 @@ $(PROGRAM): $(OBJS) $(LIBEFFECTS) v4lutils/libv4lutils.a
 $(OBJS): EffecTV.h screen.h video.h palette.h frequencies.h vloopback.h
 
 install: all-am
-	$(INSTALL) -s $(PROGRAM) $(bindir)
-	$(INSTALL) effectv.1 $(mandir)/man1
+	$(INSTALL) -s $(PROGRAM) $(bindir)/
+	$(INSTALL) effectv.1 $(mandir)/man1/
 
 clean:
 	rm -f *.o $(PROGRAM)

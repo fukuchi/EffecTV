@@ -1,6 +1,8 @@
 2001/10/31	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* debian/rules: Target directory for effectv.1 was changed.
 
+	* EffecTV-0.3.3 is released.
+
 2001/10/30	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* doc.japanese/README.ps2: Typo fix.
 
