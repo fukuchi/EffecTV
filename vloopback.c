@@ -240,10 +240,14 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 		{
 			struct video_mmap *vidmmap = arg;
 
-			if(vidmmap->width > MAX_WIDTH || vidmmap->height > MAX_HEIGHT)
+			if(vidmmap->width > MAX_WIDTH || vidmmap->height > MAX_HEIGHT) {
+				fprintf(stderr, "vloopback:requested capture size is to big(%dx%d).\n",vidmmap->width, vidmmap->height);
 				return EINVAL;
-			if(vidmmap->width < MIN_WIDTH || vidmmap->height < MIN_HEIGHT)
+			}
+			if(vidmmap->width < MIN_WIDTH || vidmmap->height < MIN_HEIGHT) {
+				fprintf(stderr, "vloopback:requested capture size is to small(%dx%d).\n",vidmmap->width, vidmmap->height);
 				return EINVAL;
+			}
 			if(vidmmap->format != pixel_format) {
 				converter = palette_get_supported_converter_fromRGB32(vidmmap->format);
 				if(converter == NULL) {
