@@ -92,9 +92,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 			q = *(src - 4);
 
 /* difference between the current pixel and right neighbor. */
-			r = ((int)(p&0xff0000) - (int)(q&0xff0000))>>16;
-			g = ((int)(p&0xff00) - (int)(q&0xff00))>>8;
-			b = (int)(p&0xff) - (int)(q&0xff);
+			r = ((int)(p & 0xff0000) - (int)(q & 0xff0000))>>16;
+			g = ((int)(p & 0x00ff00) - (int)(q & 0x00ff00))>>8;
+			b = ((int)(p & 0x0000ff) - (int)(q & 0x0000ff));
 			r *= r; /* Multiply itself and divide it with 16, instead of */
 			g *= g; /* using abs(). */
 			b *= b;
@@ -108,9 +108,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 /* difference between the current pixel and upper neighbor. */
 			q = *(src - video_width*4);
-			r = ((int)(p&0xff0000) - (int)(q&0xff0000))>>16;
-			g = ((int)(p&0xff00) - (int)(q&0xff00))>>8;
-			b = (int)(p&0xff) - (int)(q&0xff);
+			r = ((int)(p & 0xff0000) - (int)(q & 0xff0000))>>16;
+			g = ((int)(p & 0x00ff00) - (int)(q & 0x00ff00))>>8;
+			b = ((int)(p & 0x0000ff) - (int)(q & 0x0000ff));
 			r *= r;
 			g *= g;
 			b *= b;
