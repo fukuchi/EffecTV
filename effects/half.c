@@ -34,9 +34,9 @@ static int scratchTimer;
 static int scratchStride;
 static int scratchCurrent;
 
-static int mirror = 0;
+static int mirror = 1;
 static int dir = 0;
-static int delay = 0;
+static int delay = 10;
 
 static int nextDelay(void);
 static int nextNervous(void);
