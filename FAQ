@@ -76,8 +76,8 @@ b) I dislike programming on MS-Windows.
 I would like to encourage people who want to port EffecTV to another
 environment; The whole CVS tree is now served at SourceForge. If you are
 interested, see http://sourceforge.net/projects/effectv/. Please let me know
-when you start you porting project, so that I can make a new CVS branch. If you
-want to maintain the CVS tree directly, get an account at SourceForge and
+when you start your porting project, so that I can make a new CVS branch. If
+you want to maintain the CVS tree directly, get an account at SourceForge and
 tell me your ID. I will add your ID to the EffecTV developers group.
 ----------
 Q7: How can I capture the video output from EffecTV to harddisk?
@@ -90,9 +90,8 @@ pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be retrieved from /dev/video2. At the moment, EffecTV does
-not handle ioctl messages, so some applications do not work; indeed, EffecTV
-does not work with video pipe.
+The effected images can be retrieved from /dev/video2. At the moment, EffecTV
+does not support some pixel format, so some applications do not work.
 ----------
 Q8: EffecTV is slow.
 
