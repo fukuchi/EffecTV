@@ -1,6 +1,6 @@
 # Makefile for EffecTV/tools
 
-include ./config.mk
+include ../config.mk
 
 CC = gcc
 NASM = nasm
