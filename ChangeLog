@@ -1,3 +1,7 @@
+2001/06/24	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* video.c: Changed the order to stop frame grabbing. Now it syncs current
+	  grabbing frame, then stops another frame. IBM usb cam now works fine.
+
 2001/06/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* video.c: Changed the logic of detecting supported pixel format.
 	  Restricted error message displaying while this sequence.

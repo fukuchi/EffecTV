@@ -108,6 +108,9 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h)
 		fprintf(stderr, "video_init: double buffer capturing with mmap is not supported.\n");
 		return -1;
 	}
+	/* detecting a pixel format supported by the v4l driver.
+	 * video_set_grabformat() overwrites both 'converter' and 'converter_hflip'.
+	 * If 'converter' is non-NULL, palette converter must be initialized. */
 	if(video_set_grabformat()) return -1;
 	if(converter) {
 		if(palette_init()) return -1;
@@ -179,12 +182,12 @@ int video_grabstart()
 /* Stop the continuous grabbing */
 int video_grabstop()
 {
-	if(vd.framestat[0]) {
-		if(v4lsync(&vd, 0) < 0)
+	if(vd.framestat[vd.frame]) {
+		if(v4lsync(&vd, vd.frame) < 0)
 			return -1;
 	}
-	if(vd.framestat[1]) {
-		if(v4lsync(&vd, 1) < 0)
+	if(vd.framestat[vd.frame ^ 1]) {
+		if(v4lsync(&vd, vd.frame ^ 1) < 0)
 			return -1;
 	}
 	return 0;
