@@ -1,3 +1,6 @@
+2002/03/14	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/transform.c: Fixed memory leak bug.
+
 2002/03/13	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* video.c: Now video.c stores parameters of v4l_picture.
 
