@@ -1,6 +1,7 @@
 Overview of Changes in EffecTV-0.3.8
 ====================================
 * New effects BrokenTV and WarholTV developed by Jun IIO was added.
+* The default device file was changed from "/dev/video" to "/dev/video0".
 * The supported version of vloopback was changed from 0.83 to 0.90.
   Version 0.83 is still supported, but it is not recommended.
 * A patch for vloopback-0.90 has been updated. Now the patch is attached to

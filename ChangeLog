@@ -1,3 +1,7 @@
+2002/10/05	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* EffecTV.h: The default video device file has been changed to
+	  "/dev/video0".
+
 2002/10/02	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* README.ps2, docs.japanese/README.ps2: Added some notes.
 
