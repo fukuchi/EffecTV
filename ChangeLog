@@ -1,3 +1,6 @@
+2002/03/29	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* main.c, effects/{nemo.c,Makefile,effects.h}: Added NemoTV.
+
 2002/03/28	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* debian/: Removed all of debian related files.
 	* README, TODO: libc6-2.2.5 problem had been fixed by glibc-team.
