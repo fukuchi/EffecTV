@@ -31,7 +31,8 @@ static effectRegistFunc *effects_register_list[] =
 	baltanRegister,
 	streakRegister,
 	onedRegister,
-	dotRegister
+	dotRegister,
+	mosaicRegister
 };
 
 static effect **effectsList;
@@ -46,11 +47,11 @@ static void usage()
 	printf("Version: %s\n", VERSION_STRING);
 	printf("Usage: effectv [options...]\n");
 	printf("Options:\n");
-	printf("\tdevice FILE\tuse Video4Linux device FILE\n");
+	printf("\tdevice FILE\tuse device FILE for video4linux\n");
 	printf("\tchannel NUMBER\tchannel number of video source\n");
 	printf("\tfullscreen\tenable fullscreen mode\n");
 	printf("\tdouble\t\tdoubling screen size\n");
-	printf("\thardware\tuse direct video memory\n");
+	printf("\thardware\tuse direct video memory(if possible)\n");
 	printf("\tfps\t\tshow frames/sec\n");
 }
 

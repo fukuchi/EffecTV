@@ -8,7 +8,7 @@ LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
-          $(ONED) $(DOT)
+          $(ONED) $(DOT) $(MOSAIC)
 UTILS = utils.o buffer.o
 SUBDIRS =
 
@@ -34,6 +34,7 @@ BALTAN = baltan.o
 STREAK = streak.o
 ONED = 1d.o
 DOT = dot.o
+MOSAIC = mosaic.o
 
 $(LIBEFFECTS): $(EFFECTS) $(UTILS)
 	ar rc $(LIBEFFECTS) $(EFFECTS) $(UTILS)

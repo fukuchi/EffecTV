@@ -29,6 +29,7 @@ int blurzoomx[SCREEN_WIDTH];
 int blurzoomy[SCREEN_HEIGHT];
 
 static char *effectname = "RadioacTV";
+static int stat;
 static int format;
 static unsigned int *background;
 static unsigned int palette[COLORS];
@@ -130,18 +131,24 @@ int blurzoomStart()
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_RGB32) < 0)
 		return -1;
-	video_grabstart();
-	video_syncframe();
+	if(video_grabstart())
+		return -1;
+	if(video_syncframe())
+		return -1;
 	bcopy(video_getaddress(), background, SCREEN_WIDTH*SCREEN_HEIGHT*4);
-	video_grabframe();
-
+	if(video_grabframe())
+		return -1;
+	stat = 1;
 	return 0;
 }
 
 int blurzoomStop()
 {
-	video_grabstop();
-	video_setformat(format);
+	if(stat) {
+		video_grabstop();
+		video_setformat(format);
+		stat = 0;
+	}
 
 	return 0;
 }
@@ -152,7 +159,8 @@ int blurzoomDraw()
 	unsigned int a, b;
 	unsigned int *src, *dest;
 
-	video_syncframe();
+	if(video_syncframe())
+		return -1;
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
 
@@ -160,7 +168,8 @@ int blurzoomDraw()
 		blurzoombuf[i] |= abstable[(src[i]&0xff)<<8|(background[i]&0xff)];
 		background[i] = src[i];
 	}
-	video_grabframe();
+	if(video_grabframe())
+		return -1;
 
 	blurzoomcore();
 

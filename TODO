@@ -1,20 +1,20 @@
-TODO for EffecTV ver. 0.1.0
+TODO for EffecTV ver. 0.1.x
 ===========================
 
 Bug
 ---
 * EffecTV crashes on linux frame buffer device? 
-* I only tested on bttv(bt848 and bt878). Please report when EffecTV
-  runs or not with your video capturing device.
-* Fix the bugs in documents. I am not good at writing in English, so
-  please revise them and tell me what is wrong. Your mail is great help
+* I only tested EffecTV on bttv(bt848 and bt878). Please send a report when
+  EffecTV runs or not with your video capturing device.
+* There may be many bugs in documents. I am not good at writing in English,
+  so please revise them and tell me what is wrong. Your mail is great help
   for me who is learning English.
 
 Future works
 ------------
 * Resource sharing. Some effects have same objects separately.
 * Code sharing. Scaling, differentiation, etc.
-* Optimizing.(MMX?)
+* Optimizing.(MMX instractions seems well)
 * SDL-1.2
 * Video4Linux2
 * Other platform(BSD, SGI, Sun,...)
@@ -27,5 +27,5 @@ Please send your effect!
 
 Memo
 ----
-* I implemented differentiation function in various ways. Evaluate them,
-  and decide which is best.
+* I implemented differentiation function in various ways. Which is best way?
+  How about another?

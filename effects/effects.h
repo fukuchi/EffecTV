@@ -17,3 +17,4 @@ extern effectRegistFunc baltanRegister;
 extern effectRegistFunc streakRegister;
 extern effectRegistFunc onedRegister;
 extern effectRegistFunc dotRegister;
+extern effectRegistFunc mosaicRegister;

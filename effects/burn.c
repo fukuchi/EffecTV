@@ -130,7 +130,7 @@ int burnStop()
 
 int burnDraw()
 {
-	int i, x, y;
+	int x, y;
 	unsigned char v, w;
 	unsigned int a, b;
 	unsigned char *src;
@@ -170,22 +170,22 @@ int burnDraw()
 	if(scale==2) {
 		for(y=0; y<SCREEN_HEIGHT; y++) {
 			for(x=1; x<SCREEN_WIDTH-1; x++) {
-				if(buffer[y*SCREEN_WIDTH+x]) {
-					i = palette[buffer[y*SCREEN_WIDTH+x]];
-				} else {
-					i = ((unsigned int *)src)[y*SCREEN_WIDTH+x];
-				}
-				dest[y*4*SCREEN_WIDTH+x*2] = i;
-				dest[y*4*SCREEN_WIDTH+x*2+1] = i;
-				dest[y*4*SCREEN_WIDTH+SCREEN_WIDTH*2+x*2] = i;
-				dest[y*4*SCREEN_WIDTH+SCREEN_WIDTH*2+x*2+1] = i;
+				a = ((unsigned int *)src)[y*SCREEN_WIDTH+x] & 0xfefeff;
+				b = palette[buffer[y*SCREEN_WIDTH+x]] & 0xfefeff;
+				a += b;
+				b = a & 0x1010100;
+				a = a | (b - (b >> 8));
+				dest[y*4*SCREEN_WIDTH+x*2] = a;
+				dest[y*4*SCREEN_WIDTH+x*2+1] = a;
+				dest[y*4*SCREEN_WIDTH+SCREEN_WIDTH*2+x*2] = a;
+				dest[y*4*SCREEN_WIDTH+SCREEN_WIDTH*2+x*2+1] = a;
 			}
 		}
 	} else {
 		for(y=0; y<SCREEN_HEIGHT; y++) {
 			for(x=1; x<SCREEN_WIDTH-1; x++) {
-				a = ((unsigned int *)src)[y*SCREEN_WIDTH+x] & 0xfefefe;
-				b = palette[buffer[y*SCREEN_WIDTH+x]] & 0xfefefe;
+				a = ((unsigned int *)src)[y*SCREEN_WIDTH+x] & 0xfefeff;
+				b = palette[buffer[y*SCREEN_WIDTH+x]] & 0xfefeff;
 				a += b;
 				b = a & 0x1010100;
 				dest[y*SCREEN_WIDTH+x] = a | (b - (b >> 8));

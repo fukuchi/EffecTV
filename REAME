@@ -1,4 +1,4 @@
-EffecTV 0.1.0
+EffecTV 0.1.1
 
 GENERAL INFORMATION
 ===================
@@ -12,9 +12,9 @@ Requirements
 Video capture card supported by video4linux is required.
 
 EffecTV requires SDL library, available from http://www.libsdl.org/.
-EffecTV uses video4linux. Check your kernel configuration and
-CONFIG_VIDEO_DEV is enabled.
-bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
+EffecTV uses video4linux. Your kernel should be configured with 
+CONFIG_VIDEO_DEV and enable drivers for your video capture card.
+Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.strusel007.de/linux/bttv/.
 NASM is required to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
@@ -39,11 +39,12 @@ Synopsis
 effectv [options...]
 
 Options:
-	-device FILE     use Video4Linux device FILE
+	-device FILE     use device FILE for video4linux
 	-channel NUMBER  channel number of video source
 	-fullscreen      enable fullscreen mode
 	-double          doubling screen size
-	-hardware        use direct video memory
+	-hardware        use direct video memory(if possible)
+	-fps             show frames/sec
 
 Key
 ---

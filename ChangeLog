@@ -1,3 +1,13 @@
+2001/02/15	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Double scaled BurnTV now uses addition with saturation.
+	* MosaicTV (as known as CensoredTV) is added.
+
+2001/02/15	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Fixed the bugs in usage and README.
+
+2001/02/14	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* blurzoom.c didn't handle variable stat.
+
 2001/02/14	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Now effects uses a shared buffer for temporary frame buffer.
 	  But the effects uses large amount buffer(QuarkTV, BaltanTV, StreakTV)
