@@ -2,9 +2,16 @@
 	* CREWS:
 	  - Added DiffTV to my list of effects :)
 
+2004/1/1	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/matrix.c:
+	  - Modified color palette.
+
 2003/12/31	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* TODO:
 	  - Added notes on overlay-patch and solaris-patch.
+	* README.ps2, docs.japanese/README.ps2:
+	  - Updated patch. Changed the based version to 1.65.
+	  - Fixed URLs for SDL and ov511.
 
 2003/12/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/chameleon.c:
