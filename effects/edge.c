@@ -12,8 +12,8 @@
  * it adopts the edge detection filter to the image. It also adopts MaxRGB
  * filter to the image. This is not used in EdgeTV.
  * This code is highly optimized and employs many fake algorithms. For example,
- * it devides a value with 16 instead of using sqrt() in line 141. It is too
- * hard for me to write detailed comment in this code in English.
+ * it devides a value with 16 instead of using sqrt() in line 142-144. It is
+ * too hard for me to write detailed comment in this code in English.
  */
 
 #include <stdlib.h>

@@ -106,7 +106,7 @@ static void makeOneHeart(int val, unsigned char *bigheart)
 	double w, h;
 	RGB32 *pat;
 	RGB32 c;
-#define SFACT 2
+#define SFACT 4
 
 	pat = heart_pattern + val * dot_size * dot_hsize;
 	s2y = (double)(-dot_hsize) / dot_size * (31.9 + (double)(DOTMAX-val)/SFACT)
@@ -155,7 +155,7 @@ static void makeOneHeart(int val, unsigned char *bigheart)
 			c = (RGB32)(sum / w / h);
 			if(c<0) c = 0;
 			if(c>255) c = 255;
-			*pat++ = c<<16 | (c&0xfe)<<7 | (c>>1);
+			*pat++ = c<<16;
 		}
 	}
 }
