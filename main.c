@@ -33,7 +33,9 @@ static effectRegistFunc *effects_register_list[] =
 	dotRegister,
 	mosaicRegister,
 	puzzleRegister,
-	predatorRegister
+	predatorRegister,
+//	spiralRegister,
+	simuraRegister
 };
 
 static effect **effectsList;
