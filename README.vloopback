@@ -1,5 +1,9 @@
-vloopback-0.83 fails to compile on linux-2.4.3 or later. Apply the following
-patch.
+*ATTENTION*
+vloopback-0.83 fails to compile on linux-2.4.5 or later, because of the change
+of internal framework of Video for Linux driver. Jeroen Vreeken is working on
+to adopt to it. Please do not send mails about this problem to him.
+
+This patch fixes the problem for linux-2.4.3 and linux-2.4.4.
 
 --- vloopback.c.orig	Thu May 17 15:59:46 2001
 +++ vloopback.c	Thu May 17 16:00:33 2001
