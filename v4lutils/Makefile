@@ -2,7 +2,6 @@
 
 CC = gcc
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt)
-#CFLAGS = -g -Wall
 LIBS =
 
 %.o: %.c

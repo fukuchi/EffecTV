@@ -7,7 +7,6 @@ NASM = nasm
 INSTALL = /usr/bin/install -c
 
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
-#CFLAGS = $(CONFIG) $(CONFIG.arch) -g -Iv4lutils `sdl-config --cflags`
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 PROGRAM = effectv
@@ -53,3 +52,4 @@ clean:
 	rm -f *.o $(PROGRAM)
 	cd effects && $(MAKE) clean
 	cd v4lutils && $(MAKE) clean
+	cd tools && $(MAKE) clean
