@@ -42,22 +42,25 @@ int g_cursor_local = SDL_ENABLE;
 
 static char *effectname = "lensTV";
 static int state = 0;
-static int lens[640][640];
+static int *lens = NULL;
 static int mode ;
 
 void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 {
     int x, y, noy,pos, nox;
+	int *p;
 
-    for (y = 0; y < lens_width; y++) {
-        for (x = 0; x < lens_width; x++) {
-		noy=(y+oy); nox=(x+ox);
-		if ((nox>=0)&&(noy>=0)&&(nox<video_width)&&(noy<video_height)){
-  			pos = (noy * video_width) + nox;
-            		*(dst+pos) = *(src+pos + lens[y][x]);
+	p = lens;
+	for (y = 0; y < lens_width; y++) {
+		for (x = 0; x < lens_width; x++) {
+			noy=(y+oy); nox=(x+ox);
+			if ((nox>=0)&&(noy>=0)&&(nox<video_width)&&(noy<video_height)){
+				pos = (noy * video_width) + nox;
+				*(dst+pos) = *(src+pos + *p);
+			}
+			p++;
 		}
-        }
-    }
+	}
 }
 
 
@@ -136,6 +139,13 @@ int lensDraw()
 static void init() {
 
   int x,y,r,d;
+
+  if(lens != NULL) {
+	  free(lens);
+  }
+  lens = (int *)malloc(lens_width * lens_width * sizeof(int));
+  memset(lens, 0, lens_width * lens_width * sizeof(int));
+
     /* generate the lens distortion */
     r = lens_width/2;
     d = lens_zoom;
@@ -242,11 +252,12 @@ static void init() {
 
     /* it is sufficient to generate 1/4 of the lens and reflect this
      * around; a sphere is mirrored on both the x and y axes */
-    for (y = 0; y < lens_width/2; y++) {
-        for (x = 0; x < lens_width/2; x++) {
-            int ix, iy, offset;
-            if ((x * x + y * y) < (r * r)) {
-                double shift = d/sqrt(d*d - (x*x + y*y - r*r));
+    for (y = 0; y < r; y++) {
+        for (x = 0; x < r; x++) {
+            int ix, iy, offset, dist;
+			dist = x*x + y*y - r*r;
+			if(dist < 0) {
+                double shift = d/sqrt(d*d - dist);
                 ix = x * shift - x;
                 iy = y * shift - y;
             } else {
@@ -254,11 +265,11 @@ static void init() {
                 iy = 0;
             }
             offset = (iy * video_width + ix);
-            lens[lens_width/2 - y][lens_width/2 - x] = -offset;
-            lens[lens_width/2 + y][lens_width/2 + x] = offset;
+			lens[(r - y)*lens_width + r - x] = -offset;
+			lens[(r + y)*lens_width + r + x] = offset;
             offset = (-iy * video_width + ix);
-            lens[lens_width/2 + y][lens_width/2 - x] = -offset;
-            lens[lens_width/2 - y][lens_width/2 + x] = offset;
+			lens[(r + y)*lens_width + r - x] = -offset;
+			lens[(r - y)*lens_width + r + x] = offset;
         }
     }
 }
