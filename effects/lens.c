@@ -280,7 +280,7 @@ static void clipmag()
 	if (y>=video_height-lens_width/2-1)y=video_height-lens_width/2-1;
 
 	if (x<0-(lens_width/2)+1) x=0-lens_width/2+1;
-	if(x>=video_width-lens_width/2+1)x=video_width-lens_width/2+1;
+	if(x>=video_width-lens_width/2-1)x=video_width-lens_width/2-1;
 }
 
 int lensEvent(SDL_Event *event)
