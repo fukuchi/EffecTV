@@ -134,9 +134,11 @@ AgingTV
 LifeTV
 	Conway's life game with video input interaction.
 TransFormTV
+	Performs positinal translations on images.
 SparkTV
 	Spark effect.
 warpTV
+	Goo'ing effect.
 HolographicTV
 	Holographic vision seen in Star Wars.
 
