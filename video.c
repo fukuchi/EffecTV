@@ -31,6 +31,12 @@ int video_width;
 int video_height;
 int video_area; // = video_width * video_height
 
+/* Picture parameters */
+static int picture_brightness;
+static int picture_hue;
+static int picture_colour;
+static int picture_contrast;
+
 static palette_converter_toRGB32 *converter;
 static palette_converter_toRGB32 *converter_hflip;
 
@@ -125,6 +131,12 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h, int pa
 	if(converter) {
 		if(palette_init()) return -1;
 	}
+
+	v4lgetpicture(&vd);
+	picture_brightness = vd.picture.brightness;
+	picture_hue = vd.picture.hue;
+	picture_colour = vd.picture.colour;
+	picture_contrast = vd.picture.contrast;
 
 	atexit(video_quit);
 	return 0;
@@ -273,41 +285,37 @@ int video_setfreq(int v)
 /* increase brightness value with v */
 void video_change_brightness(int v)
 {
-	v4lgetpicture(&vd);
-	v += vd.picture.brightness;
-	if(v < 0) v = 0;
-	if(v > 65535) v = 65535;
-	v4lsetpicture(&vd, v, -1, -1, -1, -1);
+	picture_brightness += v;
+	if(picture_brightness < 0) picture_brightness = 0;
+	if(picture_brightness > 65535) picture_brightness = 65535;
+	v4lsetpicture(&vd, picture_brightness, -1, -1, -1, -1);
 }
 
 /* increase hue value with v */
 void video_change_hue(int v)
 {
-	v4lgetpicture(&vd);
-	v += vd.picture.hue;
-	if(v < 0) v = 0;
-	if(v > 65535) v = 65535;
-	v4lsetpicture(&vd, -1, v, -1, -1, -1);
+	picture_hue += v;
+	if(picture_hue < 0) picture_hue = 0;
+	if(picture_hue > 65535) picture_hue = 65535;
+	v4lsetpicture(&vd, -1, picture_hue, -1, -1, -1);
 }
 
 /* increase color value with v */
 void video_change_color(int v)
 {
-	v4lgetpicture(&vd);
-	v += vd.picture.colour;
-	if(v < 0) v = 0;
-	if(v > 65535) v = 65535;
-	v4lsetpicture(&vd, -1, -1, v, -1, -1);
+	picture_colour += v;
+	if(picture_colour < 0) picture_colour = 0;
+	if(picture_colour > 65535) picture_colour = 65535;
+	v4lsetpicture(&vd, -1, -1, picture_colour, -1, -1);
 }
 
 /* increase contrast value with v */
 void video_change_contrast(int v)
 {
-	v4lgetpicture(&vd);
-	v += vd.picture.contrast;
-	if(v < 0) v = 0;
-	if(v > 65535) v = 65535;
-	v4lsetpicture(&vd, -1, -1, -1, v, -1);
+	picture_contrast += v;
+	if(picture_contrast < 0) picture_contrast = 0;
+	if(picture_contrast > 65535) picture_contrast = 65535;
+	v4lsetpicture(&vd, -1, -1, -1, picture_contrast, -1);
 }
 
 /*
