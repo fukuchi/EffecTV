@@ -4,18 +4,18 @@ Last updated 2001/3/12 for release 0.1.5
 
 Contents
 --------
-Q1: I got a distorted/still/gray scale/shrinked image.
+Q1: I got a distorted/still/gray scale/shrank image.
 Q2: TV seems to work fine, but how can I change to Composite1 or any other
     video source?
 Q3: Some effects do not work.
-Q4: EffecTV is freezed.
+Q4: EffecTV is frozen.
 Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
 Q6: Why don't you port EffecTV to ANY-GREAT-OS?
 Q7: How can I capture the video output from EffecTV to harddisk?
 Q8: EffecTV is slow.
 
 ----------
-Q1: I got a distorted/still/gray scale/shrinked image.
+Q1: I got a distorted/still/gray scale/shrank image.
 
 A: Check the norm of the video source. The option "-norm" changes the norm
 setting of EffecTV. For example, when you have a video camera which employs
@@ -41,7 +41,7 @@ Q3: Some effects do not work.
 A: The driver for your video capturing device doesn't support some capturing
 mode used by them. Support for those system is underway.
 ----------
-Q4: EffecTV is freezed.
+Q4: EffecTV is frozen.
 
 A: Bttv driver comes with linux-2.2.18 is broken. Try the latest bttv driver
 available at http://www.strusel007.de/linux/bttv/. You also need to apply i2c
