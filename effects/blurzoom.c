@@ -21,6 +21,7 @@
 int blurzoomStart();
 int blurzoomStop();
 int blurzoomDraw();
+int blurzoomEvent();
 
 extern void blurzoomcore();
 
@@ -37,6 +38,10 @@ int buf_margin_left;
 static char *effectname = "RadioacTV";
 static int stat;
 static RGB32 palette[COLORS];
+static int mode = 0; /* 0=normal/1=strobe/2=strobe2/3=trigger */
+static int snapTime = 0;
+static int snapInterval = 3;
+static RGB32 *snapframe;
 
 #define VIDEO_HWIDTH (buf_width/2)
 #define VIDEO_HHEIGHT (buf_height/2)
@@ -189,7 +194,7 @@ effect *blurzoomRegister()
 	entry->start = blurzoomStart;
 	entry->stop = blurzoomStop;
 	entry->draw = blurzoomDraw;
-	entry->event = NULL;
+	entry->event = blurzoomEvent;
 
 	setTable();
 	makePalette();
@@ -201,8 +206,12 @@ int blurzoomStart()
 {
 	bzero(blurzoombuf, buf_area*2);
 	image_set_threshold_y(MAGIC_THRESHOLD);
+	snapframe = (RGB32 *)malloc(video_area*PIXEL_SIZE);
+	if(snapframe == NULL)
+		return -1;
 	if(video_grabstart())
 		return -1;
+
 	stat = 1;
 	return 0;
 }
@@ -211,6 +220,7 @@ int blurzoomStop()
 {
 	if(stat) {
 		video_grabstop();
+		free(snapframe);
 		stat = 0;
 	}
 
@@ -228,15 +238,22 @@ int blurzoomDraw()
 		return -1;
 	src = (RGB32 *)video_getaddress();
 
-	diff = image_bgsubtract_update_y(src);
-	diff += buf_margin_left;
-	p = blurzoombuf;
-	for(y=0; y<buf_height; y++) {
-		for(x=0; x<buf_width; x++) {
-			p[x] |= diff[x] >> 3;
+	if(mode != 2 || snapTime <= 0) {
+		diff = image_bgsubtract_update_y(src);
+		if(mode == 0 || snapTime <= 0) {
+			diff += buf_margin_left;
+			p = blurzoombuf;
+			for(y=0; y<buf_height; y++) {
+				for(x=0; x<buf_width; x++) {
+					p[x] |= diff[x] >> 3;
+				}
+				diff += video_width;
+				p += buf_width;
+			}
+			if(mode == 1 || mode == 2) {
+				memcpy(snapframe, src, video_area * PIXEL_SIZE);
+			}
 		}
-		diff += video_width;
-		p += buf_width;
 	}
 	blurzoomcore();
 
@@ -249,6 +266,10 @@ int blurzoomDraw()
 		dest = stretching_buffer;
 	} else {
 		dest = (RGB32 *)screen_getaddress();
+	}
+
+	if(mode == 1 || mode == 2) {
+		src = snapframe;
 	}
 	p = blurzoombuf;
 	for(y=0; y<video_height; y++) {
@@ -275,6 +296,68 @@ int blurzoomDraw()
 	if(video_grabframe())
 		return -1;
 
+	if(mode == 1 || mode == 2) {
+		snapTime--;
+		if(snapTime < 0) {
+			snapTime = snapInterval;
+		}
+	}
+
+	return 0;
+}
+
+int blurzoomEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_1:
+		case SDLK_2:
+		case SDLK_3:
+		case SDLK_4:
+			mode = event->key.keysym.sym - SDLK_1;
+			if(mode == 3)
+				snapTime = 1;
+			else
+				snapTime = 0;
+			break;
+		case SDLK_KP1:
+		case SDLK_KP2:
+		case SDLK_KP3:
+		case SDLK_KP4:
+			mode = event->key.keysym.sym - SDLK_KP1;
+			if(mode == 3)
+				snapTime = 1;
+			else
+				snapTime = 0;
+			break;
+		case SDLK_SPACE:
+			if(mode == 3)
+				snapTime = 0;
+			break;
+
+		case SDLK_INSERT:
+			snapInterval++;
+			break;
+
+		case SDLK_DELETE:
+			snapInterval--;
+			if(snapInterval < 1) {
+				snapInterval = 1;
+			}
+			break;
+		default:
+			break;
+		}
+	} else if(event->type == SDL_KEYUP) {
+		switch(event->key.keysym.sym) {
+		case SDLK_SPACE:
+			if(mode == 3)
+			snapTime = 1;
+			break;
+		default:
+			break;
+		}
+	}
 
 	return 0;
 }
