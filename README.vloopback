@@ -1,9 +1,80 @@
 *ATTENTION*
-vloopback-0.83 fails to compile on linux-2.4.5 or later, because of the change
-of internal framework of Video for Linux driver. Jeroen Vreeken is working on
-to adopt to it. Please do not send mails about this problem to him.
+vloopback-0.83 fails to compile on linux-2.4.5 or later, because of
+changes to the internal framework of the Video for Linux driver.
+Jeroen Vreeken is working on adapting vloopback to it.  Please do not
+send email about this problem to him.
 
-This patch fixes the problem for linux-2.4.3 and linux-2.4.4.
+The following patch to vloopback.c (v 0.83) seems to solve the problem
+quite effectively.  Be aware that it is a very unofficial patch (Sam
+cooked it up late last night), and that it will not compile on older
+kernels.  YMMV, caveat emptor, and all other warnings probably apply.
+(June 9, 2001)
+
+-- cut --
+*** vloopback.c~	Mon Jan 22 14:44:16 2001
+--- vloopback.c	Sat Jun  9 02:40:16 2001
+***************
+*** 143,148 ****
+--- 143,151 ----
+  static int spares=0;
+  static int pipesused=0;
+  
++ static int video_nr= -1;
++ 
++ MODULE_PARM(video_nr,"i");
+  
+  /**********************************************************************
+   *
+***************
+*** 819,824 ****
+--- 822,828 ----
+  
+  static struct video_device vloopback_template=
+  {
++     NULL,       /* struct module ? */
+  	"Video Loopback",
+  	VID_TYPE_CAPTURE,
+  	0,
+***************
+*** 1027,1033 ****
+  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
+  	init_waitqueue_head(&loops[nr]->wait);
+  	init_MUTEX(&loops[nr]->lock);
+! 	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER)==-1) {
+  		kfree(loops[nr]->vloopin);
+  		kfree(loops[nr]->vloopout);
+  		kfree(loops[nr]);
+--- 1031,1037 ----
+  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
+  	init_waitqueue_head(&loops[nr]->wait);
+  	init_MUTEX(&loops[nr]->lock);
+! 	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
+  		kfree(loops[nr]->vloopin);
+  		kfree(loops[nr]->vloopout);
+  		kfree(loops[nr]);
+***************
+*** 1035,1041 ****
+  		printk(VLNAME "error registering device\n");
+  		return -ENODEV;
+  	}
+! 	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER)==-1) {
+  		video_unregister_device(&loops[nr]->vloopin->viddev);
+  		kfree(loops[nr]->vloopin);
+  		kfree(loops[nr]->vloopout);
+--- 1039,1045 ----
+  		printk(VLNAME "error registering device\n");
+  		return -ENODEV;
+  	}
+! 	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
+  		video_unregister_device(&loops[nr]->vloopin->viddev);
+  		kfree(loops[nr]->vloopin);
+  		kfree(loops[nr]->vloopout);
+
+-- cut --
+
+**********************************************************
+The following is an older patch which fixes the problem for
+linux-2.4.3 and linux-2.4.4.
 
 --- vloopback.c.orig	Thu May 17 15:59:46 2001
 +++ vloopback.c	Thu May 17 16:00:33 2001

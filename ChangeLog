@@ -1,3 +1,7 @@
+2001/06/09	Sam Mertens		<smertens@effectv.sourceforge.net>
+	* Added my ad hoc vloopback.c patch to README.vloopback.  No
+	guarantees, but it works for me.
+	
 2001/06/09	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Changed verstion to 0.3.0.
 
