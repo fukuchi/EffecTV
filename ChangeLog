@@ -1,3 +1,7 @@
+2002/03/10	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* main.c: alt_pressed was deprecated. Now it uses SDL_GetModState().
+	* main.c, video.[ch]: Added quite ugly hack to tune video image.
+
 2002/03/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* screen.h: Fixed wrong function declaration.
 
