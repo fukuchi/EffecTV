@@ -1,3 +1,6 @@
+2002/03/28	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* debian/: Removed all of debian related files.
+
 2002/03/25	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README.ps2, docs.japanese/README.ps2: Changed recommended version of
 	  ov511 from 1.43 to 1.58. New patch was attached.
