@@ -16,22 +16,26 @@
 int dizzyStart();
 int dizzyStop();
 int dizzyDraw();
+int dizzyEvent();
 
 static char *effectname = "DizzyTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *current_buffer, *alt_buffer;
-static double dizz = 0;
 static int dx, dy;
 static int sx, sy;
 static double phase = 0.0;
-static double zoomrate = 1.05;
+static double phase_increment = 0.02;
+static double zoomrate = 1.01;
 
 static void setParams()
 {
 	double vx, vy;
 	double t;
 	double x, y;
+	double dizz;
+
+	dizz = sin(phase) * 10 + sin(phase*1.9+5) * 5;
 
 	x = video_width / 2;
 	y = video_height / 2;
@@ -57,16 +61,11 @@ static void setParams()
 	}
 	dx = vx * 65536;
 	dy = vy * 65536;
-	x = -x;
-	y = -y;
-	sx = (vx * x - vy * y - x) * 65536;
-	sy = (vx * y + vy * x - y) * 65536;
-}
+	sx = (-vx * x + vy * y + x + cos(phase*5) * 2) * 65536;
+	sy = (-vx * y - vy * x + y + sin(phase*6) * 2) * 65536;
 
-static void rotateDizz()
-{
-	dizz = sin(phase)*10 + sin(phase*1.9+5)*5;
-	phase += .1;
+	phase += phase_increment;
+	if(phase>5700000) phase = 0;
 }
 
 effect *dizzyRegister()
@@ -88,7 +87,7 @@ effect *dizzyRegister()
 	entry->start = dizzyStart;
 	entry->stop = dizzyStop;
 	entry->draw = dizzyDraw;
-	entry->event = NULL;
+	entry->event = dizzyEvent;
 
 	return entry;
 }
@@ -98,7 +97,6 @@ int dizzyStart()
 	bzero(buffer, video_area * 2 * sizeof(RGB32));
 	current_buffer = buffer;
 	alt_buffer = buffer + video_area;
-	dizz = 0;
 	phase = 0;
 
 	if(video_grabstart())
@@ -125,7 +123,7 @@ int dizzyDraw()
 	RGB32 v;
 	int x, y;
 	int ox, oy;
-	int cx, cy;
+	int i;
 
 	if(video_syncframe())
 		return -1;
@@ -137,15 +135,10 @@ int dizzyDraw()
 		ox = sx;
 		oy = sy;
 		for(x=video_width; x>0; x--) {
-			cx = ox>>16;
-			cy = oy>>16;
-#if 0
-			if(cx<0) cx = 0;
-			if(cy<0) cy = 0;
-			if(cx>=video_width) cx = video_width-1;
-			if(cy>=video_height) cy = video_height-1;
-#endif
-			v = current_buffer[cy*video_width + cx] & 0xfcfcff;
+			i = (oy>>16)*video_width + (ox>>16);
+			if(i<0) i = 0;
+			if(i>=video_area) i = video_area;
+			v = current_buffer[i] & 0xfcfcff;
 			v = (v * 3) + ((*src++) & 0xfcfcff);
 			*p++ = (v>>2);
 			ox += dx;
@@ -180,7 +173,45 @@ int dizzyDraw()
 	current_buffer = alt_buffer;
 	alt_buffer = p;
 
-	rotateDizz();
+	return 0;
+}
 
+int dizzyEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_SPACE:
+			break;
+
+        case SDLK_INSERT:
+			phase_increment += 0.01;
+            break;
+            
+        case SDLK_DELETE:
+			phase_increment -= 0.01;
+			if(phase_increment < 0.01) {
+				phase_increment = 0.01;
+			}
+            break;
+
+        case SDLK_PAGEUP:
+			zoomrate += 0.01;
+			if(zoomrate > 1.1) {
+				zoomrate = 1.1;
+			}
+            break;
+            
+        case SDLK_PAGEDOWN:
+			zoomrate -= 0.01;
+			if(zoomrate < 1.01) {
+				zoomrate = 1.01;
+			}
+            break;
+            
+		default:
+			break;
+		}
+	}
+    
 	return 0;
 }
