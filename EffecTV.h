@@ -29,6 +29,13 @@
 #define DEFAULT_PALETTE VIDEO_PALETTE_RGB32
 #define DEFAULT_VIDEO_NORM VIDEO_MODE_NTSC
 
+#ifndef SDL_DISABLE
+#define SDL_DISABLE 0
+#endif
+#ifndef SDL_ENABLE
+#define SDL_ENABLE 1
+#endif
+
 typedef unsigned int RGB32;
 #define PIXEL_SIZE (sizeof(RGB32))
 

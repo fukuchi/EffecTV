@@ -113,7 +113,7 @@ int screen_init(int w, int h, int s)
 			fprintf(stderr, "Double buffer mode is not supported.\n");
 		}
 	}
-	SDL_ShowCursor(0);
+	SDL_ShowCursor(SDL_DISABLE);
 	atexit(screen_quit);
 	screeninfo = SDL_GetVideoInfo();
 	return 0;
@@ -123,7 +123,7 @@ int screen_init(int w, int h, int s)
  * This function is registerd in screen_init() by callint atexit(). */
 void screen_quit()
 {
-	SDL_ShowCursor(1);
+	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 }
 
