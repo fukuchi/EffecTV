@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * shagadelic.c: Yeah baby yeah!
+ * shagadelic.c: Makes you shagadelic! Yeah baby yeah!
  *
  * Inspired by Adrian Likin's script for the GIMP.
  */
@@ -126,7 +126,7 @@ int shagadelicDraw()
 		for(y=0; y<SCREEN_HEIGHT; y++) {
 			for(x=0; x<SCREEN_WIDTH; x++) {
 				v = *src++ | 0x1010100;
-				v = (v - 0x606050) & 0x1010100;
+				v = (v - 0x707060) & 0x1010100;
 				v -= v>>8;
 				r = (char)(ripple[(ry+y)*SCREEN_WIDTH*2+rx+x]+phase*2)>>7;
 				g = (char)(spiral[y*SCREEN_WIDTH+x]+phase*3)>>7;
@@ -144,7 +144,7 @@ int shagadelicDraw()
 		for(y=0; y<SCREEN_HEIGHT; y++) {
 			for(x=0; x<SCREEN_WIDTH; x++) {
 				v = *src++ | 0x1010100;
-				v = (v - 0x606050) & 0x1010100;
+				v = (v - 0x707060) & 0x1010100;
 				v -= v>>8;
 /* Try another Babe! 
  * v = *src++;
