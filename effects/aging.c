@@ -24,13 +24,18 @@ static int aging_mode;
 
 static void coloraging(RGB32 *src, RGB32 *dest)
 {
+	static int c = 0x18;
 	RGB32 a, b;
 	int i;
 
+	c -= (int)(inline_fastrand())>>28;
+	if(c < 0) c = 0;
+	if(c > 0x18) c = 0x18;
 	for(i=0; i<video_area; i++) {
 		a = *src++;
 		b = (a & 0xfcfcfc)>>2;
-		*dest++ = a - b + 0x181818 + ((fastrand()>>8)&0x101010);
+		//*dest++ = a - b + 0x181818 + ((fastrand()>>8)&0x101010);
+		*dest++ = a - b + (c|(c<<8)|(c<<16)) + ((inline_fastrand()>>8)&0x101010);
 	}
 }
 
