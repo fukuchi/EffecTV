@@ -1,0 +1,288 @@
+EffecTV 0.3.2
+
+序
+==
+EffecTVはリアルタイムで動作するビデオエフェクターです。様々なエフェクターで
+ビデオやテレビを楽しめます。
+
+インストール
+============
+
+必要なもの
+----------
+EffecTVはLinux用ソフトウェアとはいえ、インテルアーキテクチャに強く依存していま
+す。他のアーキテクチャ上のLinuxではまず動かないでしょう。
+#といいつつもPlayStation2用Linuxで動かす事に成功しました。詳しくは
+#README.ps2linux.jpを参照してください。
+
+Video4linuxがサポートしているビデオキャプチャーカードかUSBデバイスが必要です。
+
+SDL(http://www.libsdl.org/)のバージョン1.1.7以降が必要です。RedHatやDebian等の
+パッケージを利用されている方は、開発用パッケージもインストールしておく必要があ
+ります。
+
+カーネルのvideo4linux機能(CONFIG_VIDEO_DEV)を有効にしておいてください。また、
+あなたのビデオキャプチャー機器用のドライバが利用可能になっている事を確認してく
+ださい。
+
+Linux-2.2.18についてくるBttvドライバは壊れています。カーネルをバージョンアップ
+するか、最新のドライバをhttp://www.bytesex.org/bttv/からダウンロードしてインス
+トールしてください。
+
+ビデオループバック機能を使う場合は、下記のサイトからドライバをダウンロードして
+インストールしてください。
+http://motion.technolust.cx/vloopback/index.html
+vloopback-0.83はlinux-2.4.3以降の内部仕様変更に対応していないので、
+README.vloopbackを読んで、中に含まれているパッチを当ててからインストールしてく
+ださい。
+
+一部のイフェクトの作成に、NASMというアセンブラを使います。NASMについては
+http://www.web-sites.co.uk/nasm
+ftp://ftp.kernel.org/pub/software/devel/nasm/
+を参照してください。主要なLinuxディストリビューションではパッケージが出ていま
+すので、そちらを利用されると良いでしょう。
+
+コンパイルとインストール
+------------------------
+Makefileを必要に応じて編集した後、
+
+make
+
+して
+
+make install
+
+でインストール完了です。コンパイルに問題が無ければ。
+実行ファイルは"effectv"という名前で、/usr/local/bin/に、
+マニュアルファイルは"effectv.1"という名前で/usr/local/man/man1/に、それぞれ
+インストールされます。インストール先を変えたい場合は、Makefileを編集するか、
+'make'の後に'make install'せずに自分で各ファイルをコピーしてください。
+
+ビデオ入力のデバイスファイル(多分 /dev/video0)の読み書き権限がユーザーに与えら
+れている事を確認してください。
+
+使い方
+======
+
+その前に
+--------
+EffecTVを実行する前に、自分の機器構成についていくつか確認しておきましょう。
+
+・つないでいるビデオ機器の信号の規格。日本だったら大抵は「NTSC-JP」。
+・ビデオ入力機器がビデオキャプチャーカードのどのコネクタにつながっているか。
+  video4linuxではこれを「チャンネル」と表記します。TVのチャンネルとは別物です
+  ので注意してください。なお、普通のビデオキャプチャーカードだとチャンネル0が
+  TV、チャンネル1がビデオ入力1になります。
+・デバイスのファイル名。普通は"/dev/video0"。
+
+これらの情報は、EffecTVを実行する時にコマンドラインオプションで与える事になり
+ます。次節を参照してください。
+
+説明
+----
+コマンドラインから、以下の形式で実行します。
+
+effectv [オプション...]
+
+オプション:
+	-device FILE     デバイスファイルのファイル名を与えます。デフォルトは
+	                 "/dev/video"。
+	-channel NUMBER  ビデオ入力のチャンネル番号を指定。デフォルトは 0。
+	-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
+	                 ビデオ信号の規格を指定します。デフォルトでは ntsc で
+	                 すが、日本だとntsc-jpの方が若干良いようです。
+	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
+	          europe-west, europe-east,italy,newzealand,australia,ireland,
+	          france,china-bcast,southafrica,argentina}
+	                 TV入力を見る時に使う、周波数表を指定します。日本では
+	                 japan-bcast(地上波)かjapan-cable(ケーブルTV?)。
+	-fullscreen      フルスクリーンモードで起動します。
+	-hardware        可能なら、画面の直接書き換えモードで起動します。
+	-doublebuffer    可能なら、ダブルバッファモードを使います。
+	-fps             毎秒何フレーム処理できてるかをタイトルバーに表示しま
+	                 す。
+	-size WxH        入力画面のサイズを指定します。
+	-geometry WxH    出力画面のサイズを指定します。
+	-scale NUMBER    出力画面の倍率を指定します。
+	-autoplay NUMBER イフェクトを、NUMBER枚のフレームを表示したら自動的に
+	                 切り換えます。
+	-vloopback FILE  ビデオループバック機能を使用します。ビデオループバッ
+                         クデバイスの入力デバイス名を指定してください。
+
+キー
+----
+上下矢印  イフェクトを切り換えます。
+左右矢印  TVを見ている時に、チャンネルを切り換えます。
+スペース  一部のイフェクトで、背景イメージの取り込みを指示したり、モードを切り
+          換えるのに使います。
+ALT+ENTER フルスクリーンモードに切り換えます。もう一度押すと元に戻ります。
+タブ      左右反転させます。もう一度押すと元に戻ります。
+Escape    EffecTVを終了します。
+
+個々のイフェクトでは他にもいくつかのキーやマウスによる操作ができます。詳しくは
+ドキュメントパッケージ(effectv-docs-ja.tar.gz)をダウンロードして参照してくださ
+い。
+
+イフェクト概要
+------------------
+QuarkTV
+	動いてるものを分解します。
+FireTV
+	前景を切り出して、燃やします。
+BurningTV
+	前景を燃やします。
+RadioacTV
+	動いているものが輝いて、オーラを発します。
+StreakTV
+	8枚分の残像を表示します。
+BaltanTV
+	もっと長い残像を表示します。
+1DTV
+	フレーム毎に線一本分だけ取り込みます。
+DotTV
+	入力画像をドットに変換。
+MosaicTV
+	前景にモザイクをかけます。
+PuzzleTV
+	入力画像がパズルに。
+PredatorTV
+	前景を(見えるように)透明にします。
+SpiralTV
+	動いてるものを同心円状に歪めます。
+SimuraTV
+	色調変換と鏡像生成。
+EdgeTV
+	輪郭線を抽出します。
+ShagadelicTV
+	サイケなディスコチックに。
+NoiseTV
+	前景に砂嵐ノイズをかぶせます。
+AgingTV
+	フィルム劣化イフェクト。
+LifeTV
+	コンウェイのライフゲームをEffecTVで遊ぶ。
+TransFormTV
+	画像の座標変換イフェクト。
+SparkTV
+	前景にスパークが走ります。
+warpTV
+	ぐにょーん。(としか言いようがない)
+HolographicTV
+	映画「スターウォーズ」のホロビデオっぽい表示。
+cycleTV
+	色調をどんどん変えて表示します。
+RippleTV
+	入力画像の動きに応じて波紋を表示します。
+DiceTV
+	入力画像を切り刻んで表示します。
+
+EffecTVの出力を録画・放送するには
+---------------------------------
+EffecTVはバージョン0.2.0からビデオループバック機能をサポートしています。この
+機能を使うと、EffecTVがあたかもビデオ入力デバイスであるかのように使うことがで
+きるようになります。
+
+まず、vloopbackデバイスのモジュールを組み込み、使用するパイプの入力/出力デバイ
+スのファイル名を控えておきます。通常は、入力が/dev/video1で、出力が/dev/video2
+になります。
+
+次に、EffecTVを以下のようにして起動します。
+
+$ effectv -vloopback /dev/video1
+
+-vloopbackの後に、先程控えておいた、パイプの入力デバイス側のファイル名を指定し
+ます。これで、/dev/video2からEffecTVの出力画像が読めるようになります。例えば
+EffecTVをさらにつなげる場合には、
+
+$ effectv -device /dev/video2
+
+としてやれば良いし、XawTvならば
+
+$ xawtv -c /dev/video2
+
+とすればOK。同様に、video4linuxを使う録画/放送ソフトウェアなら、大抵のものが
+動作します。
+
+さらなる情報
+============
+
+Web
+---
+http://effectv.sourceforge.net/index.ja.html が公式の日本語ページです。
+
+
+バグレポートや提案
+------------------
+バグレポートや提案は、
+
+fukuchi@users.sourceforge.net
+
+宛にお送りください。これは開発者の一人、福地の個人アドレスです。
+開発者全員が読むメーリングリストへのメールの送付は、英語でお願いいたします。
+
+また、SourceForgeのプロジェクトページの方に掲示板形式の議論用フォーラムが設け
+てあります。
+
+SourceForge
+===========
+EffecTVのプロジェクトページはSourceForge(http://sourceforge.net/)に置かせてい
+ただいでいます。URLは
+
+http://sourceforge.net/projects/effectv/
+
+メーリングリスト
+----------------
+開発者向けメーリングリストを講読したい方は、以下のページにある説明をお読みくだ
+さい。
+
+http://lists.sourceforge.net/lists/listrinfo/effectv-developers
+
+議論用フォーラム
+----------------
+プロジェクトページには4つのフォーラムがあります。
+
+Japanese
+	日本語で議論するためのフォーラムです。日本語で投稿される方は全てこちら
+	の方へお願いします。
+Help
+	トラブルの質問など。
+Effects coders forum
+	イフェクトを作る人同士の情報交換の場。
+Open Discussion
+	その他何でも。
+
+舞台裏とは
+----------
+BackStage Branch、すなわち「舞台裏版」とは、いわゆる開発版の事で、実験的機能や
+新しいイフェクトなどはいったんこちらの版に組み込まれ、テストされます。
+
+CVS
+---
+EffecTVのCVSツリーがプロジェクトページから入手できます。CVSの簡単な使い方が
+プロジェクトページで読めますので、そちらを参照してください。
+
+開発者権限でCVSツリーにアクセスするには、EffecTV開発者グループに加入する必要が
+あります。まずは開発者グループに相談してください。
+
+ライセンス情報
+==============
+EffecTVはフリーソフトウェアです。EffecTVはGNU General Public License version 2
+(GPL2)に従って公開・配布されています。ライセンス文書は"COPYING"というファイル
+に収められています。GPL2の日本語訳は、
+
+ftp://ftp.sra.co.jp/pub/gnu/local-fix/GPL2-j/gpl.text.gz
+
+で入手できます。
+
+本プログラムは有用とは思いますが、頒布にあたっては、市場性及び特定目的適合性に
+ついての暗黙の保証を含めて、いかなる保証も行ないません。詳細についてはGNU 一般
+公有使用許諾書をお読みください。
+
+開発メンバー
+============
+クルーと呼んでね。"CREWS"に書かれています。
+
+---
+EffecTV crews
+E-mail: effectv-developers@lists.sourceforge.net
+Web: http://effectv.sourceforge.net/index.html

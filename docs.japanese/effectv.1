@@ -1,0 +1,177 @@
+.TH EFFECTV 1 "Sep. 19, 2001" "effectv"
+.SH 名前
+effectv \- リアルタイムビデオエフェクター
+.SH 書式
+.B "effectv"
+[-help]
+[-device FILE]
+[-channel NUMBER]
+[-norm NORM]
+[-freqtab FREQTAB]
+[-fullscreen]
+[-hardware]
+[-fps]
+[-vloopback FILE]
+[-size WxH]
+[-geometry WxH]
+[-scale NUMBER]
+[-autoplay NUMBER]
+
+.SH 説明
+EffecTVはリアルタイムで動作するビデオエフェクターです。様々なエフェクターで
+ビデオやテレビを楽しめます。
+
+.SH オプション
+.TP
+.I \-help
+ヘルプを表示します。
+.TP
+.I \-device FILE
+デバイスファイルのファイル名を与えます。デフォルトは"/dev/video"。
+.TP
+.I \-channel NUMBER
+ビデオ入力のチャンネル番号を指定します。デフォルトは 0。
+.TP
+.I \-norm NORM
+ビデオ信号の規格を指定します(デフォルトはntsc)。
+ntsc, pal, secam, pal-nc, pal-m, pal-n, ntsc-jpの中から選択してください。
+.TP
+.I \-freqtab FREQTAB
+TVの周波数表を指定します。
+us-bcast, us-cable, us-cable-hrc, japan-bcast, japan-cable,
+europe-west, europe-east, italy, newzealand, australia, ireland,
+france, china-bcast, southafrica, argentinaの中から選択してください。
+.TP
+.I \-fullscreen
+フルスクリーンモードで起動します。
+.TP
+.I \-hardware
+可能なら、画面の直接書き換えモードで起動します。
+.TP
+.I \-doublebuffer
+可能なら、ダブルバッファモードを使います。
+.TP
+.I \-fps
+フレーム/秒を表示します。
+.TP
+.I \-size WxH
+入力画面のサイズを指定します。デフォルトは320x240。
+.TP
+.I \-geometry WxH
+出力画面のサイズを指定します。デフォルトは320x240。
+.TP
+.I \-scale NUMBER
+出力画面をNUMBER倍に拡大して表示します。
+.TP
+.I \-autoplay FRAMES
+イフェクトを、NUMBER枚のフレームを表示したら自動的に切り換えます。
+.TP
+.I \-vloopback FILE
+ビデオループバック機能を使用します。ビデオループバックデバイスの入力デバイス名をFILEで指定します。
+
+.SH キー操作
+.TP
+.I 上下矢印
+イフェクトを切り換えます。
+.TP
+.I 左右矢印
+TVのチャンネルを切り換えます。
+.TP
+.I スペース
+一部のイフェクトで、背景イメージを取り込みなおしたり、モードを切り換えるのに使います。
+.TP
+.I ALT+ENTER
+フルスクリーンモードに切り換えます。もう一度押すと元に戻ります。
+.TP
+.I タブ
+左右反転させます。もう一度押すと元に戻ります。
+.TP
+.I Escape
+終了します。
+.PP
+個々のイフェクトでは他にもいくつかのキーやマウスによる操作ができます。詳しくは
+ドキュメントパッケージ(effectv-docs-ja.tar.gz)をダウンロードして参照してください。
+
+.SH イフェクト概要
+.TP
+.I QuarkTV
+動いてるものを分解します。
+.TP
+.I FireTV
+前景を切り出して、燃やします。
+.TP
+.I BurningTV
+前景を燃やします。
+.TP
+.I RadioacTV
+動いているものが輝いて、オーラを発します。
+.TP
+.I StreakTV
+8枚分の残像を表示します。
+.TP
+.I BaltanTV
+もっと長い残像を表示します。
+.TP
+.I 1DTV
+フレーム毎に線一本分だけ取り込みます。
+.TP
+.I DotTV
+入力画像をドットに変換。
+.TP
+.I MosaicTV
+前景にモザイクをかけます。
+.TP
+.I PuzzleTV
+入力画像がパズルに。
+.TP
+.I PredatorTV
+前景を(見えるように)透明にします。
+.TP
+.I SpiralTV
+動いてるものを同心円状に歪めます。
+.TP
+.I SimuraTV
+色調変換と鏡像生成。
+.TP
+.I EdgeTV
+輪郭線を抽出します。
+.TP
+.I ShagadelicTV
+サイケなディスコチックに。
+.TP
+.I NoiseTV
+前景に砂嵐ノイズをかぶせます。
+.TP
+.I AgingTV
+フィルム劣化イフェクト。
+.TP
+.I LifeTV
+コンウェイのライフゲームをEffecTVで遊ぶ。
+.TP
+.I TransFormTV
+画像の座標変換イフェクト。
+.TP
+.I SparkTV
+前景にスパークが走ります。
+.TP
+.I warpTV
+ぐにょーん。(としか言いようがない)
+.TP
+.I HolographicTV
+映画「スターウォーズ」のホロビデオっぽい表示。
+.TP
+.I cycleTV
+色調をどんどん変えて表示します。
+.TP
+.I RippleTV
+入力画像の動きに応じて波紋を表示します。
+.TP
+.I DiceTV
+入力画像を切り刻んで表示します。
+
+.SH 著者
+EffecTVは福地健太郎<fukuchi@users.sourceforge.net>によって最初の版が作られました。
+現在の開発者は、CREWSファイルを参照してください。
+
+.SH 関連項目
+v4l-conf(1)

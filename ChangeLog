@@ -1,5 +1,6 @@
 2001/09/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* effectv.1: Typo fixes.
+	* README, effectv.1: Typo fixes.
+	* docs.japanese/*: Added some Japanese documents.
 
 2001/09/25	Sam Mertens		<smertens@users.sf.net>
 	* tools/Makefile given 'all-recursive', 'all-am' targets

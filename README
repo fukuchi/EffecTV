@@ -118,7 +118,7 @@ MosaicTV
 PuzzleTV
 	Scrambles the picture.
 PredatorTV
-	Makes incoming objects invisible.
+	Makes incoming objects invisible visibly.
 SpiralTV
 	Spiraling motion-distortion effect.
 SimuraTV
@@ -195,8 +195,8 @@ at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
 
 Discussion forum
 ----------------
-There are three open discussion forums: "Help", "Effects coders forum" and
-"Open discussion".
+There are four open discussion forums: "Help", "Effects coders forum",
+"Open discussion" and "Japanese".
 
 Help
 	Questions and problems should be posted here.
@@ -205,7 +205,7 @@ Effects coders forum
 Open Discussion
 	Free discussion space.
 Japanese
-	For discussion in Japnese language.
+	For discussion in Japanese language.
 
 BackStage Branch
 ----------------
@@ -236,6 +236,6 @@ AUTHORS
 See the file 'CREWS'.
 
 ---
-FUKUCHI, kentarou
-E-mail: fukuchi@is.titech.ac.jp
-Web: http://matsu-www.is.titech.ac.jp/~fukuchi/
+EffecTV crews
+E-mail: effectv-developers@lists.sourceforge.net
+Web: http://effectv.sourceforge.net/index.html
