@@ -10,8 +10,8 @@ INSTALL
 
 Requirements
 ------------
-Currently, EffecTV highly depends upon the Intel architecture. It may not work on any
-other platform.
+Currently, EffecTV highly depends upon the Intel architecture. It may not work
+on any other platform.
 
 Video capture card or USB device supported by video4linux is required.
 
@@ -87,8 +87,9 @@ Key
 Up/Down     change effect.
 Right/Left  change TV channel.
 Space       capture a background image(for FireTV, BurningTV, etc.).
-            change mode(for SpiralTV)
+            change mode(for SpiralTV, TransFormTV)
 ALT+ENTER   fullscreen mode(toggle).
+TAB         Horizontal flipping(toggle).
 Escape      Quit
 
 Individual effects are described in further detail in the documents package.
@@ -141,16 +142,15 @@ HolographicTV
 
 Recording/broadcasting EffecTV
 ------------------------------
-EffecTV has supported the use of a  video loopback device since
-version 0.2.0.  First, load the vloopback device driver module and
-verify the input/output device files for the video pipe (typically
-/dev/video1 and /dev/video2).
+EffecTV has supported the use of a video loopback device since version 0.2.0.
+First, load the vloopback device driver module and verify the input/output
+device files for the video pipe (typically /dev/video1 and /dev/video2).
 Then, run EffecTV.
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be read from /dev/video2. If you want to
-'chain' a second instance of EffecTV, type as following.
+The effected images can be read from /dev/video2. If you want to 'chain'
+a second instance of EffecTV, type as following.
 
 $ effectv -device /dev/video2
 
@@ -171,8 +171,8 @@ Bug reports and suggestions are welcome! Send an e-mail to:
 
 effectv-developers@lists.sourceforge.net
 
-or, post a message to EffecTV open discussion forums at EffecTV project
-page at SourceForge (see below for the URL).
+or, post a message to EffecTV open discussion forums at EffecTV project page
+at SourceForge (see below for the URL).
 
 SourceForge
 ===========
@@ -182,8 +182,8 @@ http://sourceforge.net/projects/effectv/
 
 Mailing list
 ------------
-If you want to subscribe to the EffecTV crews mailing list, info can
-be found at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
+If you want to subscribe to the EffecTV crews mailing list, info can be found
+at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
 
 Discussion forum
 ----------------
@@ -197,7 +197,7 @@ Effects coders forum
 Open Discussion
 	Free discussion space.
 Japanese
-	For discussion in Japnese.
+	For discussion in Japnese language.
 
 BackStage Branch
 ----------------
@@ -206,9 +206,9 @@ effects and new features come here at first.
 
 CVS
 ---
-CVS repository of EffecTV can be checked out from project page. Both
-the main trunc and BackStage Branch are stored at there. Quick CVS usage
-instructions can be found there.
+CVS repository of EffecTV can be checked out from project page. Both the main
+trunc and BackStage Branch are stored at there. Quick CVS usage instructions
+can be found there.
 
 If you want access as a developer, you should be the member of the EffecTV
 developers group.  Please ask me to join the developers group.

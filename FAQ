@@ -82,9 +82,9 @@ tell me your ID. I will add your ID to the EffecTV developers group.
 ----------
 Q7: How can I capture the video output from EffecTV to harddisk?
 
-A: EffecTV can output the effected images to a video loopback device since version
-0.2.0. First, you should download Jeroen Vreeken's vloopback driver from
-http://motion.technolust.cx/vloopback/index.html, and install the module.
+A: EffecTV can output the effected images to a video loopback device since
+version 0.2.0. First, you should download Jeroen Vreeken's vloopback driver
+from http://motion.technolust.cx/vloopback/index.html, and install the module.
 Then, load the module and check the input and output device files of the video
 pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
 
@@ -96,8 +96,9 @@ does not support some pixel format, so some applications do not work.
 Q8: EffecTV is slow.
 
 A: EffecTV uses a screen depth of 32 bits per pixel. When you launch EffecTV
-on a screen with another depth, images are converted to that depth by SDL, and it
-makes EffecTV a little slow. If you are using X11, try to run it in 32 bpp depth mode.
+on a screen with another depth, images are converted to that depth by SDL, and
+it makes EffecTV a little slow. If you are using X11, try to run it in 32 bpp
+depth mode.
 
 If your video capturing device does not support 32bit pixel format, EffecTV
 converts captured images to 32bit format. This also makes EffecTV slow.
