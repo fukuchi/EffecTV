@@ -28,8 +28,10 @@ int palette_init()
 
 	GB65table = (RGB32 *)malloc(32*64*sizeof(RGB32));
 	GB55table = (RGB32 *)malloc(32*32*sizeof(RGB32));
-	if(GB65table == NULL || GB55table == NULL)
+	if(GB65table == NULL || GB55table == NULL) {
+		fprintf(stderr, "palette_init: Memory allocation error.\n");
 		return -1;
+	}
 
 	i = 0;
 	for(g=0; g<64; g++) {
@@ -255,11 +257,112 @@ static void convert_YUV422toRGB32_hflip
 	}
 }
 
+static void convert_YUV420PtoRGB32
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+	int hwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	hwidth = width / 2;
+	cu = src + width * height;
+	cv = cu + width * height / 4;
+	p = (unsigned char *)dest;
+
+	for(y=0; y<height/2; y++) {
+		for(x=0; x<hwidth; x++) {
+			gray = YtoRGB[src[0]];
+			u = cu[x];
+			v = cv[x];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			p += 8;
+			src += 2;
+		}
+		for(x=0; x<hwidth; x++) {
+			gray = YtoRGB[src[0]];
+			u = cu[x];
+			v = cv[x];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			p += 8;
+			src += 2;
+		}
+		cu += hwidth;
+		cv += hwidth;
+	}
+}
+
+static void convert_YUV420PtoRGB32_hflip
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+	int hwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	hwidth = width / 2;
+	cu = src + width * height;
+	cv = cu + width * height / 4;
+	p = (unsigned char *)(dest + hwidth * 2 - 2);
+
+	for(y=0; y<height/2; y++) {
+		for(x=0; x<hwidth; x++) {
+			gray = YtoRGB[src[0]];
+			u = cu[x];
+			v = cv[x];
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 8;
+			src += 2;
+		}
+		p += (width + hwidth * 2) * PIXEL_SIZE;
+		for(x=0; x<hwidth; x++) {
+			gray = YtoRGB[src[0]];
+			u = cu[x];
+			v = cv[x];
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 8;
+			src += 2;
+		}
+		p += (width + hwidth * 2) * PIXEL_SIZE;
+		cu += hwidth;
+		cv += hwidth;
+	}
+}
+
 static const struct palette_converter_toRGB32_map converter_toRGB32_list[] = {
-	{VIDEO_PALETTE_RGB24,  convert_RGB24toRGB32,  convert_RGB24toRGB32_hflip},
-	{VIDEO_PALETTE_RGB565, convert_RGB565toRGB32, convert_RGB565toRGB32_hflip},
-	{VIDEO_PALETTE_RGB555, convert_RGB555toRGB32, convert_RGB555toRGB32_hflip},
-	{VIDEO_PALETTE_YUV422, convert_YUV422toRGB32, convert_YUV422toRGB32_hflip},
+	{VIDEO_PALETTE_RGB24,   convert_RGB24toRGB32,   convert_RGB24toRGB32_hflip},
+	{VIDEO_PALETTE_RGB565,  convert_RGB565toRGB32,  convert_RGB565toRGB32_hflip},
+	{VIDEO_PALETTE_RGB555,  convert_RGB555toRGB32,  convert_RGB555toRGB32_hflip},
+	{VIDEO_PALETTE_YUV422,  convert_YUV422toRGB32,  convert_YUV422toRGB32_hflip},
+	{VIDEO_PALETTE_YUV420P, convert_YUV420PtoRGB32, convert_YUV420PtoRGB32_hflip},
 	{VIDEO_PALETTE_GREY  , convert_GREYtoRGB32, convert_GREYtoRGB32_hflip},
 	{-1, NULL, NULL}
 };
