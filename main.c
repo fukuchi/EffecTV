@@ -68,7 +68,7 @@ static effectRegistFunc *effects_register_list[] =
 	diceRegister,
 	dizzyRegister,
 	DeinterlaceRegister,
-	nervousRegister,
+	nervousRegister
 };
 
 static effect **effectsList;
@@ -85,11 +85,11 @@ static void usage()
 	printf("Options:\n");
 	printf("  -device FILE     use device FILE for video4linux\n");
 	printf("  -channel NUMBER  channel number of video source\n");
-	printf("  -norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp} \
+	printf("  -norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
                    set video norm\n");
-	printf("  -freqtab  {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west, 
-			europe-east,italy,newzealand,australia,ireland,france,china-bcast, 
-            		southafrica,argentina,canada-cable} 
+	printf("  -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west, 
+            europe-east,italy,newzealand,australia,ireland,france,china-bcast,
+            southafrica,argentina,canada-cable} 
                    set frequency table\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");

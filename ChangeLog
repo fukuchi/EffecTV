@@ -1,3 +1,6 @@
+2002/02/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* main.c: Modified the indent of usage messges.
+
 2002/02/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, effectv.1, EffecTV.h : changed version to 0.3.4.
 	* docs.japanese/{README, effectv.1}: Added nervousTV, changed version to
