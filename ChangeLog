@@ -1,3 +1,9 @@
+2001/06/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* Some utility functions(utils.[ch], yuv.c, image.c buffer.o ) were moved
+	  from effects/ to the top directory.
+	* palette.c: convert_YUV422toRGB32() and convert_RGB32toYUV422() were
+	  added.
+
 2001/06/11	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* palette.c: Bug fixes of RGB conversion. RGB32toRGB565/555 did shift red
 	  value of each pixel too right.

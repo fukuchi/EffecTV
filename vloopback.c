@@ -163,8 +163,10 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 
 			if(vidpic->palette != pixel_format) {
 				converter = palette_get_supported_converter_fromRGB32(vidpic->palette);
-				if(converter == NULL)
+				if(converter == NULL) {
+					fprintf(stderr, "vloopback:unsupported pixel format(%d) is requested.\n",vidpic->palette);
 					return EINVAL;
+				}
 				pixel_format = vidpic->palette;
 			}
 			return 0;
@@ -445,7 +447,9 @@ int vloopback_push()
 		frame = gbufqueue[0];
 		src = (RGB32 *)screen_getaddress();
 		dest = gbuf + max_framesize * frame;
-		converter(src, screen_width, screen_height, dest, vloopback_width, vloopback_height);
+		if(converter) {
+			converter(src, screen_width, screen_height, dest, vloopback_width, vloopback_height);
+		}
 		gbufstat[frame] = GBUFFER_DONE;
 		gbufqueue[0] = gbufqueue[1];
 		gbufqueue[1] = -1;

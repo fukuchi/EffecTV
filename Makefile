@@ -18,9 +18,10 @@ CFLAGS = $(CONFIG) -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -Iv4luti
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 VLOOPBACKOBJS = vloopback.o
+UTILS = utils.o yuv.o buffer.o image.o
 
 PROGRAM = effectv
-OBJS = main.o screen.o video.o frequencies.o palette.o $(VLOOPBACKOBJS)
+OBJS = main.o screen.o video.o frequencies.o palette.o $(UTILS) $(VLOOPBACKOBJS)
 LIBEFFECTS = effects/libeffects.a
 SUBDIRS = effects v4lutils
 

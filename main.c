@@ -30,7 +30,7 @@
 
 #include "EffecTV.h"
 #include "effects/effects.h"
-#include "effects/utils.h"
+#include "utils.h"
 #include "syserr.xbm"
 
 int debug = 0;

@@ -14,9 +14,12 @@
 
 #include "EffecTV.h"
 #include "palette.h"
+#include "utils.h"
 
 static RGB32 *GB65table;
 static RGB32 *GB55table;
+#define CLIP 320
+static unsigned char clip[256 + CLIP * 2];
 
 int palette_init()
 {
@@ -40,6 +43,12 @@ int palette_init()
 			GB55table[i++] = (g<<11) | (b<<3);
 		}
 	}
+	for(i=0; i<CLIP; i++)
+		clip[i] = 0;
+	for(i=0; i<256; i++)
+		clip[CLIP+i] = i;
+	for(i=256+CLIP; i<256+CLIP*2; i++)
+		clip[i] = 255;
 
 	return 0;
 }
@@ -187,10 +196,70 @@ static void convert_RGB24toRGB32_hflip
 	}
 }
 
+static void convert_YUV422toRGB32
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int i, length;
+	unsigned int gray;
+	unsigned int u, v;
+	unsigned char *p;
+
+	length = width * height / 2;
+	p = (unsigned char *)dest;
+	for(i=0; i<length; i++) {
+		u = src[1];
+		v = src[3];
+		gray = YtoRGB[src[0]];
+		p[0] = clip[CLIP + gray + UtoB[u]];
+		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[2] = clip[CLIP + gray + VtoR[v]];
+		p += 4;
+		gray = YtoRGB[src[2]];
+		p[0] = clip[CLIP + gray + UtoB[u]];
+		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[2] = clip[CLIP + gray + VtoR[v]];
+		p += 4;
+		src += 4;
+	}
+}
+
+static void convert_YUV422toRGB32_hflip
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+	unsigned int gray;
+	unsigned int u, v;
+	unsigned char *p;
+
+	/* Images will be cluttered when 'width' is odd number. It is not so
+	 * difficult to adjust it, but it makes conversion little slow.. */
+	width &= 0xfffffffe;
+	p = (unsigned char *)dest + (width - 1) * 4;
+	for(y=0; y<height; y++) {
+		for(x=0; x<width; x++) {
+			u = src[1];
+			v = src[3];
+			gray = YtoRGB[src[0]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 4;
+			gray = YtoRGB[src[2]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 4;
+			src += 4;
+		}
+		p += width * 4;
+	}
+}
+
 static const struct palette_converter_toRGB32_map converter_toRGB32_list[] = {
 	{VIDEO_PALETTE_RGB24,  convert_RGB24toRGB32,  convert_RGB24toRGB32_hflip},
 	{VIDEO_PALETTE_RGB565, convert_RGB565toRGB32, convert_RGB565toRGB32_hflip},
 	{VIDEO_PALETTE_RGB555, convert_RGB555toRGB32, convert_RGB555toRGB32_hflip},
+	{VIDEO_PALETTE_YUV422, convert_YUV422toRGB32, convert_YUV422toRGB32_hflip},
 	{VIDEO_PALETTE_GREY  , convert_GREYtoRGB32, convert_GREYtoRGB32_hflip},
 	{-1, NULL, NULL}
 };
@@ -254,11 +323,62 @@ COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>5) &
 static void convert_RGB32toRGB555
 COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>6) & 0x3e0) | ((v>>9) & 0x7c00); dest += 2;)
 
+static void convert_RGB32toYUV422
+(RGB32 *src, int src_width, int src_height,
+ unsigned char *dest, int dest_width, int dest_height)
+{
+	int length;
+	int x, y;
+	int sx, sy;
+	int tx, ty;
+	RGB32 *p;
+	unsigned char *q;
+
+	if(src_width == dest_width && src_height == dest_height) {
+		length = src_width * src_height / 2;
+		q = (unsigned char *)src;
+		for(x=0; x<length; x++) {
+			dest[0] = BtoY[q[0]] + GtoY[q[1]] + RtoY[q[2]] + 16;
+			dest[1] = RtoV[q[0]] + GtoU[q[1]] + RtoU[q[2]] + 128;
+			dest[3] = BtoV[q[0]] + GtoV[q[1]] + RtoV[q[2]] + 128;
+			dest[2] = BtoY[q[4]] + GtoY[q[5]] + RtoY[q[6]] + 16;
+//			dest[0] = 255;dest[1] = 0; dest[2] = 0; dest[3] = 0;
+			dest += 4;
+			q += 8;
+		}
+	} else {
+	/* Images will be cluttered when 'dest_width' is odd number. It is not so
+	 * difficult to adjust it, but it makes conversion little slow.. */
+		tx = src_width * 256 / dest_width;
+		ty = src_height * 256 / dest_height;
+		sy = 0;
+		dest_width /= 4;
+		dest_width *= 2;
+		for(y=0; y<dest_height; y++) {
+			p = src + (sy>>8) * src_width;
+			sx = 0;
+			for(x=0; x<dest_width; x++) {
+				q = (unsigned char *)&p[sx>>8];
+				dest[0] = BtoY[q[0]] + GtoY[q[1]] + RtoY[q[2]] + 16;
+				dest[1] = RtoV[q[0]] + GtoU[q[1]] + RtoU[q[2]] + 128;
+				dest[3] = BtoV[q[0]] + GtoV[q[1]] + RtoV[q[2]] + 128;
+				sx += tx;
+				q = (unsigned char *)&p[sx>>8];
+				dest[2] = BtoY[q[0]] + GtoY[q[1]] + RtoY[q[2]] + 16;
+				dest += 4;
+				sx += tx;
+			}
+			sy += ty;
+		}
+	}
+}
+
 static const struct palette_converter_fromRGB32_map converter_fromRGB32_list[] = {
 	{VIDEO_PALETTE_RGB32, convert_RGB32toRGB32},
 	{VIDEO_PALETTE_RGB24, convert_RGB32toRGB24},
 	{VIDEO_PALETTE_RGB565, convert_RGB32toRGB565},
 	{VIDEO_PALETTE_RGB555, convert_RGB32toRGB555},
+	{VIDEO_PALETTE_YUV422, convert_RGB32toYUV422},
 	{-1, NULL}
 };
 

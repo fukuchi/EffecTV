@@ -15,7 +15,7 @@
 #include "EffecTV.h"
 #include "frequencies.h"
 #include "palette.h"
-#include "effects/utils.h"
+#include "utils.h"
 
 /* Currently there is only one v4l device obeject. */
 v4ldevice vd;
