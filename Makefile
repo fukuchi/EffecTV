@@ -7,7 +7,7 @@ CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -Iv4lutils `sdl-co
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 PROGRAM = effectv
-OBJS = main.o screen.o video.o
+OBJS = main.o screen.o video.o frequencies.o
 LIBEFFECTS = effects/libeffects.a
 SUBDIRS = effects v4lutils
 

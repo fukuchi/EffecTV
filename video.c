@@ -13,9 +13,13 @@
 #include <v4lutils.h>
 
 #include "EffecTV.h"
+#include "frequencies.h"
 
 /* Currently there is only one v4l device obeject. */
 v4ldevice vd;
+
+/* Is TV tuner enabled? */
+int hastuner = 0;
 
 static normlist normlists[] =
 {
@@ -31,8 +35,11 @@ static normlist normlists[] =
 	{"", -1}
 };
 
+static int frequency_table = 0;
+static int TVchannel = 0;
+
 /* Channel and norm is determined at initialization time. */
-int video_init(char *file, int channel, int norm)
+int video_init(char *file, int channel, int norm, int freq)
 {
 	if(file == NULL){
 		file = DEFAULT_VIDEO_DEVICE;
@@ -40,6 +47,14 @@ int video_init(char *file, int channel, int norm)
 	if(v4lopen(file, &vd)) return -1;
 	v4lsetdefaultnorm(&vd, norm);
 	v4lgetcapability(&vd);
+
+	if(!(vd.capability.type & VID_TYPE_CAPTURE)) return -1;
+	if((vd.capability.type & VID_TYPE_TUNER)) {
+		hastuner = 1;
+		frequency_table = freq;
+		TVchannel = 0;
+		video_setfreq(0);
+	}
 
 	if(v4lsetchannel(&vd, channel)) return -1;
 	if(v4lsetpalette(&vd, DEFAULT_PALETTE)) return -1;
@@ -95,6 +110,22 @@ int video_changesize(int width, int height)
 	return v4lgrabinit(&vd, width, height);
 }
 
+/* change TVchannel to TVchannel+v */
+int video_setfreq(int v)
+{
+	if(hastuner && (frequency_table >= 0)) {
+		TVchannel += v;
+		while(TVchannel<0) {
+			TVchannel += chanlists[frequency_table].count;
+		}
+		TVchannel %= chanlists[frequency_table].count;
+
+		return v4lsetfreq(&vd, chanlists[frequency_table].list[TVchannel].freq);
+	} else {
+		return 0;
+	}
+}
+
 /*
  * videox_ series are the utility for using video capturing layer.
  * They don't touch a v4ldevice.
@@ -108,6 +139,20 @@ int videox_getnorm(char *name)
 	for(i=0; normlists[i].type != -1; i++) {
 		if(strcasecmp(name, normlists[i].name) == 0) {
 			return normlists[i].type;
+		}
+	}
+
+	return -1;
+}
+
+/* returns the frequency table number. */
+int videox_getfreq(char *name)
+{
+	int i;
+
+	for(i=0; chanlists[i].name; i++) {
+		if(strcmp(name, chanlists[i].name) == 0) {
+			return i;
 		}
 	}
 

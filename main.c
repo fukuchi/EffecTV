@@ -34,7 +34,7 @@ static effectRegistFunc *effects_register_list[] =
 	mosaicRegister,
 	puzzleRegister,
 	predatorRegister,
-//	spiralRegister,
+	spiralRegister,
 	simuraRegister
 };
 
@@ -52,7 +52,10 @@ static void usage()
 	printf("Options:\n");
 	printf("\tdevice FILE\tuse device FILE for video4linux\n");
 	printf("\tchannel NUMBER\tchannel number of video source\n");
-	printf("\tnorm {ntsc,pal,secam,ntsc-jp}\tset video norm\n");
+	printf("\tnorm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}\tset video norm\n");
+	printf("\tfreqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,
+		japan-cable,europe-west,europe-east,italy,newzealand,
+		australia,ireland,france,china-bcast}\tset frequency table\n");
 	printf("\tfullscreen\tenable fullscreen mode\n");
 	printf("\tdouble\t\tdoubling screen size\n");
 	printf("\thardware\tuse direct video memory(if possible)\n");
@@ -63,6 +66,7 @@ static void usage()
 static void drawErrorPattern()
 {
 	screen_clear(0xff0000);
+	/* yes, this is very quick hack and unfriendliness. */
 }
 
 static int registEffects()
@@ -153,6 +157,12 @@ static int startTV()
 				case SDLK_DOWN:
 					flag = changeEffect(currentEffectNum+1);
 					break;
+				case SDLK_LEFT:
+					video_setfreq(-1);
+					break;
+				case SDLK_RIGHT:
+					video_setfreq(1);
+					break;
 				case SDLK_ESCAPE:
 					flag = 0;
 					break;
@@ -176,6 +186,7 @@ int main(int argc, char **argv)
 	char *option;
 	int channel = 0;
 	int norm = DEFAULT_VIDEO_NORM;
+	int freqtab = 0;
 	char *devfile = NULL;
 
 	for(i=1;i<argc;i++) {
@@ -201,6 +212,17 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing norm.\n");
 				exit(1);
 			}
+		} else if(strcmp(option, "freqtab") == 0) {
+			i++;
+			if(i<argc) {
+				if((freqtab = videox_getfreq(argv[i])) < 0) {
+					fprintf(stderr, "frequency table %s is not supported.\n", argv[i]);
+					exit(1);
+				}
+			} else {
+				fprintf(stderr, "missing frequency table.\n");
+				exit(1);
+			}
 		} else if(strncmp(option, "device", 6) == 0) {
 			i++;
 			if(i<argc) {
@@ -209,15 +231,15 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing device file.\n");
 				exit(1);
 			}
-		} else if(strncmp(option, "hardware", 8) == 0) {
+		} else if(strcmp(option, "hardware") == 0) {
 			hwsurface = 1;
 		} else if(strncmp(option, "fullscreen", 4) == 0) {
 			fullscreen = 1;
 		} else if(strncmp(option, "doublebuffer", 9) == 0) {
 			doublebuf = 1;
-		} else if(strncmp(option, "double", 6) == 0) {
+		} else if(strcmp(option, "double") == 0) {
 			scale = 2;
-		} else if(strncmp(option, "fps", 3) == 0) {
+		} else if(strcmp(option, "fps") == 0) {
 			fps = 1;
 		} else if(strncmp(option, "help", 1) == 0) {
 			usage();
@@ -236,7 +258,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Memory allocation failed.\n");
 		exit(1);
 	}
-	if(video_init(devfile, channel, norm)) {
+	if(video_init(devfile, channel, norm, freqtab)) {
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
 	}

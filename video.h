@@ -18,13 +18,15 @@ typedef struct _normlist
 } normlist;
 
 extern v4ldevice vd;
+extern int hastuner;
 
-int video_init(char *file, int channel, int norm);
+int video_init(char *file, int channel, int norm, int freq);
 void video_quit();
 int video_setformat(int palette);
 int video_grabstart();
 int video_grabstop();
 int video_changesize(int width, int height);
+int video_setfreq(int v);
 
 #define video_getformat() (vd.mmap.format)
 #define video_getaddress() (v4lgetaddress(&vd))
@@ -32,5 +34,6 @@ int video_changesize(int width, int height);
 #define video_grabframe() (v4lgrabf(&vd))
 
 int videox_getnorm(char *name);
+int videox_getfreq(char *name);
 
 #endif /* __VIDEO_H__ */
