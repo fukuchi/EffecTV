@@ -1,3 +1,7 @@
+2001/06/11	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* palette.c: Bug fixes of RGB conversion. RGB32toRGB565/555 did shift red
+	  value of each pixel too right.
+
 2001/06/10	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* effectv.1: Added summaries of new effects.
 	* Coding-HOWTO: from BSB.
