@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2002 FUKUCHI Kentarou
+ * Copyright (C) 2001-2005 FUKUCHI Kentarou
  *
  * RandomDotStereoTV - makes random dot stereogram.
  * Copyright (C) 2002 FUKUCHI Kentarou

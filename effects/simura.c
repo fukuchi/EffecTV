@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * SimuraTV - color distortion and mirrored image effector
  * Copyright (C) 2001-2002 FUKUCHI Kentaro

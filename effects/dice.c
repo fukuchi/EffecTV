@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * dice.c: a 'dicing' effect
  *  copyright (c) 2001 Sam Mertens.  This code is subject to the provisions of

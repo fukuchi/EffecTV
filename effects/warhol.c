@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * WarholTV - Hommage aux Andy Warhol
  * Copyright (C) 2002 Jun IIO

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentarou
+ * Copyright (C) 2001-2005 FUKUCHI Kentarou
  *
  * BrokenTV - simulate broken VTR.
  * Copyright (C) 2002 Jun IIO

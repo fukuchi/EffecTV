@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2004 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * NervousHalf - Or your bitter half.
  * Copyright (C) 2002 TANNENBAUM Edo

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * VertigoTV - Alpha blending with zoomed and rotated images.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
