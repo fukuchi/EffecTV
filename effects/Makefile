@@ -13,7 +13,7 @@ EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZ
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
           $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(RDS) \
-          $(LENS) $(DIFF) $(SCROLL) $(HINTDEPINT)
+          $(LENS) $(DIFF) $(SCROLL) $(HINTDEPINT) $(WARHOL)
 
 SUBDIRS =
 
@@ -76,6 +76,7 @@ LENS = lens.o
 DIFF = diff.o
 SCROLL = scroll.o
 HINTDEPINT = hintdepint.o
+WARHOL = warhol.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)
