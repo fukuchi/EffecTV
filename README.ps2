@@ -14,7 +14,7 @@ ov511 device driver
 If you want to use ov511 based USB camera, you need to download a new driver
 from:
 
-http://alpha.dyndns.org/ov511/download/ov511-1.43.tar.gz
+http://alpha.dyndns.org/ov511/download/ov511-1.58.tar.gz
 
 Extract it and apply a patch attached to the end of this document. You can
 apply the patch by following command.
@@ -55,46 +55,67 @@ EmotionEngine.
 Patch
 =====
 ----------from here----------
-diff -ruN ov511-1.43.orig/Makefile ov511-1.43/Makefile
---- ov511-1.43.orig/Makefile	Mon Oct  8 20:51:29 2001
-+++ ov511-1.43/Makefile	Thu Oct 11 10:21:56 2001
-@@ -1,10 +1,9 @@
+diff -ru ov511-1.58.orig/Makefile ov511-1.58/Makefile
+--- ov511-1.58.orig/Makefile	Sat Feb 16 15:02:18 2002
++++ ov511-1.58/Makefile	Sun Mar 17 22:35:42 2002
+@@ -1,9 +1,10 @@
  #################################### OPTIONS ##################################
- 
- # Try changing this to /usr/src/linux/include if you get strange compile errors
--INCLUDEDIR = /usr/include
+ # Change this to /usr/include if you get header file errors
+-INCLUDEDIR = /lib/modules/`uname -r`/build/include
 +INCLUDEDIR = /usr/src/linux/include
  
--CFLAGS = -D__KERNEL__ -DMODULE -O2 -Wall -Wstrict-prototypes \
+ CFLAGS = -D__KERNEL__ -DMODULE -DOUTSIDE_KERNEL -O2 -Wall -Wstrict-prototypes \
 -	-fomit-frame-pointer -I$(INCLUDEDIR) 
-+CFLAGS = -D__KERNEL__ -I$(INCLUDEDIR) -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -G 0 -mno-abicalls -fno-pic -mcpu=r5900 -mips1 -pipe -mlong-calls -DMODULE -DEXPORT_SYMTAB
++	-fomit-frame-pointer -I$(INCLUDEDIR) -G 0 -mno-abicalls -fno-pic \
++	-mcpu=r5900 -mips1 -pipe -mlong-calls -DEXPORT_SYMTAB
  
- # Uncomment to enable kernel i2c support (for devices with tuners)
- # If you know how to cause "make i2c" to set this automatically, let me know.
-diff -ruN ov511-1.43.orig/ov511.c ov511-1.43/ov511.c
---- ov511-1.43.orig/ov511.c	Mon Oct  8 20:50:46 2001
-+++ ov511-1.43/ov511.c	Thu Oct 11 10:21:01 2001
-@@ -392,6 +392,11 @@
-  * So I copied it again for the OV511 driver -claudio
-  **********************************************************************/
+ CC=gcc
  
+diff -ru ov511-1.58.orig/ov511.c ov511-1.58/ov511.c
+--- ov511-1.58.orig/ov511.c	Tue Mar 12 17:28:00 2002
++++ ov511-1.58/ov511.c	Sun Mar 17 20:51:22 2002
+@@ -162,6 +162,20 @@
+ 
+ #define FATAL_ERROR(rc) ((rc) < 0 && (rc) != -EPERM)
+ 
++	
++#define wait_event_interruptible(wq, condition)				\
++({									\
++	int __ret = 0;							\
++	do {								\
++		init_waitqueue_head(&wq);				\
++		if (signal_pending(current)) {				\
++			__ret = -EINTR;					\
++			break;						\
++		}							\
++	} while (!(condition));						\
++	__ret;								\
++})
++
+ /**********************************************************************
+  * Module Parameters
+  * (See ov511.txt for detailed descriptions of these)
+@@ -508,6 +522,11 @@
+ }
+ 
+ #else	/* if LINUX_VERSION_CODE <= KERNEL_VERSION(2, 5, 5) */
++
 +static inline void * vmalloc_32(unsigned long size)
 +{
 +	return vmalloc(size);
 +}
-+
+ 
  /* Given PGD from the address space's page table, return the kernel
   * virtual mapping of the physical memory mapped at ADR.
-  */
-diff -ruN ov511-1.43.orig/ov511.h ov511-1.43/ov511.h
---- ov511-1.43.orig/ov511.h	Mon Oct  8 20:51:16 2001
-+++ ov511-1.43/ov511.h	Thu Oct 11 10:21:01 2001
-@@ -15,6 +15,8 @@
- #include "i2c-algo-usb.h"
- #endif
+diff -ru ov511-1.58.orig/ov511.h ov511-1.58/ov511.h
+--- ov511-1.58.orig/ov511.h	Sun Mar  3 19:03:19 2002
++++ ov511-1.58/ov511.h	Sun Mar 17 20:00:45 2002
+@@ -6,6 +6,8 @@
+ #include <linux/smp_lock.h>
+ #include <linux/usb.h>
  
 +#define VID_HARDWARE_OV511 27
 +
- #define OV511_DEBUG	/* Turn on debug messages */
- 
- #ifdef OV511_DEBUG
+ #ifdef OV511_ENABLE_I2C
+ 	#include <linux/i2c.h>
+ 	#include "i2c-algo-usb.h"

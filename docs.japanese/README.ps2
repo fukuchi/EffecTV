@@ -14,7 +14,7 @@ ov511デバイスドライバ
 もしov511を使ったUSBカメラを使いたい場合は、まず以下の場所から新しいドライバを
 入手してください。
 
-http://alpha.dyndns.org/ov511/download/ov511-1.43.tar.gz
+http://alpha.dyndns.org/ov511/download/ov511-1.58.tar.gz
 
 そうしたら、ファイルを展開し、パッチをあてます。パッチは"README.ps2"の英語版の
 末尾に添付されています。以下のようにしてあてる事ができます。

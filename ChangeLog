@@ -1,3 +1,7 @@
+2002/03/25	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README.ps2, docs.japanese/README.ps2: Changed recommended version of
+	  ov511 from 1.43 to 1.58. New patch was attached.
+
 2002/03/17	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* main.c: Minor changes to compile with gcc 3.0.
 	* frequencies.[ch]: Irish frequency table fix. (imported from xawtv-3.72)
@@ -35,7 +39,7 @@
 	* EffecTV-0.3.4 is released.
 
 2002/02/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* main.c: Modified the indent of usage messges.
+	* main.c: Modified the indent of usage messages.
 
 2002/02/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, effectv.1, EffecTV.h : changed version to 0.3.4.
