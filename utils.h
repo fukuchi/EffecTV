@@ -9,6 +9,13 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+
+/* DEFINE's by nullset@dookie.net */
+#define RED(n)  ((n>>16) & 0x000000FF)
+#define GREEN(n) ((n>>8) & 0x000000FF)
+#define BLUE(n)  ((n>>0) & 0x000000FF)
+#define RGB(r,g,b) ((0<<24) + (r<<16) + (g <<8) + (b))
+#define INTENSITY(n)	( ( (RED(n)+GREEN(n)+BLUE(n))/3))
 /*
  * utils.c
  */

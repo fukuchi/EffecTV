@@ -33,3 +33,5 @@ extern effectRegistFunc threadRegister;
 extern effectRegistFunc sparkRegister;
 extern effectRegistFunc warpRegister;
 extern effectRegistFunc holoRegister;
+extern effectRegistFunc cycleRegister;
+

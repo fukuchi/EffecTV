@@ -10,7 +10,7 @@ LIBEFFECTS = libeffects.a
 EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
-          $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO)
+          $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE)
 SUBDIRS =
 
 %.o: %.c
@@ -55,6 +55,7 @@ SPARK = spark.o
 THREAD = thread.o
 WARP = warp.o
 HOLO = holo.o
+CYCLE = cycle.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)

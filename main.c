@@ -61,7 +61,8 @@ static effectRegistFunc *effects_register_list[] =
 	lifeRegister,
 	sparkRegister,
 	warpRegister,
-	holoRegister
+	holoRegister,
+	cycleRegister
 };
 
 static effect **effectsList;
