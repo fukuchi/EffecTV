@@ -1,90 +1,126 @@
 *ATTENTION*
 vloopback-0.83 fails to compile on linux-2.4.5 or later, because of
-changes to the internal framework of the Video for Linux driver.
+changes of the internal framework of the Video for Linux driver.
 Jeroen Vreeken is working on adapting vloopback to it.  Please do not
 send email about this problem to him.
 
 The following patch to vloopback.c (v 0.83) seems to solve the problem
-quite effectively.  Be aware that it is a very unofficial patch (Sam
-cooked it up late last night), and that it will not compile on older
-kernels.  YMMV, caveat emptor, and all other warnings probably apply.
-(June 9, 2001)
+quite effectively.  Be aware that it is a very unofficial patch.
+
+written by Sam Martens, June 9, 2001
+modified by Kentarou Fukuchi, June 14, 2001
 
 -- cut --
-*** vloopback.c~	Mon Jan 22 14:44:16 2001
---- vloopback.c	Sat Jun  9 02:40:16 2001
-***************
-*** 143,148 ****
---- 143,151 ----
-  static int spares=0;
-  static int pipesused=0;
-  
-+ static int video_nr= -1;
-+ 
-+ MODULE_PARM(video_nr,"i");
-  
-  /**********************************************************************
-   *
-***************
-*** 819,824 ****
---- 822,828 ----
-  
-  static struct video_device vloopback_template=
-  {
-+     NULL,       /* struct module ? */
-  	"Video Loopback",
-  	VID_TYPE_CAPTURE,
-  	0,
-***************
-*** 1027,1033 ****
-  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
-  	init_waitqueue_head(&loops[nr]->wait);
-  	init_MUTEX(&loops[nr]->lock);
-! 	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER)==-1) {
-  		kfree(loops[nr]->vloopin);
-  		kfree(loops[nr]->vloopout);
-  		kfree(loops[nr]);
---- 1031,1037 ----
-  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
-  	init_waitqueue_head(&loops[nr]->wait);
-  	init_MUTEX(&loops[nr]->lock);
-! 	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
-  		kfree(loops[nr]->vloopin);
-  		kfree(loops[nr]->vloopout);
-  		kfree(loops[nr]);
-***************
-*** 1035,1041 ****
-  		printk(VLNAME "error registering device\n");
-  		return -ENODEV;
-  	}
-! 	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER)==-1) {
-  		video_unregister_device(&loops[nr]->vloopin->viddev);
-  		kfree(loops[nr]->vloopin);
-  		kfree(loops[nr]->vloopout);
---- 1039,1045 ----
-  		printk(VLNAME "error registering device\n");
-  		return -ENODEV;
-  	}
-! 	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
-  		video_unregister_device(&loops[nr]->vloopin->viddev);
-  		kfree(loops[nr]->vloopin);
-  		kfree(loops[nr]->vloopout);
-
--- cut --
-
-**********************************************************
-The following is an older patch which fixes the problem for
-linux-2.4.3 and linux-2.4.4.
-
---- vloopback.c.orig	Thu May 17 15:59:46 2001
-+++ vloopback.c	Thu May 17 16:00:33 2001
-@@ -819,6 +819,9 @@
+diff -ruN vloopback-0.83.orig/Makefile vloopback-0.83/Makefile
+--- vloopback-0.83.orig/Makefile	Thu Jun 14 08:26:18 2001
++++ vloopback-0.83/Makefile	Thu Jun 14 08:22:41 2001
+@@ -1,16 +1,46 @@
+-# Makefile for vloopback
+-#
+-LINUXSRC=/usr/src/linux
++# The most part of patch is taken from bttv's Makefile.
++#################################################
++# config
+ 
+-# -DFAKE_VIDEO_PROC
+-#CONFIG_FLAGS=
+-CONFIG_FLAGS= -DCONFIG_PROC_FS -DCONFIG_VIDEO_PROC_FS
++# where the kernel sources are located
++RUNNING := /lib/modules/$(shell uname -r)/build
++KERNEL_DIR := $(shell if test -d $(RUNNING); then echo $(RUNNING); else echo /usr/src/linux; fi)
++#KERNEL_DIR := /usr/src/linux
+ 
+-CFLAGS=	-D__KERNEL__ -DMODULE $(CONFIG_FLAGS) -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -pipe -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -I $(LINUXSRC)/drivers/usb -I$(LINUXSRC)/include 
++# kernel version
++CURRENT := $(shell grep "UTS_RELEASE" $(KERNEL_DIR)/include/linux/version.h | cut -d'"' -f2)
++TREE := $(shell echo $(CURRENT) | cut -d. -f1,2)
+ 
+-all:	vloopback.o
++MODULE_DIR := $(shell test -d "/lib/modules/$(CURRENT)/kernel" && \
++	echo "/lib/modules/$(CURRENT)/kernel/drivers/media/video" ||\
++	echo "/lib/modules/$(CURRENT)/misc")
+ 
+-vloopback.o : vloopback.c
++
++#################################################
++# some magic for using linux kernel settings
++# when compiling module(s)
++
++# for new-style kernel Makefiles (2.4)
++export-objs	:= 
++list-multi	:= vloopback.o
++obj-m		:= vloopback.o
++multi-m		:= $(filter $(list-multi), $(obj-m))
++int-m		:= $(sort $(foreach m, $(multi-m), $($(basename $(m))-objs)))
++
++# for old-style kernel Makefiles (2.2)
++M_OBJS		:= $(sort $(filter-out $(export-objs), $(obj-m)))
++MX_OBJS		:= $(sort $(filter     $(export-objs), $(obj-m)))
++MI_OBJS		:= $(sort $(filter-out $(export-objs), $(int-m)))
++MIX_OBJS        := $(sort $(filter     $(export-objs), $(int-m)))
++
++here:
++	DIR=`pwd`; (cd $(KERNEL_DIR); make SUBDIRS=$$DIR modules)
++	@echo
++
++install:
++	su -c "set -x; mkdir -p $(MODULE_DIR); cp -v $(M_OBJS) $(MX_OBJS) $(MODULE_DIR); depmod -a"
++
++include $(KERNEL_DIR)/Rules.make
+ 
+ clean:
+ 	rm -f *.o *~
+diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
+--- vloopback-0.83.orig/vloopback.c	Tue Jan 23 04:44:16 2001
++++ vloopback-0.83/vloopback.c	Thu Jun 14 08:23:51 2001
+@@ -143,6 +143,10 @@
+ static int spares=0;
+ static int pipesused=0;
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,5)
++static int video_nr= -1;
++MODULE_PARM(video_nr,"i");
++#endif
+ 
+ /**********************************************************************
+  *
+@@ -819,6 +823,9 @@
  
  static struct video_device vloopback_template=
  {
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,3)
-+	owner: THIS_MODULE,
++	THIS_MODULE,
 +#endif
  	"Video Loopback",
  	VID_TYPE_CAPTURE,
  	0,
+@@ -999,6 +1006,11 @@
+ }
+ #endif /* CONFIG_PROC_FS && CONFIG_VIDEO_PROC_FS */
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,5)
++# define do_video_register(dev,type,nr) video_register_device((dev),(type))
++#else
++# define do_video_register(dev,type,nr) video_register_device((dev),(type),(nr))
++#endif
+ 
+ static int create_pipe(int nr)
+ {
+@@ -1027,7 +1039,7 @@
+ 	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
+ 	init_waitqueue_head(&loops[nr]->wait);
+ 	init_MUTEX(&loops[nr]->lock);
+-	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER)==-1) {
++	if (do_video_register(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
+ 		kfree(loops[nr]->vloopin);
+ 		kfree(loops[nr]->vloopout);
+ 		kfree(loops[nr]);
+@@ -1035,7 +1047,7 @@
+ 		printk(VLNAME "error registering device\n");
+ 		return -ENODEV;
+ 	}
+-	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER)==-1) {
++	if (do_video_register(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
+ 		video_unregister_device(&loops[nr]->vloopin->viddev);
+ 		kfree(loops[nr]->vloopin);
+ 		kfree(loops[nr]->vloopout);
