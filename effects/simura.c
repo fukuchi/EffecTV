@@ -19,8 +19,8 @@ static int event();
 
 static char *effectname = "SimuraTV";
 static int stat;
-static RGB32 color;
-static int mirror;
+static RGB32 color = 0x000000;
+static int mirror = 1;
 static int width;
 static int hwidth;
 static int height;
@@ -89,9 +89,6 @@ effect *simuraRegister()
 
 static int start()
 {
-	color = 0;
-	mirror = 1;
-
 	stat = 1;
 	return 0;
 }
