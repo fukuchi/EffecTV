@@ -10,9 +10,11 @@
  * Ported to EffecTV BSB by Buddy Smith
  * Modified from BSB for EffecTV 0.3.x by Ed Tannenbaaum
  * ET added interactive control via mouse as follows....
- * Mouse with no buttons pressed moves magnifier
- * Left button and y movement controls size of magnifier
- * Right Button and y movement controls magnification.
+ * Spacebar toggles interactive mode (off by default)
+ * In interactive mode:
+ *   Mouse with no buttons pressed moves magnifier
+ *   Left button and y movement controls size of magnifier
+ *   Right Button and y movement controls magnification.
  *
  * This works best in Fullscreen mode due to mouse trapping
  *
@@ -22,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
 #include "../EffecTV.h"
 #include "utils.h"
 
@@ -29,11 +32,9 @@ int lensStart();
 int lensStop();
 int lensDraw();
 int lensEvent();
-void init();
-void clipmag(void);
-
+static void init();
 static int x=16,y=16;
-// static int xd=5,yd=5;
+static int xd=5,yd=5;
 static int lens_width=150;
 static int lens_zoom = 30;
 
@@ -42,6 +43,7 @@ int g_cursor_local = SDL_ENABLE;
 static char *effectname = "lensTV";
 static int state = 0;
 static int lens[640][640];
+static int mode ;
 
 void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 {
@@ -62,7 +64,7 @@ void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 effect *lensRegister()
 {
 	effect *entry;
-
+	mode=1;
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
 
@@ -118,19 +120,20 @@ int lensDraw()
 	}
 
 
-  	memcpy(dst,src,video_height*video_width*sizeof(RGB32));
+  	memcpy(dst, src, video_height*video_width*sizeof(RGB32));
   	apply_lens(x,y,src,dst);
-  	//x+= xd; y+=yd;
-  	//if (x > (video_width - lens_width - 15) || x < 15) xd = -xd;
-  	//if (y > (video_height - lens_width - 15) || y < 15) yd = -yd;
-
+	if (mode==1){
+  		x+= xd; y+=yd;
+  		if (x > (video_width - lens_width - 5) || x < 5) xd = -xd;
+  		if (y > (video_height - lens_width - 5) || y < 5) yd = -yd;
+	}
 	if(screen_mustlock()) screen_unlock();
   	if(video_grabframe())  return -1;
 
   	return 0;
 } 
 
-void init() {
+static void init() {
 
   int x,y,r,d;
     /* generate the lens distortion */
@@ -260,70 +263,70 @@ void init() {
     }
 }
 
-
-
-int lensEvent(SDL_Event *event)
-{
-		if(event->type == SDL_KEYDOWN) {
-			switch(event->key.keysym.sym) {
-
-
-
-                	case SDLK_0:
-
-                        fprintf(stdout,"0000\n");
-                        break;
-
-				default: break;
-
-			}
-		}
-
-		else { if (SDL_MOUSEMOTION == event->type){
-
-			switch(event->button.button) {
-          			case SDL_BUTTON_LEFT:
-					lens_width = lens_width + (event->motion.yrel);
-					if (lens_width>video_height)lens_width=video_height;
-					if (lens_width<3)lens_width=3;
-					init();
-					clipmag();
-
-				break;
-
-				case 2: // Right button on 2 button mice / middle on three?
-        			case 4: // Right on  my wheel mouuse
-						//lens_width = event->button.y;
-						lens_zoom = lens_zoom + event->motion.yrel;
-						if (lens_zoom<5) lens_zoom=5;
-						if (lens_zoom>200) lens_zoom=200;
-						init();
-						//fprintf(stdout,"y=%d\n",y);fprintf(stdout,"x=%d\n",x);
-				break;
-				default:
-					y = y+(event->motion.yrel);
-					x = x+(event->motion.xrel);
-					clipmag();
-					//fprintf(stdout,"y=%d\n",y);fprintf(stdout,"x=%d\n",x);
-				break;
-
-
-			}
-		}
-
-
-
-
-    	}
-
-	return 0;
-}
-
-void clipmag(void)
+static void clipmag()
 {
 	if (y<0-(lens_width/2)+1)y=0-(lens_width/2)+1;
 	if (y>=video_height-lens_width/2-1)y=video_height-lens_width/2-1;
 
 	if (x<0-(lens_width/2)+1) x=0-lens_width/2+1;
 	if(x>=video_width-lens_width/2+1)x=video_width-lens_width/2+1;
+}
+
+int lensEvent(SDL_Event *event)
+{
+		if(event->type == SDL_KEYDOWN) {
+			switch(event->key.keysym.sym) {
+
+			  	case SDLK_SPACE:
+					mode=!mode;
+
+                        		//fprintf(stdout,"mode=%d\n",mode);
+				break;
+
+				default: 
+				break;
+
+			}
+		}
+
+		else { 
+			if(mode==0){
+			   if (SDL_MOUSEMOTION == event->type){
+
+				switch(event->button.button) {
+          				case SDL_BUTTON_LEFT:
+						lens_width = lens_width + (event->motion.yrel);
+						if (lens_width>video_height)lens_width=video_height;
+						if (lens_width<3)lens_width=3;
+						init();
+						clipmag();
+
+					break;
+
+					case 2: // Right button on 2 button mice / middle on three?
+        				case 4: // Right on  my wheel mouuse
+						//lens_width = event->button.y;
+						lens_zoom = lens_zoom + event->motion.yrel;
+						if (lens_zoom<5) lens_zoom=5;
+						if (lens_zoom>200) lens_zoom=200;
+						init();
+						//fprintf(stdout,"y=%d\n",y);fprintf(stdout,"x=%d\n",x);
+					break;
+					default:
+						y = y+(event->motion.yrel);
+						x = x+(event->motion.xrel);
+						clipmag();
+					//fprintf(stdout,"y=%d\n",y);fprintf(stdout,"x=%d\n",x);
+					break;
+
+
+				}
+			   }
+			}
+
+
+
+    	}
+
+	return 0;
 }

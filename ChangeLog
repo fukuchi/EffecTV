@@ -1,3 +1,7 @@
+2002/08/08	Sam Mertens		<smertens@users.sf.net>
+	* effects/lens.c: Added Ed Tannenbaum's patch to toggle between
+	interactive and non-interactive modes
+	
 2002/08/05	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* Changed version to 0.3.7.
 	* README, docs.japanese/README: Changed the URL of NASM.
