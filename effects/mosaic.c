@@ -76,7 +76,7 @@ int mosaicStop()
 
 int mosaicDraw()
 {
-	int  x, y, xx, yy, v;
+	int x, y, xx, yy, v;
 	int count;
 	RGB32 *src, *dest;
 	RGB32 *p, *q;
