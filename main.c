@@ -68,7 +68,9 @@ static effectRegistFunc *effects_register_list[] =
 	diceRegister,
 	dizzyRegister,
 	DeinterlaceRegister,
-	nervousRegister
+	nervousRegister,
+	rndmRegister,
+	revRegister
 };
 
 static effect **effectsList;

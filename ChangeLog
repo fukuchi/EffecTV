@@ -1,5 +1,15 @@
+2002/02/28	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/{rev.c,rndm.c}: Added rndmTV and revTV.
+
+2002/02/15	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* docs.japanese/{README.ps2,README.tools,FAQ}: Typo fixes.
+	* CREWS: Edo->Ed. Sorry Ed!
+	* TODO: Removed "Software deinterlacing", because Chris had done it.
+
 2002/02/14	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, docs.japanese/README: Added notice of vloopback crash.
+
+	* EffecTV-0.3.4 is released.
 
 2002/02/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* main.c: Modified the indent of usage messges.
