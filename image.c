@@ -311,6 +311,45 @@ unsigned char *image_diff_filter(unsigned char *diff)
 	return diff2;
 }
 
+/* Y value filters */
+unsigned char *image_y_over(RGB32 *src)
+{
+	int i;
+	int R, G, B, v;
+	unsigned char *p = diff;
+
+	for(i = video_area; i>0; i--) {
+		R = ((*src)&0xff0000)>>(16-1);
+		G = ((*src)&0xff00)>>(8-2);
+		B = (*src)&0xff;
+		v = y_threshold - (R + G + B);
+		*p = (unsigned char)(v>>24);
+		src++;
+		p++;
+	}
+
+	return diff;
+}
+
+unsigned char *image_y_under(RGB32 *src)
+{
+	int i;
+	int R, G, B, v;
+	unsigned char *p = diff;
+
+	for(i = video_area; i>0; i--) {
+		R = ((*src)&0xff0000)>>(16-1);
+		G = ((*src)&0xff00)>>(8-2);
+		B = (*src)&0xff;
+		v = (R + G + B) - y_threshold;
+		*p = (unsigned char)(v>>24);
+		src++;
+		p++;
+	}
+
+	return diff;
+}
+
 /* horizontal flipping */
 void image_hflip(RGB32 *src, RGB32 *dest, int width, int height)
 {
