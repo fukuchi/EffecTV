@@ -98,7 +98,7 @@ static void holoInit()
 	int i;
 
 	for(i=0; i<256; i++) {
-		noisepattern[i] = i * i * i / 40000 ;
+		noisepattern[i] = (i * i * i / 40000)* i / 256;
 	}
 }
 
@@ -178,7 +178,7 @@ int holoDraw()
 	src += video_width;
 	bg = bgimage + video_width;
 	for(y=1; y<video_height-1; y++) {
-		if(((y+phase) & 0x3f)<0x28) {
+		if(((y+phase) & 0x7f)<0x58) {
 			for(x=0; x<video_width; x++) {
 				if(*diff){
 					s = *src;
@@ -248,7 +248,7 @@ int holoDraw()
 	}
 	if(video_grabframe())
 		return -1;
-	phase--;
+	phase-=37;
 
 	return 0;
 }
