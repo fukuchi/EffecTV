@@ -12,7 +12,7 @@ Bug
 
 Future works
 ------------
-* Optimizing. (MMX instructions seems well)
+* Optimising. (MMX instructions seems well)
 * Video4Linux2 and other drivers
 * Other platform(BSD, SGI, Sun, MS-Windows, BeOS,...)
 * GUI for changing channel, tuning TV, selecting effects, etc. (ongoing in BSB)
