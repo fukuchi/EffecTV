@@ -249,10 +249,10 @@ static void convert_RGB32toRGB24
 COMMON_CONVERTER_FROMRGB32(dest[0] = v & 0xff; dest[1] = (v>>8) & 0xff; dest[2] = (v>>16) & 0xff; dest += 3;)
 
 static void convert_RGB32toRGB565
-COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>5) & 0x7e0) | ((v>>16) & 0xf800); dest += 2;)
+COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>5) & 0x7e0) | ((v>>8) & 0xf800); dest += 2;)
 
 static void convert_RGB32toRGB555
-COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>6) & 0x3e0) | ((v>>17) & 0x7c00); dest += 2;)
+COMMON_CONVERTER_FROMRGB32(*(unsigned short *)dest = ((v>>3) & 0x1f) | ((v>>6) & 0x3e0) | ((v>>9) & 0x7c00); dest += 2;)
 
 static const struct palette_converter_fromRGB32_map converter_fromRGB32_list[] = {
 	{VIDEO_PALETTE_RGB32, convert_RGB32toRGB32},
