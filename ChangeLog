@@ -1,3 +1,7 @@
+2004/01/20	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/spark.c:
+	  - Now mode is not reset in start().
+
 2004/01/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effectv.1, docs.japanese/effectv.1:
 	  - Oh I have forgotten to update man pages X(

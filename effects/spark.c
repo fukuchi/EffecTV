@@ -21,7 +21,7 @@ static int event();
 static char *effectname = "SparkTV";
 static int stat;
 static int bgIsSet = 0;
-static int mode;
+static int mode = 0;
 
 struct shortvec {
 	int x1;
@@ -366,7 +366,6 @@ static int start()
 	sparks_head = 0;
 	image_set_threshold_y(40);
 	bgIsSet = 0;
-	mode = 0;
 
 	stat = 1;
 	return 0;
