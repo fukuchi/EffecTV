@@ -1,3 +1,11 @@
+2002/09/29	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* README.ps2, docs.japanese/README.ps2 : Updated patch. Changed the based
+	  version to 1.63.
+
+2002/09/28	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* README, docs.japanese/README: Added a sentence about incompletion of
+	  vloopback support.
+
 2002/09/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* Changed version to 0.3.8.
 	* CREWS: Added Jun IIO as a director.
