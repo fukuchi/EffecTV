@@ -75,7 +75,7 @@
    (D) SECAM used in:
 	Afghanistan, Armenia, Azerbaijan, Belarus, Bulgaria,
 	Estonia, Georgia, Hungary, Zazakhstan, Lithuania, Mongolia, Moldova,
-	Poland, Russia, Slovak Republic, Ukraine, Vietnam
+	Russia, Slovak Republic, Ukraine, Vietnam
    (G) SECAM used in:
 	Greecem Iran, Iraq, Mali, Mauritus, Morocco, Saudi Arabia
    (K) SECAM used in:

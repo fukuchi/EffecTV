@@ -67,7 +67,8 @@ static effectRegistFunc *effects_register_list[] =
 	rippleRegister,
 	diceRegister,
 	dizzyRegister,
-	DeinterlaceRegister
+	DeinterlaceRegister,
+	nervousRegister,
 };
 
 static effect **effectsList;
@@ -88,7 +89,7 @@ static void usage()
                    set video norm\n");
 	printf("  -freqtab  {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west, 
 			europe-east,italy,newzealand,australia,ireland,france,china-bcast, 
-            		southafrica,argentina} 
+            		southafrica,argentina,canada-cable} 
                    set frequency table\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");

@@ -1,3 +1,16 @@
+2002/02/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README, effectv.1, EffecTV.h : changed version to 0.3.4.
+	* docs.japanese/{README, effectv.1}: Added nervousTV, changed version to
+	  0.3.4.
+	* frequencies.[ch], main.c, effectv.1, docs.japanese/effectv.1:
+	  Added canada-cable. (imported from xawtv-3.69)
+
+2002/02/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/nervous.c: New effect "nervousTV" by Ed Tannenbaum.
+	* README, effectv.1, main.c, effects/Makefile, effects/effects.h:
+	  Added nervousTV.
+	* CREWS: Added Edo Tannenbaum.
+
 2002/02/06	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* effects/dot.c: New feature for St. Valentine's Day:).
 

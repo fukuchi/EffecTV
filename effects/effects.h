@@ -38,3 +38,4 @@ extern effectRegistFunc rippleRegister;
 extern effectRegistFunc diceRegister;
 extern effectRegistFunc dizzyRegister;
 extern effectRegistFunc DeinterlaceRegister;
+extern effectRegistFunc nervousRegister;
