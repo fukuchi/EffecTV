@@ -1,22 +1,20 @@
 *ATTENTION*
-vloopback-0.83 fails to compile on linux-2.4.5 or later, because of
-changes of the internal framework of the Video for Linux driver.
-Jeroen Vreeken is working on adapting vloopback to it.  Please do not
-send email about this problem to him.
+vloopback-0.90 has some trouble in pipe creation and signal handling.
+Please apply a patch follows.
 
-The following patch to vloopback-0.83 seems to solve the problem quite
+The following patch to vloopback-0.90 seems to solve the problem quite
 effectively. Be aware that it is a very unofficial patch.
 
-The following patch is *not* for vloopback-0.90 or later.
-If you want to use vloopback-0.90, please see 'README.vloopback90'.
+The following patch is *not* for vloopback-0.83 or later.
+We recommend you to use vloopback-0.90, but if you want to use vloopback-0.83,
+please read 'README.vloopback83'.
 
-written by Sam Martens, June 9, 2001
-modified by Kentarou Fukuchi, Jul 27, 2001
+This patche is based on Anderr Zaja's patch posted to Motion mailing list.
 
 -- cut --
-diff -ruN vloopback-0.83.orig/Makefile vloopback-0.83/Makefile
---- vloopback-0.83.orig/Makefile	Tue Jan 23 04:44:15 2001
-+++ vloopback-0.83/Makefile	Fri Jul 27 22:45:40 2001
+diff -ruN vloopback-0.90.orig/Makefile vloopback-0.90/Makefile
+--- vloopback-0.90.orig/Makefile	Fri Jun 29 23:52:06 2001
++++ vloopback-0.90/Makefile	Sun Mar 31 01:19:41 2002
 @@ -1,16 +1,46 @@
 -# Makefile for vloopback
 -#
@@ -73,55 +71,54 @@ diff -ruN vloopback-0.83.orig/Makefile vloopback-0.83/Makefile
  
  clean:
  	rm -f *.o *~
-diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
---- vloopback-0.83.orig/vloopback.c	Tue Jan 23 04:44:16 2001
-+++ vloopback-0.83/vloopback.c	Fri Jul 27 22:49:11 2001
-@@ -143,6 +143,8 @@
- static int spares=0;
- static int pipesused=0;
+diff -ruN vloopback-0.90.orig/vloopback.c vloopback-0.90/vloopback.c
+--- vloopback-0.90.orig/vloopback.c	Fri Jun 29 23:52:06 2001
++++ vloopback-0.90/vloopback.c	Mon Jan 21 03:09:08 2002
+@@ -50,7 +50,8 @@
  
-+static int video_nr= -1;
-+MODULE_PARM(video_nr,"i");
- 
- /**********************************************************************
-  *
-@@ -819,6 +821,9 @@
- 
- static struct video_device vloopback_template=
- {
-+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,4,3)
-+	THIS_MODULE,
-+#endif
- 	"Video Loopback",
- 	VID_TYPE_CAPTURE,
- 	0,
-@@ -999,6 +1004,11 @@
- }
- #endif /* CONFIG_PROC_FS && CONFIG_VIDEO_PROC_FS */
- 
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,5)
-+# define do_video_register(dev,type,nr) video_register_device((dev),(type))
-+#else
-+# define do_video_register(dev,type,nr) video_register_device((dev),(type),(nr))
-+#endif
+ #include <linux/config.h>
+ #include <linux/kernel.h>
+-#include <linux/malloc.h>
++//#include <linux/malloc.h>
++#include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include <linux/wrapper.h>
+ #include <linux/module.h>
+@@ -505,7 +506,7 @@
+ 			kill_proc(loops[nr]->pid, SIGIO, 1);
+ 			interruptible_sleep_on(&loops[nr]->wait);
+ 			
+-			if (cmd & IOC_IN) {
++			if (!(cmd & IOC_OUT)) {
+ 				if (memcmp(loops[nr]->ioctlretdata, loops[nr]->ioctldata, _IOC_SIZE(cmd))) {
+ 					return -EINVAL;
+ 				}
+@@ -965,6 +966,8 @@
  
  static int create_pipe(int nr)
  {
-@@ -1027,7 +1037,7 @@
++	int devnum = -1;
++
+ 	loops[nr]= kmalloc(sizeof(struct vloopback_pipe), GFP_KERNEL);
+ 	loops[nr]->vloopin= kmalloc(sizeof(struct vloopback_device), GFP_KERNEL);
+ 	loops[nr]->vloopout= kmalloc(sizeof(struct vloopback_device), GFP_KERNEL);
+@@ -990,15 +993,16 @@
  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
  	init_waitqueue_head(&loops[nr]->wait);
  	init_MUTEX(&loops[nr]->lock);
--	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER)==-1) {
-+	if (do_video_register(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
- 		kfree(loops[nr]->vloopin);
+-	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER, nr*2+dev_offset)==-1) {
+-	kfree(loops[nr]->vloopin);
++	if (dev_offset > -1) devnum = nr*2+dev_offset;
++	if (video_register_device(&loops[nr]->vloopin->viddev, VFL_TYPE_GRABBER, devnum)==-1) {
  		kfree(loops[nr]->vloopout);
  		kfree(loops[nr]);
-@@ -1035,7 +1045,7 @@
- 		printk(VLNAME "error registering device\n");
+ 		loops[nr]=NULL;
+ 		info("error registering device");
  		return -ENODEV;
  	}
--	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER)==-1) {
-+	if (do_video_register(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER,video_nr)==-1) {
+-	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER, nr*2+1+dev_offset)==-1) {
++	if (dev_offset > -1) devnum = nr*2+1+dev_offset;
++	if (video_register_device(&loops[nr]->vloopout->viddev, VFL_TYPE_GRABBER, devnum)==-1) {
  		video_unregister_device(&loops[nr]->vloopin->viddev);
  		kfree(loops[nr]->vloopin);
  		kfree(loops[nr]->vloopout);

@@ -26,8 +26,8 @@ from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for the video loopback feature.
 http://motion.technolust.cx/vloopback/index.html
-Patches for vloopback-0.83 and vloopback-0.90 are included in this package.
-Please read README.vloopback and README.vloopback90.
+Patches for vloopback-0.90 and vloopback-0.83 are included in this package.
+Please read README.vloopback and README.vloopback83.
 
 *NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
 distro. Vloopback support does not work on early version of libc-2.2.5. If you
