@@ -1,3 +1,6 @@
+2002/02/14	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README, docs.japanese/README: Added notice of vloopback crash.
+
 2002/02/12	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* main.c: Modified the indent of usage messges.
 
