@@ -83,7 +83,7 @@ Q7: How can I capture the video output from EffecTV to harddisk?
 
 A: EffecTV can output the effected images to a video loopback device since
 version 0.2.0. First, you should download Jeroen Vreeken's vloopback driver
-from http://motion.technolust.cx/vloopback/index.html, and install the module.
+from http://motion.sourceforge.net/vloopback/index.html and install the module.
 Then, load the module and check the input and output device files of the video
 pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
 

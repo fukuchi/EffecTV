@@ -76,9 +76,9 @@ Q7: EffecTVの出力を録画したいんだけど。
 
 A: EffecTVは、vloopbackデバイスを使って、出力画像を他のアプリケーションに渡す
 事ができます。まずは、Jeroen Vreeken作のvloopbackドライバを、
-http://motion.technolust.cx/vloopback/index.html からダウンロードしてきて、イ
-ンストールしましょう。次に、ドライバをロードしたら、パイプの入出力デバイスファ
-イルの名前を控えておきます(大抵の場合、/dev/video1と/dev/video2になる)。
+http://motion.sourceforge.net/vloopback/index.html からダウンロードしてきて、
+インストールしましょう。次に、ドライバをロードしたら、パイプの入出力デバイス
+ファイルの名前を控えておきます(大抵の場合、/dev/video1と/dev/video2になる)。
 そうしたら、次のようにしてEffecTVを立ち上げます。
 
 $ effectv -vloopback /dev/video1

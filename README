@@ -25,7 +25,7 @@ Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for the video loopback feature.
-http://motion.technolust.cx/vloopback/index.html
+http://motion.sourceforge.net/vloopback/index.html
 Patches for vloopback-0.90 and vloopback-0.83 are included in this package.
 Please read README.vloopback and README.vloopback83.
 
@@ -303,9 +303,9 @@ effects and new features come here at first.
 
 CVS
 ---
-CVS repository of EffecTV can be checked out from project page. Both the main
-trunk and BackStage Branch are stored at there. Quick CVS usage instructions
-can be found there.
+CVS repository of EffecTV can be checked out from the project page. Both the
+main trunk and the BackStage Branch are stored at there. Quick CVS usage
+instructions can be found at there.
 
 If you want access as a developer, you should be the member of the EffecTV
 developers group.  Please ask me to join the developers group.
