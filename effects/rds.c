@@ -16,10 +16,12 @@
 int rdsStart();
 int rdsStop();
 int rdsDraw();
+int rdsEvent();
 
 static char *effectname = "RandomDotStereoTV";
 static int stat;
 static int stride = 40;
+static int method = 0;
 
 effect *rdsRegister()
 {
@@ -34,7 +36,7 @@ effect *rdsRegister()
 	entry->start = rdsStart;
 	entry->stop = rdsStop;
 	entry->draw = rdsDraw;
-	entry->event = NULL;
+	entry->event = rdsEvent;
 
 	return entry;
 }
@@ -62,6 +64,7 @@ int rdsStop()
 int rdsDraw()
 {
 	int x, y, i;
+	RGB32 *target;
 	RGB32 *src, *dest;
 	RGB32 v;
 	RGB32 R, G, B;
@@ -81,39 +84,85 @@ int rdsDraw()
 	}
 
 	memset(dest, 0, video_area * PIXEL_SIZE);
+	target = dest;
 
-	for(y=0; y<video_height; y++) {
-		for(i=0; i<stride; i++) {
-			if(inline_fastrand()&0xc0000000)
-				continue;
+	if(method) {
+		for(y=0; y<video_height; y++) {
+			for(i=0; i<stride; i++) {
+				if(inline_fastrand()&0xc0000000)
+					continue;
 
-			x = video_width / 2 + i;
-			*(dest + x) = 0xffffff;
-
-			while(x + stride/2 < video_width) {
-				v = *(src + x + stride/2);
-				R = (v&0xff0000)>>(16+6);
-				G = (v&0xff00)>>(8+6);
-				B = (v&0xff)>>7;
-				x += stride + R + G + B;
-				if(x >= video_width) break;
+				x = video_width / 2 + i;
 				*(dest + x) = 0xffffff;
-			}
+	
+				while(x + stride/2 < video_width) {
+					v = *(src + x + stride/2);
+					R = (v&0xff0000)>>(16+6);
+					G = (v&0xff00)>>(8+6);
+					B = (v&0xff)>>7;
+					x += stride + R + G + B;
+					if(x >= video_width) break;
+					*(dest + x) = 0xffffff;
+				}
 
-			x = video_width / 2 + i;
-			while(x - stride/2 >= 0) {
-				v = *(src + x - stride/2);
-				R = (v&0xff0000)>>(16+6);
-				G = (v&0xff00)>>(8+6);
-				B = (v&0xff)>>7;
-				x -= stride + R + G + B;
-				if(x < 0) break;
-				*(dest + x) = 0xffffff;
+				x = video_width / 2 + i;
+				while(x - stride/2 >= 0) {
+					v = *(src + x - stride/2);
+					R = (v&0xff0000)>>(16+6);
+					G = (v&0xff00)>>(8+6);
+					B = (v&0xff)>>7;
+					x -= stride + R + G + B;
+					if(x < 0) break;
+					*(dest + x) = 0xffffff;
+				}
 			}
+			src += video_width;
+			dest += video_width;
 		}
-		src += video_width;
-		dest += video_width;
+	} else {
+		for(y=0; y<video_height; y++) {
+			for(i=0; i<stride; i++) {
+				if(inline_fastrand()&0xc0000000)
+					continue;
+
+				x = video_width / 2 + i;
+				*(dest + x) = 0xffffff;
+	
+				while(x + stride/2 < video_width) {
+					v = *(src + x + stride/2);
+					R = (v&0xff0000)>>(16+6);
+					G = (v&0xff00)>>(8+6);
+					B = (v&0xff)>>7;
+					x += stride - R - G - B;
+					if(x >= video_width) break;
+					*(dest + x) = 0xffffff;
+				}
+
+				x = video_width / 2 + i;
+				while(x - stride/2 >= 0) {
+					v = *(src + x - stride/2);
+					R = (v&0xff0000)>>(16+6);
+					G = (v&0xff00)>>(8+6);
+					B = (v&0xff)>>7;
+					x -= stride - R - G - B;
+					if(x < 0) break;
+					*(dest + x) = 0xffffff;
+				}
+			}
+			src += video_width;
+			dest += video_width;
+		}
 	}
+
+	target += video_width + (video_width - stride) / 2;
+	for(y=0; y<4; y++) {
+		for(x=0; x<4; x++) {
+			target[x] = 0xff0000;
+			target[x+stride] = 0xff0000;
+		}
+		target += video_width;
+	}
+
 	if(stretch) {
 		image_stretch_to_screen();
 	}
@@ -123,5 +172,19 @@ int rdsDraw()
 	if(video_grabframe())
 		return -1;
 
+	return 0;
+}
+
+int rdsEvent(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_SPACE:
+			method ^= 1;
+			break;
+		default:
+			break;
+		}
+	}
 	return 0;
 }

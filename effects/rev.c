@@ -111,11 +111,9 @@ int revDraw()
 
 void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h)
 {
-
-	int narea=w*h*sizeof(RGB32);
 	RGB32 *cdst=dst+((dsty*video_width)+dstx);
 	RGB32 *nsrc;
-	int i,y,x,R,G,B,yval;
+	int y,x,R,G,B,yval;
 
 // draw the offset lines
 	for (y=srcy; y<h+srcy; y+=linespace){
