@@ -1,3 +1,9 @@
+2001/03/01	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* effects/blurzoom.c: cleaned the code up.
+
+2001/02/27	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* effects/simura.c: minor bugfixes.
+
 2001/02/25	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* New effect: SimuraTV
 

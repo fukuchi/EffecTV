@@ -46,36 +46,34 @@ static void makeAbstable()
 	}
 }
 
+/* this table assumes that SCALE_WIDTH is times of 32 */
 static void setTable()
 {
-	int b,x,y,tx,ty,ttx;
-	int esi,mesi;
+	int bits, x, y, tx, ty, xx;
+	int ptr, prevptr;
 
-	mesi=0;
-	ty=(int)(0.5+RATIO*(-SCREEN_HEIGHT/2)+SCREEN_HEIGHT/2);
-	tx=(int)(0.5+RATIO*(-SCREEN_WIDTH/2)+SCREEN_WIDTH/2);
-	esi=ty*320+tx;
-	blurzoomy[0]=esi-mesi;
-	mesi=esi;
-	for(ttx=0;ttx<10;ttx++){
-		b=0;
-		for(x=0;x<32;x++){
-			tx=(int)(0.5+RATIO*(ttx*32+x-160)+160);
-			esi=ty*320+tx;
-			b=b<<1;
-			if(esi!=mesi)
-				b|=1;
-			mesi=esi;
+	prevptr = (int)(0.5+RATIO*(-SCREEN_HWIDTH)+SCREEN_HWIDTH);
+	for(xx=0; xx<(SCREEN_WIDTH/32); xx++){
+		bits = 0;
+		for(x=0; x<32; x++){
+			ptr= (int)(0.5+RATIO*(xx*32+x-SCREEN_HWIDTH)+SCREEN_HWIDTH);
+			bits = bits<<1;
+			if(ptr != prevptr)
+				bits |= 1;
+			prevptr = ptr;
 		}
-		blurzoomx[ttx]=b;
+		blurzoomx[xx] = bits;
 	}
-	tx=(int)(0.5+RATIO*(-160)+160);
-	ttx=(int)(0.5+RATIO*(319-160)+160);
-	for(y=1;y<240;y++){
-		ty=(int)(0.5+RATIO*(y-120)+120);
-		esi=ty*320+tx;
-		blurzoomy[y]=esi-mesi;
-		mesi=ty*320+ttx;
+
+	ty = (int)(0.5+RATIO*(-SCREEN_HHEIGHT)+SCREEN_HHEIGHT);
+	tx = (int)(0.5+RATIO*(-SCREEN_HWIDTH)+SCREEN_HWIDTH);
+	xx=(int)(0.5+RATIO*(SCREEN_WIDTH-1-SCREEN_HWIDTH)+SCREEN_HWIDTH);
+	blurzoomy[0] = ty*SCREEN_WIDTH+tx;
+	prevptr = ty*SCREEN_WIDTH+xx;
+	for(y=1; y<SCREEN_HEIGHT; y++){
+		ty = (int)(0.5+RATIO*(y-SCREEN_HHEIGHT)+SCREEN_HHEIGHT);
+		blurzoomy[y] = ty*SCREEN_WIDTH + tx - prevptr;
+		prevptr = ty*SCREEN_WIDTH + xx;
 	}
 }		
 
