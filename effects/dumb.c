@@ -67,7 +67,7 @@ int dumbDraw()
 		              (RGB32 *)screen_getaddress(),
 					  screen_width, screen_height);
 	} else {
-		bcopy(video_getaddress(), screen_getaddress(),
+		memcpy(screen_getaddress(), video_getaddress(),
 		      video_width * video_height * sizeof(RGB32));
 	}
 	if(screen_mustlock()) {

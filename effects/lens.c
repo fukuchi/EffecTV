@@ -118,7 +118,7 @@ int lensDraw()
 	}
 
 
-  	bcopy(src,dst,video_height*video_width*sizeof(RGB32));
+  	memcpy(dst,src,video_height*video_width*sizeof(RGB32));
   	apply_lens(x,y,src,dst);
   	//x+= xd; y+=yd;
   	//if (x > (video_width - lens_width - 15) || x < 15) xd = -xd;

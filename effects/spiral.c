@@ -311,7 +311,7 @@ int spiralDraw()
 		dest = (RGB32 *)screen_getaddress();
 	}
     
-	bcopy(src, planetable[plane], video_width * video_height * PIXEL_SIZE);
+	memcpy(planetable[plane], src, video_width * video_height * PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 	if(screen_mustlock()) {

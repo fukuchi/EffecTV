@@ -268,7 +268,7 @@ int agingDraw()
 	pits(framebuffer);
 	if(area_scale > 1)
 		dusts(framebuffer);
-	bcopy(framebuffer, screen_getaddress(), width*height*sizeof(RGB32));
+	memcpy(screen_getaddress(), framebuffer, width*height*sizeof(RGB32));
 	if(screen_mustlock()) {
 		screen_unlock();
 	}

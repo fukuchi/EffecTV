@@ -86,7 +86,7 @@ int quarkDraw()
 	if(video_syncframe())
 		return -1;
 	src = (RGB32 *)video_getaddress();
-	bcopy(src, planetable[plane], video_area*sizeof(RGB32));
+	memcpy(planetable[plane], src, video_area*sizeof(RGB32));
 	if(video_grabframe())
 		return -1;
 	if(screen_mustlock()) {

@@ -407,7 +407,7 @@ int sparkDraw()
 	}
 
 	diff = image_diff_filter(image_bgsubtract_y(src));
-	bcopy(src, dest, video_area*sizeof(RGB32));
+	memcpy(dest, src, video_area*sizeof(RGB32));
 	if(video_grabframe())
 		return -1;
 
