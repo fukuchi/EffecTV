@@ -24,7 +24,7 @@ static const SDL_VideoInfo *screeninfo;
 /*
  * Screen properties. These variables are immutable after calling screen_init()
  */
- /* Scale of screen. Screen size is described in EffecTV.h */
+/* Scale of screen. Screen size is described in EffecTV.h */
 int scale = 1;
 
 /* Flag for double buffering mode. */

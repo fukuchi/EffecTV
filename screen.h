@@ -24,15 +24,12 @@ int screen_bpp();
 void screen_setcaption(const char *str);
 void screen_clear(int color);
 
-/* Returns memory address of the frame buffer. The value may be changed every
- * drawing phase. You have to call this function at the begining of draw
- * function of effects.
- */ 
+/* Returns memory address of the frame buffer. The value may be changed every drawing
+ * phase. You have to call this function at the begining of draw function of effects. */
 #define screen_getaddress() (screen->pixels)
 
 /* This function must be called when the effects fished their drawing phase.
- * Until calling this function, the address of the frame buffer is not changed.
- */
+ * Until calling this function, the address of the frame buffer is not changed. */
 #define screen_update() (SDL_Flip(screen))
 
 /* If this function returns non-zero, you have to call screen_lock before access

@@ -63,8 +63,11 @@ Options:
 Key
 ---
 Up/Down		change effect.
-Space		capture a background image(for FireTV and BurningTV).
+Space		capture a background image(for FireTV, BurningTV and PredatorTV).
 Escape		Quit
+
+More details for each effects are described in documents package.
+You should download effectv-docs.tar.gz found at EffecTV web page.
 
 Summary of effects
 ------------------
@@ -90,6 +93,8 @@ PuzzleTV
 	Scrambles the picture.
 PredatorTV
 	Makes incoming objects invisible.
+SimuraTV
+	Color distortion and image mirroring.
 
 CONTACT
 =======

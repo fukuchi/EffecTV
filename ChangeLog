@@ -1,3 +1,6 @@
+2001/02/25	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* New effect: SimuraTV
+
 2001/02/23	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* global variable "videoinfo" is renamed to "screeninfo" to avoid
 	  confusion.

@@ -14,6 +14,7 @@
 
 #include "EffecTV.h"
 
+/* Currently there is only one v4l device obeject. */
 v4ldevice vd;
 
 static normlist normlists[] =
@@ -30,6 +31,7 @@ static normlist normlists[] =
 	{"", -1}
 };
 
+/* Channel and norm is determined at initialization time. */
 int video_init(char *file, int channel, int norm)
 {
 	if(file == NULL){
@@ -48,18 +50,21 @@ int video_init(char *file, int channel, int norm)
 	return 0;
 }
 
+/* video_quit() is called automatically when the process terminates.
+ * This function is registerd in video_init() by callint atexit(). */
 void video_quit()
 {
 	v4lmunmap(&vd);
 	v4lclose(&vd);
 }
 
+/* Set the format of captured data. */
 int video_setformat(int palette)
 {
 	return v4lsetpalette(&vd, palette);
 }
 
-/* start the continuous grabbing */
+/* Start the continuous grabbing */
 int video_grabstart()
 {
 	if(v4lgrabstart(&vd, 0) < 0)
@@ -69,7 +74,7 @@ int video_grabstart()
 	return 0;
 }
 
-/* stop the continuous grabbing */
+/* Stop the continuous grabbing */
 int video_grabstop()
 {
 	if(v4lsync(&vd, 0) < 0)
@@ -79,7 +84,7 @@ int video_grabstop()
 	return 0;
 }
 
-/* change the size of captured image. When both width and height are 0,
+/* Change the size of captured image. When both width and height are 0,
  * the size is set to defautl size. */
 int video_changesize(int width, int height)
 {
