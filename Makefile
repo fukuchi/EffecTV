@@ -9,7 +9,13 @@ man1dir = ${mandir}/man1
 
 INSTALL = /usr/bin/install -c
 
-CONFIG = -DVLOOPBACK
+# comment next line if you want to disable vloopback support.
+CONFIG += -DVLOOPBACK
+# choose vloopback version (only one).
+## version 0.90 or later
+#CONFIG += -DVLOOPBACK_VERSION=90 
+## version 0.83 or former
+CONFIG += -DVLOOPBACK_VERSION=83
 
 CC = gcc
 NASM = nasm

@@ -6,9 +6,6 @@
  *
  */
 
-/* Codes for one-copy mode will be removed. */
-#define ZEROCOPY
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,9 +19,7 @@
 #include <signal.h>
 #include <linux/videodev.h>
 #include <v4lutils.h>
-#ifdef ZEROCOPY
 #include <pthread.h>
-#endif
 
 #include "EffecTV.h"
 #include "palette.h"
@@ -35,8 +30,6 @@ int vloopback = 0;
 
 static int outputfd;
 static unsigned char *gbuf;
-
-#ifdef ZEROCOPY
 
 static char *output_devname;
 static char ioctlbuf[MAXIOCTL];
@@ -103,10 +96,18 @@ static int vloopback_munmap(unsigned char *map, int memsize)
 	return 0;
 }
 
+#if VLOOPBACK_VERSION > 83
+static int v4l_ioctlhandler(unsigned long int cmd, void *arg)
+#else
 static int v4l_ioctlhandler(unsigned int cmd, void *arg)
+#endif
 {
 	switch(cmd) {
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCGCAP:
+#else
 		case VIDIOCGCAP & 0xff:
+#endif
 		{
 			struct video_capability *vidcap = arg;
 
@@ -121,7 +122,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCGCHAN:
+#else
 		case VIDIOCGCHAN & 0xff:
+#endif
 		{
 			struct video_channel *vidchan = arg;
 
@@ -134,7 +139,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCSCHAN:
+#else
 		case VIDIOCSCHAN & 0xff:
+#endif
 		{
 			int *v = arg;
 
@@ -143,7 +152,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCGPICT:
+#else
 		case VIDIOCGPICT & 0xff:
+#endif
 		{
 			struct video_picture *vidpic = arg;
 
@@ -157,7 +170,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCSPICT:
+#else
 		case VIDIOCSPICT & 0xff:
+#endif
 		{
 			struct video_picture *vidpic = arg;
 
@@ -172,7 +189,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCGWIN:
+#else
 		case VIDIOCGWIN & 0xff:
+#endif
 		{
 			struct video_window *vidwin = arg;
 
@@ -185,7 +206,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			vidwin->clipcount = 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCSWIN:
+#else
 		case VIDIOCSWIN & 0xff:
+#endif
 		{
 			struct video_window *vidwin = arg;
 
@@ -200,7 +225,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCSYNC:
+#else
 		case VIDIOCSYNC & 0xff:
+#endif
 		{
 			int frame = *(int *)arg;
 			int ret = 0;
@@ -238,7 +267,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return ret;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCMCAPTURE:
+#else
 		case VIDIOCMCAPTURE & 0xff:
+#endif
 		{
 			struct video_mmap *vidmmap = arg;
 
@@ -279,7 +312,11 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			return 0;
 		}
 
+#if VLOOPBACK_VERSION > 83
+		case VIDIOCGMBUF:
+#else
 		case VIDIOCGMBUF & 0xff:
+#endif
 		{
 			struct video_mbuf *vidmbuf = arg;
 
@@ -322,6 +359,9 @@ static void *signal_loop(void *arg)
 	int size, ret;
 	struct pollfd ufds;
 	sigset_t sigset;
+#if VLOOPBACK_VERSION > 83
+	unsigned long int cmd;
+#endif
 
 	if(signal_loop_init()) {
 		signal_loop_initialized = -1;
@@ -344,66 +384,46 @@ static void *signal_loop(void *arg)
 			continue;
 		}
 		size = read(outputfd, ioctlbuf, MAXIOCTL);
+#if VLOOPBACK_VERSION > 83
+		if(size >= sizeof(unsigned long int)) {
+			memcpy(&cmd, ioctlbuf, sizeof(unsigned long int));
+			if(cmd == 0) {
+#else
 		if(size >= 1) {
 			if(ioctlbuf[0] == 0) {
+#endif
 				fprintf(stderr, "vloopback: client closed device.\n");
 				gbuf_lock();
 				gbuf_clear();
 				gbuf_unlock();
 				continue;
 			}
-			ret = v4l_ioctlhandler(ioctlbuf[0], ioctlbuf+1);
+#if VLOOPBACK_VERSION > 83
+			ret = v4l_ioctlhandler(cmd, ioctlbuf+sizeof(unsigned long int));
 			if(ret) {
 		/* There is no way to return error code to the caller with vloopback
 		 * device. Only way to return EINVAL is changing values in ioctlbuf. */
+				memset(ioctlbuf+sizeof(unsigned long int), 0xff, MAXIOCTL-sizeof(unsigned long int));
+				fprintf(stderr, "vloopback: ioctl %d unsuccesfull.\n", ioctlbuf[0]);
+			}
+			ioctl(outputfd, cmd, ioctlbuf+sizeof(unsigned long int));
+#else
+			ret = v4l_ioctlhandler(ioctlbuf[0], ioctlbuf+1);
+			if(ret) {
 				memset(ioctlbuf+1, 0xff, MAXIOCTL-1);
 				fprintf(stderr, "vloopback: ioctl %d unsuccesfull.\n", ioctlbuf[0]);
 			}
 			ioctl(outputfd, ioctlbuf[0], ioctlbuf+1);
+#endif
 		}
 	}
 	return NULL;
 }
 
-#endif /* ZEROCOPY */
-
 int vloopback_init(char *name)
 {
-#ifndef ZEROCOPY
-	struct video_window vid_win;
-	struct video_picture vid_pic;
-#else
 	sigset_t sigset;
-#endif
 
-#ifndef ZEROCOPY
-	outputfd = open(name, O_RDWR);
-	if(outputfd < 0) {
-		fprintf(stderr, "vloopback: couldn't open output device file %s\n",name);
-		return -1;
-	}
-	if(ioctl(outputfd, VIDIOCGPICT, &vid_pic) == -1) {
-		perror("vloopback_init:VIDIOCGPICT");
-		return -1;
-	}
-	vid_pic.palette = VIDEO_PALETTE_RGB24;
-	if(ioctl(outputfd, VIDIOCSPICT, &vid_pic) == -1) {
-		perror("vloopback_init:VIDIOCSPICT");
-		return -1;
-	}
-	if(ioctl(outputfd, VIDIOCGWIN, &vid_win) == -1) {
-		perror("vloopback_init:VIDIOCGWIN");
-		return -1;
-	}
-	vid_win.width = screen_width;
-	vid_win.height = screen_height; 
-	if(ioctl(outputfd, VIDIOCSWIN, &vid_win) == -1) {
-		perror("vloopback_init:VIDIOCSWIN");
-		return -1;
-	}
-	gbuf = (unsigned char *)malloc(screen_width * screen_height * 3);
-	if(gbuf == NULL) return -1;
-#else
 	output_devname = name;
 
 	sigemptyset(&sigset);
@@ -421,7 +441,6 @@ int vloopback_init(char *name)
 	}
 	if(signal_loop_initialized == -1)
 		return -1;
-#endif /* ZEROCOPY */
 	fprintf(stderr, "vloopback: video pipelining is OK.\n");
 	atexit(vloopback_quit);
 	return 0;
@@ -435,7 +454,6 @@ void vloopback_quit()
 	fprintf(stderr, "vloopback: video pipelining is stopped.\n");
 }
 
-#ifdef ZEROCOPY
 int vloopback_push()
 {
 	int frame;
@@ -458,23 +476,3 @@ int vloopback_push()
 	}
 	return 0;
 }
-#else
-int vloopback_push()
-{
-	int i;
-	unsigned char *src;
-	int length;
-
-	src = (unsigned char *)screen_getaddress();
-	length = screen_width * screen_height;
-	for(i=0; i < length; i++) {
-		gbuf[i*3] = src[i*4];
-		gbuf[i*3+1] = src[i*4+1];
-		gbuf[i*3+2] = src[i*4+2];
-	}
-	if(write(outputfd, gbuf, length*3) != length*3) {
-		perror("vloopback_push: write");
-	}
-	return 0;
-}
-#endif /* ZEROCOPY */
