@@ -199,15 +199,16 @@ static void createImg(RGB32 *src)
 	}
 }
 
+#define WHITE 0.45
 static RGB32 green(unsigned int v)
 {
 	unsigned int w;
 
 	if(v < 256) {
-		return v<<8;
+		return ((int)(v*WHITE)<<16)|(v<<8)|(int)(v*WHITE);
 	}
 
-	w = v - 256;
+	w = v - (int)(256*WHITE);
 	if(w > 255) w = 255;
 	return (w << 16) + 0xff00 + w;
 }
@@ -219,9 +220,9 @@ static void setPalette(void)
 	for(i=0; i<256; i++) {
 		c = i;
 		palette[i*FONT_DEPTH  ] = 0;
-		palette[i*FONT_DEPTH+1] = green(0x44 * c / 130);
-		palette[i*FONT_DEPTH+2] = green(0x99 * c / 130);
-		palette[i*FONT_DEPTH+3] = green(0xff * c / 130);
+		palette[i*FONT_DEPTH+1] = green(0x44 * c / 170);
+		palette[i*FONT_DEPTH+2] = green(0x99 * c / 170);
+		palette[i*FONT_DEPTH+3] = green(0xff * c / 170);
 	}
 }
 
