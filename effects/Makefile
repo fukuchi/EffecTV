@@ -37,7 +37,7 @@ DOT = dot.o
 MOSAIC = mosaic.o
 PUZZLE = puzzle.o
 PREDATOR = predator.o
-SPIRAL = #spiral.o
+SPIRAL = spiral.o
 SIMURA = simura.o
 
 $(LIBEFFECTS): $(EFFECTS) $(UTILS)
