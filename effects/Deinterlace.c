@@ -62,12 +62,12 @@ int DeinterlaceStop()
   return y;
 }*/
 
-int Difference(int a,int b)
+static int Difference(int a,int b)
 {
 	return abs(GREEN(a)-GREEN(b));
 }
 
-int MixPixels(int a,int b)
+static int MixPixels(int a,int b)
 {
 	return RGB(((  RED(a)+  RED(b))/2),
 		   ((GREEN(a)+GREEN(b))/2),
@@ -92,7 +92,11 @@ int DeinterlaceDraw()
 		}
 	}
 	src = (RGB32 *)video_getaddress();
-	dst = (RGB32 *)screen_getaddress();
+	if(stretch) {
+		dst = stretching_buffer;
+	} else {
+		dst = (RGB32 *)screen_getaddress();
+	}
 	
 	for (y=1;y < video_height-2; y+=2)
 	  for (x=0;x<video_width; x+=3){
@@ -132,6 +136,9 @@ int DeinterlaceDraw()
 	    *(RGB32 *)(dst+x+2+(y+0)*video_width) = outp6;
 	  }				  
 	
+	if(stretch) {
+		image_stretch_to_screen();
+	}
 	if(screen_mustlock()) {
 		screen_unlock();
 	}
