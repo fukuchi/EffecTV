@@ -86,7 +86,7 @@ Options
 
 -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
           europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-		  southafrica,argentina}
+          southafrica,argentina}
 	Set frequency table of TV tuner. Choose one of them if you want to watch
 	TV on EffecTV.
 
