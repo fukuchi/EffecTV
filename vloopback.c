@@ -404,14 +404,16 @@ static void *signal_loop(void *arg)
 		/* There is no way to return error code to the caller with vloopback
 		 * device. Only way to return EINVAL is changing values in ioctlbuf. */
 				memset(ioctlbuf+sizeof(unsigned long int), 0xff, MAXIOCTL-sizeof(unsigned long int));
-				fprintf(stderr, "vloopback: ioctl %d unsuccesfull.\n", ioctlbuf[0]);
+				fprintf(stderr, "vloopback: ioctl %lx unsuccessfully handled.\n", cmd);
 			}
-			ioctl(outputfd, cmd, ioctlbuf+sizeof(unsigned long int));
+			if(ioctl(outputfd, cmd, ioctlbuf+sizeof(unsigned long int))) {
+				fprintf(stderr, "vloopback: ioctl %lx unsuccessfull.\n", cmd);
+			}
 #else
 			ret = v4l_ioctlhandler(ioctlbuf[0], ioctlbuf+1);
 			if(ret) {
 				memset(ioctlbuf+1, 0xff, MAXIOCTL-1);
-				fprintf(stderr, "vloopback: ioctl %d unsuccesfull.\n", ioctlbuf[0]);
+				fprintf(stderr, "vloopback: ioctl %d unsuccessfull.\n", ioctlbuf[0]);
 			}
 			ioctl(outputfd, ioctlbuf[0], ioctlbuf+1);
 #endif
