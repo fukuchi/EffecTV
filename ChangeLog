@@ -1,8 +1,13 @@
+2001/09/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effectv.1: Typo fixes.
+
 2001/09/25	Sam Mertens		<smertens@users.sf.net>
 	* tools/Makefile given 'all-recursive', 'all-am' targets
 	  so global make works again
+
 2001/09/21	Buddy Smith	<nullset@users.sf.net>
 	* tools/ directory added to $SUBDIRS in Makefile
+
 2001/09/21	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/ripple.c: Rain drop function was enhanced. Some debug code was
 	  eliminated.
