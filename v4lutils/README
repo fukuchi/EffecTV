@@ -10,7 +10,7 @@ SUMMARY OF USAGE
 ================
 V4lutils employs OO-like model. All of status is stored in "v4ldevice" struct.
 Please read comments in v4lutils.c for the details.
-V4lutils is mostly thread safe (I belive). v4lperror() may cause problem.
+V4lutils is almost thread safe (I belive). v4lperror() may cause problem.
 I'll try to fix this problem ASAP.
 
 CONTACT
