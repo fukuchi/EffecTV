@@ -1,5 +1,6 @@
 2002/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
-	* effects/1d.c,puzzle.c: Replaced from bcopy() to memcpy().
+	* effects/{1d,puzzle,aging,dumb,lens,predator,quark,spark,spiral}.c:
+	  Replaced from bcopy() to memcpy().
 
 2002/08/03	Sam Mertens		<smertens@users.sf.net>
 	* effects/lens.c: Included Ed Tannenbaum's port of LensTV from BSB
