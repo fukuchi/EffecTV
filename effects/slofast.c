@@ -1,10 +1,11 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2003 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * slofastTV - nonlinear time TV
  * Copyright (C) 2005 SCHUBERT Erich
  * based on slofastTV Copyright (C) 2002 TANNENBAUM Edo
+ *
  */
 
 #include <stdlib.h>

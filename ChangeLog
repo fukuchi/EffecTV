@@ -1,3 +1,6 @@
+2005/02/13	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* Changed version to 0.3.9.
+
 2005/01/28	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* main.c:
 	  - Added names of options to all error messages of themselves.

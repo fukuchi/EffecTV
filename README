@@ -1,4 +1,4 @@
-EffecTV 0.3.9
+EffecTV 0.3.10
 
 GENERAL INFORMATION
 ===================
@@ -272,6 +272,9 @@ OpTV
 
 NervousHalf
 	A half of the screen delays or be nervous.
+
+SloFastTV
+	Non-linear time TV.
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

@@ -1,4 +1,4 @@
-EffecTV 0.3.9
+EffecTV 0.3.10
 
 序
 ==
@@ -281,6 +281,9 @@ OpTV
 
 NervousHalf
 	画面の半分が遅れたり、Nervous 効果がかかったりします。
+
+SloFastTV
+	非線型時間効果。
 
 
 Vloopback機能の使い方 - EffecTVの出力を録画・放送するには
