@@ -44,7 +44,7 @@ make install
 Executable binary file 'effectv' will be installed to /usr/local/bin/,
 and man page 'effectv.1' will be installed to /usr/local/man/man1/ by default.
 
-The input device file (typically "/dev/video") must be readable and writable
+The input device file (typically "/dev/video0") must be readable and writable
 for you.
 
 USING

@@ -11,12 +11,12 @@ The following patch is *not* for vloopback-0.90 or later. EffecTV does not work
 with vloopback-0.90 or later (because it does not work on my linux box...).
 
 written by Sam Martens, June 9, 2001
-modified by Kentarou Fukuchi, June 14, 2001
+modified by Kentarou Fukuchi, Jul 27, 2001
 
 -- cut --
 diff -ruN vloopback-0.83.orig/Makefile vloopback-0.83/Makefile
---- vloopback-0.83.orig/Makefile	Thu Jun 14 08:26:18 2001
-+++ vloopback-0.83/Makefile	Thu Jun 14 08:22:41 2001
+--- vloopback-0.83.orig/Makefile	Tue Jan 23 04:44:15 2001
++++ vloopback-0.83/Makefile	Fri Jul 27 22:45:40 2001
 @@ -1,16 +1,46 @@
 -# Makefile for vloopback
 -#
@@ -75,19 +75,17 @@ diff -ruN vloopback-0.83.orig/Makefile vloopback-0.83/Makefile
  	rm -f *.o *~
 diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
 --- vloopback-0.83.orig/vloopback.c	Tue Jan 23 04:44:16 2001
-+++ vloopback-0.83/vloopback.c	Thu Jun 14 08:23:51 2001
-@@ -143,6 +143,10 @@
++++ vloopback-0.83/vloopback.c	Fri Jul 27 22:49:11 2001
+@@ -143,6 +143,8 @@
  static int spares=0;
  static int pipesused=0;
  
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,4,5)
 +static int video_nr= -1;
 +MODULE_PARM(video_nr,"i");
-+#endif
  
  /**********************************************************************
   *
-@@ -819,6 +823,9 @@
+@@ -819,6 +821,9 @@
  
  static struct video_device vloopback_template=
  {
@@ -97,7 +95,7 @@ diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
  	"Video Loopback",
  	VID_TYPE_CAPTURE,
  	0,
-@@ -999,6 +1006,11 @@
+@@ -999,6 +1004,11 @@
  }
  #endif /* CONFIG_PROC_FS && CONFIG_VIDEO_PROC_FS */
  
@@ -109,7 +107,7 @@ diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
  
  static int create_pipe(int nr)
  {
-@@ -1027,7 +1039,7 @@
+@@ -1027,7 +1037,7 @@
  	sprintf(((struct video_device *)loops[nr]->vloopout)->name, "Video loopback %d output", nr);
  	init_waitqueue_head(&loops[nr]->wait);
  	init_MUTEX(&loops[nr]->lock);
@@ -118,7 +116,7 @@ diff -ruN vloopback-0.83.orig/vloopback.c vloopback-0.83/vloopback.c
  		kfree(loops[nr]->vloopin);
  		kfree(loops[nr]->vloopout);
  		kfree(loops[nr]);
-@@ -1035,7 +1047,7 @@
+@@ -1035,7 +1045,7 @@
  		printk(VLNAME "error registering device\n");
  		return -ENODEV;
  	}

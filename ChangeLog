@@ -1,5 +1,7 @@
 2001/08/29	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* burn.c: a bug fix of the little optimization.
+	* README.vloopback: new patch was added.
+	* README, ChangeLog: typo fixes.
 
 2001/08/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* burn.c: A little optimization.
@@ -11,7 +13,7 @@
 	* screen.c: Now it uses SDL_DISABLE and SDL_ENABLE instead of 0 and 1.
 	* effectv.1: typo fixed.
 
-2001/07/7	FUKUCHI	Kentafou	<fukuchi@is.titech.ac.jp>
+2001/07/7	FUKUCHI	Kentarou	<fukuchi@is.titech.ac.jp>
 	* vloopback.c, Makefile: vloopback-0.90 support was added.
 	  but vloopback-0.90 seems to be unstable.
 
