@@ -1,5 +1,7 @@
 # Makefile for v4lutils
 
+include ../config.mk
+
 CC = gcc
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt)
 LIBS =

@@ -1,3 +1,8 @@
+2003/02/17	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* tools/Makefile, v4lutils/Makefile: Now includes config.mk. This is taken
+	  from a patch for Solaris by Bt8x8 driver for Solraris team:
+	  http://bt848x.sourceforge.net/
+
 2002/10/05	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* EffecTV.h: The default video device file has been changed to
 	  "/dev/video0".

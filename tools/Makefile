@@ -1,17 +1,12 @@
 # Makefile for EffecTV/tools
 
-prefix = /usr/local
-exec_prefix = ${prefix}
-
-bindir = ${exec_prefix}/bin
-mandir = ${prefix}/man
-man1dir = ${mandir}/man1
-
-INSTALL = /usr/bin/install -c
+include ./config.mk
 
 CC = gcc
 NASM = nasm
-CFLAGS = -g
+INSTALL = /usr/bin/install -c
+
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt)
 LIBS =
 
 V4L_CFLAGS = -I../v4lutils
