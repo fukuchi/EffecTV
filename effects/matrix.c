@@ -437,7 +437,17 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			mode ^= 1;
+			memset(cmap, CHARNUM - 1, mapW * mapH * sizeof(unsigned char));
+			memset(vmap, 0, mapW * mapH * sizeof(unsigned char));
+			memset(blips, 0, mapW * sizeof(Blip));
+			break;
+		case SDLK_1:
+		case SDLK_KP1:
+			mode = 0;
+			break;
+		case SDLK_2:
+		case SDLK_KP2:
+			mode = 1;
 			break;
 		default:
 			break;

@@ -84,13 +84,13 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 	switch(mode) {
 		case 0:
-			randomPup(src);
-			break;
-		case 1:
 			diagonalPup(src);
 			break;
-		case 2:
+		case 1:
 			diagonalPup2(src);
+			break;
+		case 2:
+			randomPup(src);
 			break;
 		default:
 			break;

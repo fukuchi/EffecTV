@@ -117,19 +117,17 @@ static int draw(RGB32 *src, RGB32 *dest)
 			break;
 		case 1:
 			for(i=0; i<video_area-video_width; i++) {
-				//v = (src[i] & 0xff) | ((src[i]>>8) & 0xff) | ((src[i]>>16) & 0xff);
-				v = src[i] & 0xff;
-				if(v < 60) {
-					buffer[i] |= 0xff - v;
+				v = (src[i]>>16) & 0xff;
+				if(v > 150) {
+					buffer[i] |= v;
 				}
 			}
 			break;
 		case 2:
 			for(i=0; i<video_area-video_width; i++) {
-				//v = (src[i] & 0xff) | ((src[i]>>8) & 0xff) | ((src[i]>>16) & 0xff);
-				v = (src[i]>>16) & 0xff;
-				if(v > 150) {
-					buffer[i] |= v;
+				v = src[i] & 0xff;
+				if(v < 60) {
+					buffer[i] |= 0xff - v;
 				}
 			}
 			break;
