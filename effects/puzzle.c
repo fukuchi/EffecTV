@@ -20,53 +20,69 @@ static int draw(RGB32 *src, RGB32 *dest);
 static int event();
 
 #define BLOCKSIZE 80
+#define SLIDING_INTERVAL 30
+#define AUTOSOLVE_WAIT 300
 
 static char *effectname = "PuzzleTV";
 static int stat;
-static int *blockpos;
-static int *blockoffset;
-static int blocksize;
-static int blockw;
-static int blockh;
-static int blocknum;
-static int marginw;
-static int marginh;
-static int spacepos;
-static int spacex;
-static int spacey;
+
+static int blockSize;
+static int blockW;
+static int blockH;
+static int blockNum;
+
+typedef struct {
+	int position;
+	int srcOffset;
+	int destOffset;
+} Block;
+
+static Block *blocks;
+static int marginW;
+static int marginH;
+static int phase;
+static int movingBlock;
+static int spaceBlock;
+
+static int autoSolveTimer;
+
+static void copyBlockImage(RGB32 *src, RGB32 *dest);
+static void blockSetSrcOffset(int i);
+static void moveBlock(RGB32 *src, RGB32 *dest);
+static void autoSolve(void);
 
 effect *puzzleRegister()
 {
 	effect *entry;
 	int x, y;
 
-	blocksize = BLOCKSIZE;
+	blockSize = BLOCKSIZE;
 	if(video_width < 320) {
-		blocksize = video_width / 4;
+		blockSize = video_width / 4;
 	}
 	if(video_height < 240) {
-		if((video_height/3) < blocksize) {
-			blocksize = video_height / 3;
+		if((video_height / 3) < blockSize) {
+			blockSize = video_height / 3;
 		}
 	}
-	blockw = video_width / blocksize;
-	blockh = video_height / blocksize;
-	blocknum = blockw * blockh;
+	blockW = video_width / blockSize;
+	blockH = video_height / blockSize;
+	blockNum = blockW * blockH;
 
-	blockpos = (int *)malloc(blocknum*sizeof(int));
-	blockoffset = (int *)malloc(blocknum*sizeof(int));
-	if(blockpos == NULL || blockoffset == NULL) {
+	blocks = (Block *)malloc(blockNum * sizeof(Block));
+	if(blocks == NULL) {
 		return NULL;
 	}
 
-	for(y=0; y<blockh; y++) {
-		for(x=0; x<blockw; x++) {
-			blockoffset[y*blockw+x] = y*blocksize*video_width + x*blocksize;
+	for(y=0; y<blockH; y++) {
+		for(x=0; x<blockW; x++) {
+			blocks[y * blockW + x].destOffset
+				= (y * video_width + x) * blockSize;
 		}
 	}
 
-	marginw = video_width - blockw * blocksize;
-	marginh = video_height - blockh * blocksize;
+	marginW = video_width - blockW * blockSize;
+	marginH = video_height - blockH * blockSize;
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -86,21 +102,29 @@ static int start()
 {
 	int i, a, b, c;
 
-	for(i=0; i<blocknum; i++)
-		blockpos[i] = i;
-	for(i=0; i<20*blockw; i++) {
-		/* the number of shuffling times is a rule of thumb. */
-		a = fastrand()%(blocknum-1);
-		b = fastrand()%(blocknum-1);
-		if(a == b)
-			b = (b+1)%(blocknum-1);
-		c = blockpos[a];
-		blockpos[a] = blockpos[b];
-		blockpos[b] = c;
+	for(i=0; i<blockNum; i++) {
+		blocks[i].position = i;
 	}
-	spacepos = blocknum-1;
-	spacex = blockw-1;
-	spacey = blockh-1;
+
+	for(i=0; i<20*blockW; i++) {
+		/* the number of shuffling times is a rule of thumb. */
+		a = fastrand()%(blockNum-1);
+		b = fastrand()%(blockNum-1);
+		if(a == b)
+			b = (b+1)%(blockNum-1);
+		c = blocks[a].position;
+		blocks[a].position = blocks[b].position;
+		blocks[b].position = c;
+	}
+
+	for(i=0; i<blockNum; i++) {
+		blockSetSrcOffset(i);
+	}
+
+	phase = 0;
+	movingBlock = -1;
+	spaceBlock = blockNum - 1;
+	autoSolveTimer = AUTOSOLVE_WAIT;
 
 	stat = 1;
 	return 0;
@@ -114,97 +138,219 @@ static int stop()
 
 static int draw(RGB32 *src, RGB32 *dest)
 {
-	int  x, y, xx, yy, i;
+	int  y, i;
 	RGB32 *p, *q;
 
-	i = 0;
-	for(y=0; y<blockh; y++) {
-		for(x=0; x<blockw; x++) {
-			p = &src[blockoffset[blockpos[i]]];
-			q = &dest[blockoffset[i]];
-			if(spacepos == i) {
-				for(yy=0; yy<blocksize; yy++) {
-					for(xx=0; xx<blocksize; xx++) {
-						q[xx] = 0;
-					}
-					q += video_width;
-				}
-			} else {
-				for(yy=0; yy<blocksize; yy++) {
-					for(xx=0; xx<blocksize; xx++) {
-						q[xx] = p[xx];
-					}
-					q += video_width;
-					p += video_width;
-				}
+	if(autoSolveTimer == 0) {
+		autoSolve();
+	} else {
+		autoSolveTimer--;
+	}
+
+	for(i=0; i<blockNum; i++) {
+		if(i == movingBlock || i == spaceBlock) {
+			q = dest + blocks[i].destOffset;
+			for(y=0; y<blockSize; y++) {
+				memset(q, 0, blockSize * PIXEL_SIZE);
+				q += video_width;
 			}
-			i++;
+		} else {
+			copyBlockImage( src + blocks[i].srcOffset,
+						   dest + blocks[i].destOffset);
 		}
 	}
-	p = src + blockw * blocksize;
-	q = dest + blockw * blocksize;
-	if(marginw) {
-		for(y=0; y<blockh*blocksize; y++) {
-			for(x=0; x<marginw; x++) {
-				*q++ = *p++;
-			}
-			p += video_width - marginw;
-			q += video_width - marginw;
+
+	if(movingBlock >= 0) {
+		moveBlock(src, dest);
+	}
+
+	if(marginW) {
+		p =  src + blockW * blockSize;
+		q = dest + blockW * blockSize;
+		for(y=0; y<blockH * blockSize; y++) {
+			memcpy(q, p, marginW * PIXEL_SIZE);
+			p += video_width;
+			q += video_width;
 		}
 	}
-	if(marginh) {
-		p = src + (blockh * blocksize) * video_width;
-		q = dest + (blockh * blocksize) * video_width;
-		memcpy(q, p, marginh*video_width*sizeof(RGB32));
+	if(marginH) {
+		p =  src + (blockH * blockSize) * video_width;
+		q = dest + (blockH * blockSize) * video_width;
+		memcpy(q, p, marginH * video_width * PIXEL_SIZE);
 	}
+
+	return 0;
+}
+
+static int orderMotion(int dir)
+{
+	int x, y;
+	int dx, dy;
+
+	if(movingBlock >= 0) return -1;
+
+	x = spaceBlock % blockW;
+	y = spaceBlock / blockW;
+	switch(dir) {
+		case 0:
+			dx =  0; dy =  1;
+			break;
+		case 1:
+			dx =  0; dy = -1;
+			break;
+		case 2:
+			dx =  1; dy =  0;
+			break;
+		case 3:
+			dx = -1; dy =  0;
+			break;
+		default:
+			return -1;
+			break;
+	}
+	if(x + dx < 0 || x + dx >= blockW) return -1;
+	if(y + dy < 0 || y + dy >= blockH) return -1;
+
+	movingBlock = (y + dy) * blockW + x + dx;
+	phase = SLIDING_INTERVAL - 1;
 
 	return 0;
 }
 
 static int event(SDL_Event *event)
 {
-	int tmp, nextpos;
-
-	nextpos = -1;
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_w:
 		case SDLK_k:
-			if(spacey<blockh-1) {
-				nextpos = spacepos + blockw;
-				spacey++;
-			}
+			orderMotion(0);
 			break;
 		case SDLK_s:
 		case SDLK_j:
-			if(spacey>0) {
-				nextpos = spacepos - blockw;
-				spacey--;
-			}
+			orderMotion(1);
 			break;
 		case SDLK_a:
 		case SDLK_h:
-			if(spacex<blockw-1) {
-				nextpos = spacepos + 1;
-				spacex++;
-			}
+			orderMotion(2);
 			break;
 		case SDLK_d:
 		case SDLK_l:
-			if(spacex>0) {
-				nextpos = spacepos - 1;
-				spacex--;
-			}
+			orderMotion(3);
 			break;
 		default:
 			break;
 		}
-	}
-	if(nextpos>=0) {
-		tmp = blockpos[spacepos];
-		blockpos[spacepos] = blockpos[nextpos];
-		blockpos[nextpos] = tmp;
-		spacepos = nextpos;
+		autoSolveTimer = AUTOSOLVE_WAIT;
 	}
 	return 0;
+}
+
+static void copyBlockImage(RGB32 *src, RGB32 *dest)
+{
+	int y;
+	
+	for(y=blockSize; y>0; y--) {
+		memcpy(dest, src, blockSize * PIXEL_SIZE);
+		src += video_width;
+		dest += video_width;
+	}
+}
+
+static void blockSetSrcOffset(int i)
+{
+	int x, y;
+
+	x = blocks[i].position % blockW;
+	y = blocks[i].position / blockW;
+
+	blocks[i].srcOffset = (y * video_width + x) * blockSize;
+}
+
+static void moveBlock(RGB32 *src, RGB32 *dest)
+{
+	int sx, sy;
+	int dx, dy;
+	int x, y;
+
+	sx = movingBlock % blockW;
+	sy = movingBlock / blockW;
+	dx = spaceBlock % blockW;
+	dy = spaceBlock / blockW;
+
+	sx *= blockSize;
+	sy *= blockSize;
+	dx *= blockSize;
+	dy *= blockSize;
+
+	x = dx + (sx - dx) * phase / SLIDING_INTERVAL;
+	y = dy + (sy - dy) * phase / SLIDING_INTERVAL;
+
+	copyBlockImage(src + blocks[movingBlock].srcOffset,
+			dest + y * video_width + x);
+
+	if(autoSolveTimer == 0) {
+		phase--;
+	} else {
+		phase-=2;
+	}
+	if(phase < 0) {
+		int tmp;
+		/* Exchanges positions of the moving block and the space */
+		tmp = blocks[movingBlock].position;
+		blocks[movingBlock].position = blocks[spaceBlock].position;
+		blocks[spaceBlock].position = tmp;
+
+		blockSetSrcOffset(movingBlock);
+		blockSetSrcOffset(spaceBlock);
+
+		spaceBlock = movingBlock;
+		movingBlock = -1;
+	}
+}
+
+static void autoSolve(void)
+{
+	/* IMPORTANT BUG: this functions does *NOT* solve the puzzle! */
+	static int lastMove = 0;
+	static char dir[4];
+	int i, j, x, y, max;
+
+	if(movingBlock >= 0) return;
+	for(i=0; i<4; i++) {
+		dir[i] = i;
+	}
+	dir[lastMove] = -1;
+	x = spaceBlock % blockW;
+	y = spaceBlock / blockW;
+	if(x <= 0) dir[3] = -1;
+	if(x >= blockW - 1) dir[2] = -1;
+	if(y <= 0) dir[1] = -1;
+	if(y >= blockH - 1) dir[0] = -1;
+
+	max = 0;
+	for(i=0; i<3; i++) {
+		if(dir[i] == -1) {
+			for(j=i+1; j<4; j++) {
+				if(dir[j] != -1) {
+					dir[i] = dir[j];
+					dir[j] = -1;
+					max++;
+					break;
+				}
+			}
+		} else {
+			max++;
+		}
+	}
+
+	if(max > 0) {
+		i = dir[inline_fastrand() % max];
+		if(orderMotion(i) == 0) {
+			if(i < 2) {
+				lastMove = 1 - i;
+			} else {
+				lastMove = 5 - i;
+			}
+		}
+	}
 }
