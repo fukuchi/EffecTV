@@ -314,19 +314,20 @@ int rippleDraw()
 			dy = y + v;
 			if(dx<0) dx=0;
 			if(dy<0) dy=0;
-			if(dx>width) dx=width;
-			if(dy>height) dy=height;
+			if(dx>=width) dx=width-1;
+			if(dy>=height) dy=height-1;
 			dest[0] = src[dy*width+dx];
 
 			i = dx;
 
-			dx = x + (h+(int)vp[2])/2;
+			dx = x + 1 + (h+(int)vp[2])/2;
 			if(dx<0) dx=0;
-			if(dx>width) dx=width;
+			if(dx>=width) dx=width-1;
 			dest[1] = src[dy*width+dx];
 
-			dy = y + (v+(int)vp[map_w*2+1])/2;
+			dy = y + 1 + (v+(int)vp[map_w*2+1])/2;
 			if(dy<0) dy=0;
+			if(dy>=height) dy=height-1;
 			dest[width] = src[dy*width+i];
 
 			dest[width+1] = src[dy*width+dx];
