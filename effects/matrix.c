@@ -40,6 +40,7 @@ static unsigned char *vmap;
 static unsigned char *img;
 static int mapW, mapH;
 static RGB32 palette[256 * FONT_DEPTH];
+static int pause;
 
 typedef struct {
 	int mode;
@@ -102,6 +103,7 @@ static int start()
 	memset(cmap, CHARNUM - 1, mapW * mapH * sizeof(unsigned char));
 	memset(vmap, 0, mapW * mapH * sizeof(unsigned char));
 	memset(blips, 0, mapW * sizeof(Blip));
+	pause = 0;
 
 	stat = 1;
 	return 0;
@@ -121,8 +123,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	unsigned int val;
 	RGB32 a, b;
 
-	updateCharMap();
-	createImg(src);
+	if(pause == 0) {
+		updateCharMap();
+		createImg(src);
+	}
 
 	c = cmap;
 	v = vmap;
@@ -441,6 +445,7 @@ static int event(SDL_Event *event)
 			memset(cmap, CHARNUM - 1, mapW * mapH * sizeof(unsigned char));
 			memset(vmap, 0, mapW * mapH * sizeof(unsigned char));
 			memset(blips, 0, mapW * sizeof(Blip));
+			pause = 1;
 			break;
 		case SDLK_1:
 		case SDLK_KP1:
@@ -452,6 +457,10 @@ static int event(SDL_Event *event)
 			break;
 		default:
 			break;
+		}
+	} else if(event->type == SDL_KEYUP) {
+		if(event->key.keysym.sym == SDLK_SPACE) {
+			pause = 0;
 		}
 	}
 

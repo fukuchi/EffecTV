@@ -1,6 +1,8 @@
 2004/01/20	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/spark.c:
 	  - Now mode is not reset in start().
+	* effects/matrix.c:
+	  - Now pressing Space bar can stop dropping code.
 
 2004/01/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effectv.1, docs.japanese/effectv.1:
