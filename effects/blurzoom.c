@@ -10,7 +10,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include "../EffecTV.h"
 #include "utils.h"
 
@@ -174,7 +173,7 @@ effect *blurzoomRegister()
 	buf_margin_right = video_width - buf_width - buf_margin_left;
 
 	sharedbuffer_reset();
-	blurzoombuf = (unsigned char *)sharedbuffer_alloc(buf_area*2);
+	blurzoombuf = (unsigned char *)sharedbuffer_alloc(buf_area * 2);
 	if(blurzoombuf == NULL) {
 		return NULL;
 	}
@@ -204,7 +203,7 @@ effect *blurzoomRegister()
 
 int blurzoomStart()
 {
-	bzero(blurzoombuf, buf_area*2);
+	memset(blurzoombuf, 0, buf_area * 2);
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	snapframe = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(snapframe == NULL)
