@@ -121,4 +121,3 @@ diff -ruN vloopback-0.90.orig/vloopback.c vloopback-0.90/vloopback.c
  		video_unregister_device(&loops[nr]->vloopin->viddev);
  		kfree(loops[nr]->vloopin);
  		kfree(loops[nr]->vloopout);
-Binary files vloopback-0.90.orig/vloopback.o and vloopback-0.90/vloopback.o differ
