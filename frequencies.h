@@ -103,7 +103,6 @@ struct CHANLISTS {
     int               count;
 };
 
-
 #define CHAN_COUNT(x) (sizeof(x)/sizeof(struct CHANLIST))
 
 /* --------------------------------------------------------------------- */
