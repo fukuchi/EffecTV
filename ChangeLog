@@ -1,3 +1,6 @@
+2002/03/17	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* main.c: Minor changes to compile with gcc 3.0.
+
 2002/03/14	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/transform.c: Fixed memory leak bug.
 

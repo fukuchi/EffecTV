@@ -87,12 +87,12 @@ static void usage()
 	printf("Options:\n");
 	printf("  -device FILE     use device FILE for video4linux\n");
 	printf("  -channel NUMBER  channel number of video source\n");
-	printf("  -norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
-                   set video norm\n");
-	printf("  -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west, 
-            europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-            southafrica,argentina,canada-cable} 
-                   set frequency table\n");
+	printf("  -norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}\n"
+           "                   set video norm\n");
+	printf("  -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,\n"
+           "            europe-east,italy,newzealand,australia,ireland,france,china-bcast,\n"
+           "            southafrica,argentina,canada-cable}\n"
+           "                   set frequency table\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");
 	printf("  -doublebuffer    enable double buffering mode (if possible)\n");
@@ -101,9 +101,9 @@ static void usage()
 	printf("  -geometry WxH    set the size of screen\n");
 	printf("  -scale NUMBER    scaling the screen\n");
 	printf("  -autoplay NUMBER changes effects automatically every NUMBER frames\n");
-	printf("  -palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
-                   set the palette of capturing device. It is detected
-                   automatically by default.\n");
+	printf("  -palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}\n"
+           "                   set the palette of capturing device. It is detected\n"
+           "                   automatically by default.\n");
 #ifdef USE_VLOOPBACK
 	printf("  -vloopback FILE  use device FILE for output of vloopback device\n");
 #endif
