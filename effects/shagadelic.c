@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * ShagadelicTV - makes you shagadelic! Yeah baby yeah!
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * Inspired by Adrian Likin's script for the GIMP.
  */

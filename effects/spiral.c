@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * spiral.c: a 'spiraling' effect (even though it isn't really a spiral)
  *  code originally derived from quark.c; additions and changes are

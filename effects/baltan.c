@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * BaltanTV - like StreakTV, but following for a long time
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  */
 

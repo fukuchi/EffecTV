@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * RadioacTV - motion-enlightment effect.
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * I referred to "DUNE!" by QuoVadis for this effect.
  */

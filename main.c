@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Video Effector
- * Copyright (C) 2001 FUKUCHI, Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ static effectRegistFunc *effects_register_list[] =
 	lensRegister,
 	diffRegister,
 	scrollRegister,
-	hintdepintRegister,
+//	hintdepintRegister,
 	warholRegister
 };
 

@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * EdgeTV - detects edge and display it in good old computer way. 
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * The idea of EdgeTV is taken from Adrian Likins's effector script for GIMP,
  * `Predator effect.'

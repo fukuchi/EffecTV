@@ -1,4 +1,4 @@
-EffecTV 0.3.7
+EffecTV 0.3.8
 
 GENERAL INFORMATION
 ===================
@@ -214,6 +214,10 @@ LensTV
 	Old school demo lens effect.
 DiffTV
 	Hilights interframe differences.
+BrokenTV
+	Simulates broken TV.
+WarholTV
+	Hommage aux Andy Warhol.
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

@@ -75,7 +75,7 @@ RDS = rds.o
 LENS = lens.o
 DIFF = diff.o
 SCROLL = scroll.o
-HINTDEPINT = hintdepint.o
+HINTDEPINT = #hintdepint.o
 WARHOL = warhol.o
 
 $(LIBEFFECTS): $(EFFECTS)

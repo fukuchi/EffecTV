@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * rndmTV Random noise based on video signal
  * (c)2002 Ed Tannenbaum <et@et-arts.com>

@@ -1,6 +1,6 @@
 /*
  * v4lutils - utility library for Video4Linux
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * v4lutils.c: utility functions
  *

@@ -1,3 +1,12 @@
+2002/09/27	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* Changed version to 0.3.8.
+	* CREWS: Added Jun IIO as a director.
+	* main.c, effects/Makefile: Disabled HintDePintTV.
+	* Changed copyright notation. (just for my personal reason)
+	  copyrighted year have been extended to 2002.(is it right way?)
+	* README, effectv.1, docs.japanese/{README,effectv.1}:
+	  Added BrokenTV and WarholTV.
+
 2002/09/04	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* v4lutils/v4lutils.c: Was changed to output more user-friendly error
 	  message.

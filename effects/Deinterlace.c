@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * DeinterlaceTV - deinterlaces the video.
  * Copyright (C) 2001 Casandro (einStein@donau.de

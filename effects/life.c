@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * LifeTV - Play John Horton Conway's `Life' game with video input.
- * Copyright (C) 2001 FUKUCHI Kentarou
+ * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * This idea is stolen from Nobuyuki Matsushita's installation program of
  * ``HoloWall''. (See http://www.csl.sony.co.jp/person/matsu/index.html)
