@@ -1,3 +1,7 @@
+2002/08/03	Sam Mertens		<smertens@users.sf.net>
+	* effects/holo.c: fixed wrong parameter order in memcpy() calls
+	(my own fault)
+	
 2002/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{1d,puzzle,aging,dumb,lens,predator,quark,spark,spiral}.c:
 	  Replaced from bcopy() to memcpy().

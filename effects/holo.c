@@ -40,7 +40,7 @@ static int setBackground()
 /* step 1: grab frame-1 to buffer-1 */
 	video_syncframe();
 	src = (RGB32 *)video_getaddress();
-	memcpy(src, bgimage, video_area*sizeof(RGB32));
+	memcpy(bgimage, src, video_area*sizeof(RGB32));
 	video_grabframe();
 /* step 2: add frame-2 to buffer-1 */
 	video_syncframe();
@@ -51,7 +51,7 @@ static int setBackground()
 /* step 3: grab frame-3 to buffer-2 */
 	video_syncframe();
 	src = (RGB32 *)video_getaddress();
-	memcpy(src, tmp, video_area*sizeof(RGB32));
+	memcpy(tmp, src, video_area*sizeof(RGB32));
 	video_grabframe();
 /* step 4: add frame-4 to buffer-2 */
 	video_syncframe();
@@ -74,11 +74,11 @@ static int setBackground()
 		}
 		if(stretch) {
 			if(i == 0) {
-				memcpy(bgimage, stretching_buffer, video_area*sizeof(RGB32));
+				memcpy(stretching_buffer, bgimage, video_area*sizeof(RGB32));
 			}
 			image_stretch_to_screen();
 		} else {
-			memcpy(bgimage, (RGB32 *)screen_getaddress(),
+			memcpy((RGB32 *)screen_getaddress(), bgimage,
 					video_area*sizeof(RGB32));
 		}
 		if(screen_mustlock()) {
