@@ -1,4 +1,4 @@
-EffecTV 0.3.2
+EffecTV 0.3.3
 
 序
 ==
@@ -40,7 +40,8 @@ README.vloopbackを読んで、中に含まれているパッチを当ててからインストールしてく
 http://www.web-sites.co.uk/nasm
 ftp://ftp.kernel.org/pub/software/devel/nasm/
 を参照してください。主要なLinuxディストリビューションではパッケージが出ていま
-すので、そちらを利用されると良いでしょう。
+すので、そちらを利用されると良いでしょう。NASMを使用しない場合は、"config.mk"
+を修正する必要があります。
 
 コンパイルとインストール
 ------------------------
@@ -84,30 +85,61 @@ EffecTVを実行する前に、自分の機器構成についていくつか確認しておきましょう。
 
 effectv [オプション...]
 
-オプション:
-	-device FILE     デバイスファイルのファイル名を与えます。デフォルトは
-	                 "/dev/video"。
-	-channel NUMBER  ビデオ入力のチャンネル番号を指定。デフォルトは 0。
-	-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
-	                 ビデオ信号の規格を指定します。デフォルトでは ntsc で
-	                 すが、日本だとntsc-jpの方が若干良いようです。
-	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
-	          europe-west, europe-east,italy,newzealand,australia,ireland,
-	          france,china-bcast,southafrica,argentina}
-	                 TV入力を見る時に使う、周波数表を指定します。日本では
-	                 japan-bcast(地上波)かjapan-cable(ケーブルTV?)。
-	-fullscreen      フルスクリーンモードで起動します。
-	-hardware        可能なら、画面の直接書き換えモードで起動します。
-	-doublebuffer    可能なら、ダブルバッファモードを使います。
-	-fps             毎秒何フレーム処理できてるかをタイトルバーに表示しま
-	                 す。
-	-size WxH        入力画面のサイズを指定します。
-	-geometry WxH    出力画面のサイズを指定します。
-	-scale NUMBER    出力画面の倍率を指定します。
-	-autoplay NUMBER イフェクトを、NUMBER枚のフレームを表示したら自動的に
-	                 切り換えます。
-	-vloopback FILE  ビデオループバック機能を使用します。ビデオループバッ
-                         クデバイスの入力デバイス名を指定してください。
+オプション
+----------
+-device FILE
+	デバイスファイルのファイル名を与えます。省略すると"/dev/video"を使用し
+	ます。
+
+-channel NUMBER
+	ビデオ入力のチャンネル番号を指定。デフォルトは 0。
+
+-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
+	ビデオ信号の規格を指定します。デフォルトでは ntsc ですが、日本だと
+	ntsc-jpの方が若干良いようです。
+
+-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
+          europe-east,italy,newzealand,australia,ireland,france,china-bcast,
+          southafrica,argentina}
+	TV入力を見る時に使う、周波数表を指定します。日本ではjapan-bcast(地上波)
+	かjapan-cable(ケーブルTV?)を選択してください。
+
+-fullscreen
+	フルスクリーンモードで起動します。
+-hardware
+	可能なら、画面の直接書き換えモードで起動します。動作が速くなる事があり
+	ます。
+-doublebuffer
+	可能なら、ダブルバッファモードを使います。動作が速くなり、画質が良くな
+	る事があります。
+-fps
+	毎秒何フレーム処理できてるかをタイトルバーに表示します。
+
+-size WxH
+	入力画面のサイズを指定します。サイズを大きくするとEffecTVの動作が一般
+	に遅くなります。大きな画面が必要な場合は、"-scale"オプションを使用する
+	事も検討してください。
+
+-geometry WxH
+	出力画面のサイズを指定します。普通は"-scale"オプションの方が使いやすい
+	でしょう。
+
+-scale NUMBER
+	出力画面の倍率を指定します。"-scale 2"と指定すれば、縦横2倍の画面を得
+	ます。
+
+-autoplay NUMBER
+	イフェクトを、NUMBER枚のフレームを表示したら自動的に切り換えます。
+
+-palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
+	ビデオ入力デバイスのパレットを指定します。通常は自動的に選択されるので
+	このオプションを指定する必要はありません。一部のUSBデバイスではRGB系の
+	パレットを使用すると動作が遅くなります。そういった場合にこのオプション
+	でYUV系のパレットを選択すると、改善される事があります。
+
+-vloopback FILE
+	ビデオループバック機能を使用します。ビデオループバッスの入力デバイス名
+	を指定してください。
 
 キー
 ----
@@ -175,6 +207,8 @@ RippleTV
 	入力画像の動きに応じて波紋を表示します。
 DiceTV
 	入力画像を切り刻んで表示します。
+DizzyTV
+	回転拡大したイメージを重ね合わせていきます。
 
 EffecTVの出力を録画・放送するには
 ---------------------------------

@@ -10,12 +10,14 @@ effectv \- リアルタイムビデオイフェクター
 [-freqtab FREQTAB]
 [-fullscreen]
 [-hardware]
+[-doublebuffer]
 [-fps]
-[-vloopback FILE]
 [-size WxH]
 [-geometry WxH]
 [-scale NUMBER]
 [-autoplay NUMBER]
+[-palette PALETTE]
+[-vloopback FILE]
 
 .SH 説明
 EffecTVはリアルタイムで動作するビデオイフェクターです。様々なイフェクターで
@@ -65,6 +67,9 @@ france, china-bcast, southafrica, argentinaの中から選択してください。
 .TP
 .I \-autoplay FRAMES
 イフェクトを、NUMBER枚のフレームを表示したら自動的に切り換えます。
+.TP
+.I \-palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
+入力画像のパレットを指定します。通常は自動的に設定されます。
 .TP
 .I \-vloopback FILE
 ビデオループバック機能を使用します。ビデオループバックデバイスの入力デバイス名をFILEで指定します。
@@ -168,6 +173,9 @@ TVのチャンネルを切り換えます。
 .TP
 .I DiceTV
 入力画像を切り刻んで表示します。
+.TP
+.I DizzyTV
+回転拡大したイメージを重ね合わせていきます。
 
 .SH 著者
 EffecTVは福地健太郎<fukuchi@users.sourceforge.net>によって最初の版が作られました。
