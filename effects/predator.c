@@ -52,27 +52,27 @@ static int setBackground()
 /* step 1: grab frame-1 to buffer-1 */
 	video_syncframe();
 	src = (unsigned int *)video_getaddress();
-	bcopy(src, bgimage, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(src, bgimage, SCREEN_AREA*PIXEL_SIZE);
 	video_grabframe();
 /* step 2: add frame-2 to buffer-1 */
 	video_syncframe();
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		bgimage[i] = (src[i]&bgimage[i])+(((src[i]^bgimage[i])&0xfefefe)>>1);
 	}
 	video_grabframe();
 /* step 3: grab frame-3 to buffer-2 */
 	video_syncframe();
 	src = (unsigned int *)video_getaddress();
-	bcopy(src, dest, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(src, dest, SCREEN_AREA*PIXEL_SIZE);
 	video_grabframe();
 /* step 4: add frame-4 to buffer-2 */
 	video_syncframe();
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		dest[i] = (src[i]&dest[i])+(((src[i]^dest[i])&0xfefefe)>>1);
 	}
 	video_grabframe();
 /* step 5: add buffer-3 to buffer-1 */
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		bgimage[i] = (bgimage[i]&dest[i])+(((bgimage[i]^dest[i])&0xfefefe)>>1);
 		bgvalue[i] = RGBtoY(bgimage[i]);
 	}
@@ -101,7 +101,7 @@ static int setBackground()
 				}
 			}
 		} else {
-			bcopy(bgimage, dest, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+			bcopy(bgimage, dest, SCREEN_AREA*PIXEL_SIZE);
 		}
 		if(screen_mustlock()) {
 			screen_unlock();
@@ -121,12 +121,12 @@ effect *predatorRegister()
 	yuvTableInit();
 
 	sharedbuffer_reset();
-	bgimage = (unsigned int *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT*8);
-	if(bgimage == NULL) {
+	bgimage = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
+	bgvalue = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
+	buffer  = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
+	if(bgimage == NULL || bgvalue == NULL || buffer == NULL) {
 		return NULL;
 	}
-	bgvalue = (unsigned char *)bgimage + SCREEN_WIDTH*SCREEN_HEIGHT*4;
-	buffer = (unsigned char *)bgvalue + SCREEN_WIDTH*SCREEN_HEIGHT;
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -176,7 +176,7 @@ int predatorDraw()
 	src = video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
 
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		v = ((int)src[i] - (int)bgvalue[i] + MAGIC_THRESHOLD)&0x7fffffff;
 		buffer[i] = (v - MAGIC_THRESHOLD*2)>>31;
 	}

@@ -65,7 +65,7 @@ static int setBackground()
 {
 	if(video_syncframe())
 		return -1;
-	bcopy(video_getaddress(), background, SCREEN_WIDTH*SCREEN_HEIGHT);
+	bcopy(video_getaddress(), background, SCREEN_AREA);
 	if(video_grabframe())
 		return -1;
 
@@ -77,12 +77,12 @@ effect *fireRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	background = (unsigned char *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT);
-	buffer = (unsigned char *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT);
+	background = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
+	buffer = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
 	if(background == NULL || buffer == NULL) {
 		return NULL;
 	}
-	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
+	bzero(buffer, SCREEN_AREA);
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -103,7 +103,7 @@ effect *fireRegister()
 
 int fireStart()
 {
-	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
+	bzero(buffer, SCREEN_AREA);
 	screen_clear(0);
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_GREY))

@@ -32,9 +32,9 @@ effect *dumbRegister()
 	entry->draw = dumbDraw;
 	entry->event = NULL;
 	if(scale == 2) {
-		framelength = SCREEN_WIDTH*SCREEN_HEIGHT*4*4;
+		framelength = SCREEN_AREA*PIXEL_SIZE*4;
 	} else {
-		framelength = SCREEN_WIDTH*SCREEN_HEIGHT*4;
+		framelength = SCREEN_AREA*PIXEL_SIZE;
 	}
 
 	return entry;

@@ -50,11 +50,11 @@ int quarkStart()
 {
 	int i;
 	
-	buffer = (unsigned int *)malloc(SCREEN_WIDTH*SCREEN_HEIGHT*4*PLANES);
+	buffer = (unsigned int *)malloc(SCREEN_AREA*PIXEL_SIZE*PLANES);
 	if(buffer == NULL)
 		return -1;
 	for(i=0;i<PLANES;i++)
-		planetable[i] = &buffer[SCREEN_WIDTH*SCREEN_HEIGHT*i];
+		planetable[i] = &buffer[SCREEN_AREA*i];
 	plane = PLANES - 1;
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_RGB32))
@@ -89,7 +89,7 @@ int quarkDraw()
 		return -1;
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	bcopy(src, planetable[plane], SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(src, planetable[plane], SCREEN_AREA*PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 	if(screen_mustlock()) {
@@ -97,13 +97,10 @@ int quarkDraw()
 			return 0;
 		}
 	}
-	for(i=0;i<SCREEN_WIDTH*SCREEN_HEIGHT;i++) {
-
+	for(i=0;i<SCREEN_AREA;i++) {
 /* The reason why I use high order 8 bits is written in utils.c
    (or, do 'man rand') */
-
 		cf = (plane + (fastrand()>>24))&(PLANES-1);
-
 		dest[i] = (planetable[cf])[i];
 	}
 	if(screen_mustlock()) {
@@ -127,7 +124,7 @@ int quarkDrawDouble()
 		return -1;
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	bcopy(src, planetable[plane], SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(src, planetable[plane], SCREEN_AREA*PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 	if(screen_mustlock()) {

@@ -41,7 +41,7 @@ static int setBackground()
 {
 	if(video_syncframe())
 		return -1;
-	bcopy(video_getaddress(), background, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(video_getaddress(), background, SCREEN_AREA*PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 
@@ -53,7 +53,7 @@ effect *mosaicRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	background = (unsigned int *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	background = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
 	if(background == NULL) {
 		return NULL;
 	}

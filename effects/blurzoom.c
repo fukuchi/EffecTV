@@ -99,8 +99,8 @@ effect *blurzoomRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	background = (unsigned int *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT*4);
-	blurzoombuf = (unsigned char *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	background = (unsigned int *)sharedbuffer_alloc(SCREEN_AREA*PIXEL_SIZE);
+	blurzoombuf = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA*2);
 	if(background == NULL || blurzoombuf == NULL) {
 		return NULL;
 	}
@@ -125,7 +125,7 @@ effect *blurzoomRegister()
 
 int blurzoomStart()
 {
-	bzero(blurzoombuf, SCREEN_WIDTH*SCREEN_HEIGHT*2);
+	bzero(blurzoombuf, SCREEN_AREA*2);
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_RGB32))
 		return -1;
@@ -133,7 +133,7 @@ int blurzoomStart()
 		return -1;
 	if(video_syncframe())
 		return -1;
-	bcopy(video_getaddress(), background, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+	bcopy(video_getaddress(), background, SCREEN_AREA*PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 	stat = 1;
@@ -162,7 +162,7 @@ int blurzoomDraw()
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
 
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		blurzoombuf[i] |= abstable[(src[i]&0xff)<<8|(background[i]&0xff)];
 		background[i] = src[i];
 	}
@@ -194,7 +194,7 @@ int blurzoomDraw()
 			dest += SCREEN_WIDTH*4;
 		}
 	} else {
-		for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+		for(i=0; i<SCREEN_AREA; i++) {
 			a = background[i] & 0xfefeff;
 			b = palette[blurzoombuf[i]];
 			a += b;

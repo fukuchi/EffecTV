@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * streak.c: like BaltanTV, but following for a long time
+ * streak.c: afterimages following
  *
  */
 
@@ -12,7 +12,9 @@
 #include "utils.h"
 
 #define PLANES 32
-#define STRIDE 8
+#define STRIDE 4
+#define STRIDE_MASK 0xf8f8f8f8
+#define STRIDE_SHIFT 3
 
 int streakStart();
 int streakStop();
@@ -29,10 +31,9 @@ static int format;
 effect *streakRegister()
 {
 	effect *entry;
-	
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
-		free(buffer);
 		return NULL;
 	}
 	
@@ -52,11 +53,12 @@ int streakStart()
 {
 	int i;
 
-	buffer = (unsigned int *)malloc(SCREEN_WIDTH*SCREEN_HEIGHT*4*PLANES);
+	buffer = (unsigned int *)malloc(SCREEN_AREA*PIXEL_SIZE*PLANES);
 	if(buffer == NULL)
 		return -1;
+	bzero(buffer, SCREEN_AREA*PIXEL_SIZE*PLANES);
 	for(i=0;i<PLANES;i++)
-		planetable[i] = &buffer[SCREEN_WIDTH*SCREEN_HEIGHT*i];
+		planetable[i] = &buffer[SCREEN_AREA*i];
 
 	plane = 0;
 	format = video_getformat();
@@ -78,7 +80,6 @@ int streakStop()
 			free(buffer);
 		state = 0;
 	}
-
 	return 0;
 }
 
@@ -91,23 +92,27 @@ int streakDraw()
 		return -1;
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
-		planetable[plane][i] = (src[i] & 0xfcfcfc)>>2;
+	for(i=0; i<SCREEN_AREA; i++) {
+		planetable[plane][i] = (src[i] & STRIDE_MASK)>>STRIDE_SHIFT;
 	}
 	if(video_grabframe())
 		return -1;
+
 	cf = plane & (STRIDE-1);
 	if(screen_mustlock()) {
 		if(screen_lock() < 0) {
 			return 0;
 		}
 	}
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		dest[i] = planetable[cf][i]
 		        + planetable[cf+STRIDE][i]
 		        + planetable[cf+STRIDE*2][i]
-		        + planetable[cf+STRIDE*3][i];
-		planetable[plane][i] = (dest[i]&0xfcfcfc)>>2;
+		        + planetable[cf+STRIDE*3][i]
+		        + planetable[cf+STRIDE*4][i]
+		        + planetable[cf+STRIDE*5][i]
+		        + planetable[cf+STRIDE*6][i]
+		        + planetable[cf+STRIDE*7][i];
 	}
 	if(screen_mustlock()) {
 		screen_unlock();
@@ -121,15 +126,15 @@ int streakDraw()
 
 int streakDrawDouble()
 {
-	int i, x, y, cf, v;
+	int i, x, y, cf;
 	unsigned int *src, *dest;
 
 	if(video_syncframe())
 		return -1;
 	src = (unsigned int *)video_getaddress();
 	dest = (unsigned int *)screen_getaddress();
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
-		planetable[plane][i] = (src[i] & 0xfcfcfc)>>2;
+	for(i=0; i<SCREEN_AREA; i++) {
+		planetable[plane][i] = (src[i] & STRIDE_MASK)>>STRIDE_SHIFT;
 	}
 	if(video_grabframe())
 		return -1;
@@ -139,19 +144,20 @@ int streakDrawDouble()
 			return 0;
 		}
 	}
-	i = 0;
 	for(y=0; y<SCREEN_HEIGHT; y++) {
 		for(x=0; x<SCREEN_WIDTH; x++) {
-			v = planetable[cf][i]
-			  + planetable[cf+STRIDE][i]
-			  + planetable[cf+STRIDE*2][i]
-			  + planetable[cf+STRIDE*3][i];
-			planetable[plane][i] = (v&0xfcfcfcfc)>>2;
-			dest[y*2*SCREEN_WIDTH*2+x*2] = v;
-			dest[y*2*SCREEN_WIDTH*2+x*2+1] = v;
-			dest[(y*2+1)*SCREEN_WIDTH*2+x*2] = v;
-			dest[(y*2+1)*SCREEN_WIDTH*2+x*2+1] = v;
-			i++;
+			i = planetable[cf][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*2][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*3][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*4][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*5][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*6][y*SCREEN_WIDTH+x]
+			  + planetable[cf+STRIDE*7][y*SCREEN_WIDTH+x];
+			dest[y*2*SCREEN_WIDTH*2+x*2] = i;
+			dest[y*2*SCREEN_WIDTH*2+x*2+1] = i;
+			dest[(y*2+1)*SCREEN_WIDTH*2+x*2] = i;
+			dest[(y*2+1)*SCREEN_WIDTH*2+x*2+1] = i;
 		}
 	}
 	if(screen_mustlock()) {

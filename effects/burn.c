@@ -65,7 +65,7 @@ static int setBackground()
 	if(video_syncframe())
 		return -1;
 	src = video_getaddress();
-	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
+	for(i=0; i<SCREEN_AREA; i++) {
 		background[i] = src[i*4];
 	}
 	if(video_grabframe())
@@ -79,12 +79,12 @@ effect *burnRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	background = (unsigned char *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT);
-	buffer = (unsigned char *)sharedbuffer_alloc(SCREEN_WIDTH*SCREEN_HEIGHT);
+	background = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
+	buffer = (unsigned char *)sharedbuffer_alloc(SCREEN_AREA);
 	if(background == NULL || buffer == NULL) {
 		return NULL;
 	}
-	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
+	bzero(buffer, SCREEN_AREA);
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -105,7 +105,7 @@ effect *burnRegister()
 
 int burnStart()
 {
-	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
+	bzero(buffer, SCREEN_AREA);
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_RGB32))
 		return -1;
