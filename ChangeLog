@@ -1,3 +1,8 @@
+2002/08/19	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* docs.japanese/README.{1ban,vloopback,vloopback83}: Follows english docs.
+	* main.c, effects/{scroll.c,hintdepint.c}: New effects BrokenTV and
+	  HintDePint.c were added.
+
 2002/08/18	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* config.mk: Changed default vloopback version to 0.90.
 	* README.vloopback83: Attached new patch for vloopback-0.83.
