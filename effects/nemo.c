@@ -11,6 +11,10 @@
  *  2002/03/07
  *
  * Shamelessly grabbed 99% of the code from the spiral effect
+ *
+ *  2002/03/30 Kentarou Fukuchi <fukuchi@users.sf.net>
+ *
+ * Code cleaning up for EffecTV-0.3.5. planetable now allocated at run-time.
  * 
  */
 
@@ -31,16 +35,14 @@ static char *effectname_base = "NemoTV";
 static char effectname[128] = "";
 static int state = 0;
 static unsigned int *buffer;
-static unsigned int *planetable[512];
+static unsigned int **planetable;
 static int planes;
 static int plane;
 
-static int *depthmap;
-static int mode = 0;
-
-
+/*
 static int g_cursor_state = SDL_DISABLE;
 static int g_cursor_local = SDL_DISABLE;
+*/
 
 
 void nemoSetName()
@@ -52,12 +54,6 @@ void nemoSetName()
 effect *nemoRegister()
 {
 	effect *entry;
-    
-	sharedbuffer_reset();
-	depthmap = (int *)sharedbuffer_alloc(video_width * video_height * sizeof(int));
-	if(depthmap == NULL) {
-		return NULL;
-	}
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
@@ -70,7 +66,8 @@ effect *nemoRegister()
 	entry->start = nemoStart;
 	entry->stop = nemoStop;
 	entry->draw = nemoDraw;
-    entry->event = nemoEvent;
+//    entry->event = nemoEvent;
+    entry->event = NULL;
 
 	return entry;
 }
@@ -92,9 +89,16 @@ int nemoStart()
     	(screen_area * PIXEL_SIZE * planes)/(1024*1024.0),
     	planes);
     
+	planetable = (unsigned int **)malloc(planes * sizeof(unsigned int *));
+	if(planetable == NULL) {
+		fprintf(stderr, "malloc failed\n");
+		return -1;
+	}
+
 	buffer = (unsigned int *)malloc(screen_area * PIXEL_SIZE * planes);
 	if(buffer == NULL) { 
 		fprintf(stderr, "malloc failed\n");
+		free(planetable);
 		return -1;
 	}
 
@@ -113,8 +117,10 @@ int nemoStart()
     }
         
 
+/*
     g_cursor_state = SDL_ShowCursor(SDL_QUERY);
     SDL_ShowCursor(g_cursor_local);
+*/
     nemoSetName();
 	state = 1;
 	
@@ -129,9 +135,10 @@ int nemoStop()
 		if(buffer)
         {
 			free(buffer);
+			free(planetable);
         }
 
-        SDL_ShowCursor(g_cursor_state);
+//        SDL_ShowCursor(g_cursor_state);
         state = 0;
 	}
 
@@ -188,6 +195,7 @@ int nemoDraw()
 	return 0;
 }
 
+#if 0
 
 int nemoEvent(SDL_Event *event)
 {
@@ -219,5 +227,5 @@ int nemoEvent(SDL_Event *event)
     
 	return 0;
 }
-
+#endif
 // end
