@@ -96,13 +96,20 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h)
 	video_area = video_width * video_height;
 
 	framebuffer = (RGB32 *)malloc(video_area*sizeof(RGB32));
-	if(framebuffer == NULL) return -1;
+	if(framebuffer == NULL) {
+		fprintf(stderr, "video_init: Memory allocation error.\n");
+		return -1;
+	}
 
 	if(v4lmaxchannel(&vd)) {
 		if(v4lsetchannel(&vd, channel)) return -1;
 	}
-	if(v4lmmap(&vd)) return -1;
+	if(v4lmmap(&vd)) {
+		fprintf(stderr, "video_init: mmap interface is not supported by this driver.\n");
+		return -1;
+	}
 	if(v4lgrabinit(&vd, video_width, video_height)) return -1;
+
 /* quick hack for v4l driver that does not support double buffer capturing */
 	if(vd.mbuf.frames < 2) {
 		fprintf(stderr, "video_init: double buffer capturing with mmap is not supported.\n");
@@ -111,7 +118,10 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h)
 	/* detecting a pixel format supported by the v4l driver.
 	 * video_set_grabformat() overwrites both 'converter' and 'converter_hflip'.
 	 * If 'converter' is non-NULL, palette converter must be initialized. */
-	if(video_set_grabformat()) return -1;
+	if(video_set_grabformat()) {
+		fprintf(stderr, "video_init: Can't find a supported pixel format.\n");
+		return -1;
+	}
 	if(converter) {
 		if(palette_init()) return -1;
 	}
