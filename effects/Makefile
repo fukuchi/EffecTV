@@ -13,7 +13,7 @@ EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZ
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
-          $(DICE) $(DIZZY)
+          $(DICE) $(DIZZY) $(DEINTERLACE)
 SUBDIRS =
 
 %.o: %.c
@@ -66,6 +66,7 @@ CYCLE = cycle.o
 RIPPLE = ripple.o
 DICE = dice.o
 DIZZY = dizzy.o
+DEINTERLACE = Deinterlace.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)
