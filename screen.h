@@ -41,7 +41,7 @@ unsigned char *screen_getaddress();
 #ifndef RGB_BGR_CONVERSION
 #define screen_update() (SDL_Flip(screen))
 #else
-unsigned char *screen_getaddress();
+int screen_update();
 #endif
 
 /* If this function returns non-zero, you have to call screen_lock before access
