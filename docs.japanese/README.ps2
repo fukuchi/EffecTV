@@ -32,6 +32,8 @@ $ patch -p1 < README.ps2
 
 EffecTV
 -------
+EffecTVのRPMパッケージをインストールした場合は、この節を読む必要はありません。
+
 "config.mk"の15〜17行を編集し、
 
 # ARCH = i686-linux
@@ -41,6 +43,7 @@ ARCH = ps2-linux
 というように、"ARCH = ps2-linux"を有効にしてください。あとはmakeするだけです。
 コンパイルにはSDL(1.2.1以降)が必須です。詳しくはEffecTVの文書を読んでください。
 PS2 Linux用のSDLのRPMパッケージは以下の場所で公開されています。
+
 http://playstation2-linux.com/projects/libsdl
 
 動かし方

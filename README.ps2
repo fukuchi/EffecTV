@@ -4,8 +4,9 @@ environment.
 Before Install
 ==============
 Video capture devices supported by PS2 Linux are only USB devices. In addition,
-the kernel is very old, version 2.2.1, so a few USB cameras are supported.
-I tested ov511 based USB camera (WebCamPlus), and it works but little buggy.
+the default kernel of PS2 Linux is very old, version 2.2.1, so a few USB
+cameras are supported. I tested ov511 based USB camera (WebCamPlus), and it
+works but is little buggy.
 
 Install
 =======
@@ -31,6 +32,9 @@ on PS2 Linux without some modification. I hope my ov511 patch will help you.
 
 EffecTV
 -------
+If you have installed the RPM package of EffecTV, you need not to read this
+section.
+
 Edit line 15 to 17 of 'config.mk' and set "ARCH = ps2-linux" like following.
 
 # ARCH = i686-linux
