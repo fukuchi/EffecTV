@@ -1,5 +1,9 @@
 # Makefile for EffecTV
 
+include ./config.mk
+
+# the following lines set destination directory for a compiled program and
+# manual page.
 prefix = /usr/local
 exec_prefix = ${prefix}
 
@@ -8,14 +12,6 @@ mandir = ${prefix}/man
 man1dir = ${mandir}/man1
 
 INSTALL = /usr/bin/install -c
-
-# comment next line if you want to disable vloopback support.
-CONFIG += -DVLOOPBACK
-# choose vloopback version (only one).
-## version 0.90 or later
-#CONFIG += -DVLOOPBACK_VERSION=90 
-## version 0.83 or former
-CONFIG += -DVLOOPBACK_VERSION=83
 
 CC = gcc
 NASM = nasm
@@ -27,7 +23,12 @@ VLOOPBACKOBJS = vloopback.o
 UTILS = utils.o yuv.o buffer.o image.o
 
 PROGRAM = effectv
-OBJS = main.o screen.o video.o frequencies.o palette.o $(UTILS) $(VLOOPBACKOBJS)
+OBJS = main.o screen.o video.o frequencies.o palette.o $(UTILS)
+
+ifeq ($(USE_VLOOPBACK), yes)
+OBJS += $(VLOOPBACKOBJS)
+endif
+
 LIBEFFECTS = effects/libeffects.a
 SUBDIRS = effects v4lutils tools
 

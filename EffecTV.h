@@ -12,7 +12,7 @@
 #include <SDL/SDL.h>
 #include "screen.h"
 #include "video.h"
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 #include "vloopback.h"
 #endif
 

@@ -44,7 +44,7 @@ ftp://ftp.kernel.org/pub/software/devel/nasm/
 
 コンパイルとインストール
 ------------------------
-Makefileを必要に応じて編集した後、
+"config.mk"と"Makefile"を必要に応じて編集した後、
 
 make
 

@@ -95,7 +95,7 @@ static void usage()
 	printf("  -geometry WxH    set the size of screen\n");
 	printf("  -scale NUMBER    scaling the screen\n");
 	printf("  -autoplay NUMBER changes effects automatically every NUMBER frames\n");
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 	printf("  -vloopback FILE  use device FILE for output of vloopback device\n");
 #endif
 }
@@ -260,7 +260,7 @@ static int startTV()
 			if(ret < 0) {
 				flag = 2;
 			} else if(ret == 0) {
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 				if(vloopback) {
 					vloopback_push();
 				}
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 	int norm = DEFAULT_VIDEO_NORM;
 	int freqtab = 0;
 	char *devfile = NULL;
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 	char *vloopbackfile = NULL;
 #endif
 	int vw, vh; /* video width,height */
@@ -407,7 +407,7 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing device file.\n");
 				exit(1);
 			}
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 		} else if(strncmp(option, "vloopback", 5) == 0) {
 			i++;
 			if(i<argc) {
@@ -504,7 +504,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "screen size: %dx%d\n",screen_width, screen_height);
 		fprintf(stderr, "scale = %d; stretch = %d\n",screen_scale, stretch);
 	}
-#ifdef VLOOPBACK
+#ifdef USE_VLOOPBACK
 	if(vloopback) {
 		if(vloopback_init(vloopbackfile)) {
 			fprintf(stderr, "Vloopback initialization failed\n");

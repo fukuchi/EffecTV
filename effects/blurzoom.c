@@ -44,7 +44,8 @@ static RGB32 palette[COLORS];
 /* this table assumes that video_width is times of 32 */
 static void setTable()
 {
-	int bits, x, y, tx, ty, xx;
+	unsigned int bits;
+	int x, y, tx, ty, xx;
 	int ptr, prevptr;
 
 	prevptr = (int)(0.5+RATIO*(-VIDEO_HWIDTH)+VIDEO_HWIDTH);
@@ -52,9 +53,15 @@ static void setTable()
 		bits = 0;
 		for(x=0; x<32; x++){
 			ptr= (int)(0.5+RATIO*(xx*32+x-VIDEO_HWIDTH)+VIDEO_HWIDTH);
+#ifdef USE_NASM
 			bits = bits<<1;
 			if(ptr != prevptr)
 				bits |= 1;
+#else
+			bits = bits>>1;
+			if(ptr != prevptr)
+				bits |= 0x80000000;
+#endif /* USE_NASM */
 			prevptr = ptr;
 		}
 		blurzoomx[xx] = bits;
@@ -71,6 +78,64 @@ static void setTable()
 		prevptr = ty * buf_width + xx;
 	}
 }		
+
+#ifndef USE_NASM
+/* following code is a replacement of blurzoomcore.nas. */
+static void blur()
+{
+	int x, y;
+	int width;
+	unsigned char *p, *q;
+	unsigned char v;
+	
+	width = buf_width;
+	p = blurzoombuf + width + 1;
+	q = p + buf_area;
+
+	for(y=buf_height-2; y>0; y--) {
+		for(x=width-2; x>0; x--) {
+			v = (*(p-width) + *(p-1) + *(p+1) + *(p+width))/4 - 1;
+			if(v == 255) v = 0;
+			*q = v;
+			p++;
+			q++;
+		}
+		p += 2;
+		q += 2;
+	}
+}
+
+static void zoom()
+{
+	int b, x, y;
+	unsigned char *p, *q;
+	int blocks, height;
+	int dx;
+
+	p = blurzoombuf + buf_area;
+	q = blurzoombuf;
+	height = buf_height;
+	blocks = buf_width_blocks;
+
+	for(y=0; y<height; y++) {
+		p += blurzoomy[y];
+		for(b=0; b<blocks; b++) {
+			dx = blurzoomx[b];
+			for(x=0; x<32; x++) {
+				p += (dx & 1);
+				*q++ = *p;
+				dx = dx>>1;
+			}
+		}
+	}
+}
+
+void blurzoomcore()
+{
+	blur();
+	zoom();
+}
+#endif /* USE_NASM */
 
 static void makePalette()
 {

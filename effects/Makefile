@@ -1,5 +1,7 @@
 # Makefile for EffecTV
 
+include ../config.mk
+
 CC = gcc
 NASM = nasm
 CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I.. -I../v4lutils `sdl-config --cflags`
@@ -35,7 +37,10 @@ DUMB = dumb.o
 QUARK = quark.o
 FIRE = fire.o
 BURN = burn.o
-BLURZOOM = blurzoom.o blurzoomcore.o
+BLURZOOM = blurzoom.o
+ifeq ($(USE_NASM), yes)
+BLURZOOM += blurzoomcore.o
+endif
 BALTAN = baltan.o
 STREAK = streak.o
 ONED = 1d.o
