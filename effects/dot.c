@@ -106,9 +106,10 @@ static void makeOneHeart(int val, unsigned char *bigheart)
 	double w, h;
 	RGB32 *pat;
 	RGB32 c;
+#define SFACT 2
 
 	pat = heart_pattern + val * dot_size * dot_hsize;
-	s2y = (double)(-dot_hsize) / dot_size * (31.9 + (double)(DOTMAX-val)/2)
+	s2y = (double)(-dot_hsize) / dot_size * (31.9 + (double)(DOTMAX-val)/SFACT)
 		+ 31.9;
 	f2y = (int)s2y;
 	for(y=0; y<dot_size; y++) {
@@ -116,20 +117,20 @@ static void makeOneHeart(int val, unsigned char *bigheart)
 		f1y = f2y;
 
 		s2y = (double)(y+1-dot_hsize) / dot_size
-			* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+			* (31.9 + (double)(DOTMAX-val)/SFACT) + 31.9;
 		f2y = (int)s2y;
 		d1y = 1.0 - (s1y - (double)f1y);
 		d2y = s2y - (double)f2y;
 		h = s2y - s1y;
 
 		s2x = (double)(-dot_hsize) / dot_size
-			* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+			* (31.9 + (double)(DOTMAX-val)/SFACT) + 31.9;
 		f2x = (int)s2x;
 		for(x=0; x<dot_hsize; x++) {
 			s1x = s2x;
 			f1x = f2x;
 			s2x = (double)(x+1-dot_hsize) / dot_size
-				* (31.9 + (double)(DOTMAX-val)/2) + 31.9;
+				* (31.9 + (double)(DOTMAX-val)/SFACT) + 31.9;
 			f2x = (int)s2x;
 			d1x = 1.0 - (s1x - (double)f1x);
 			d2x = s2x - (double)f2x;
