@@ -36,6 +36,11 @@ int video_setfreq(int v);
 int video_syncframe();
 int video_grabframe();
 unsigned char *video_getaddress();
+void video_change_brightness(int);
+void video_change_hue(int);
+void video_change_color(int);
+void video_change_contrast(int);
+void video_change_whiteness(int);
 
 #define video_getformat() (vd.mmap.format)
 

@@ -270,6 +270,46 @@ int video_setfreq(int v)
 	}
 }
 
+/* increase brightness value with v */
+void video_change_brightness(int v)
+{
+	v4lgetpicture(&vd);
+	v += vd.picture.brightness;
+	if(v < 0) v = 0;
+	if(v > 65535) v = 65535;
+	v4lsetpicture(&vd, v, -1, -1, -1, -1);
+}
+
+/* increase hue value with v */
+void video_change_hue(int v)
+{
+	v4lgetpicture(&vd);
+	v += vd.picture.hue;
+	if(v < 0) v = 0;
+	if(v > 65535) v = 65535;
+	v4lsetpicture(&vd, -1, v, -1, -1, -1);
+}
+
+/* increase color value with v */
+void video_change_color(int v)
+{
+	v4lgetpicture(&vd);
+	v += vd.picture.colour;
+	if(v < 0) v = 0;
+	if(v > 65535) v = 65535;
+	v4lsetpicture(&vd, -1, -1, v, -1, -1);
+}
+
+/* increase contrast value with v */
+void video_change_contrast(int v)
+{
+	v4lgetpicture(&vd);
+	v += vd.picture.contrast;
+	if(v < 0) v = 0;
+	if(v > 65535) v = 65535;
+	v4lsetpicture(&vd, -1, -1, -1, v, -1);
+}
+
 /*
  * videox_ series are the utility for using video capturing layer.
  * They don't touch a v4ldevice.
