@@ -115,7 +115,7 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 		{
 			struct video_capability *vidcap = arg;
 
-			sprintf(vidcap->name, "EffecTV vloopback output");
+			snprintf(vidcap->name, 32, "EffecTV vloopback output");
 			vidcap->type = VID_TYPE_CAPTURE;
 			vidcap->channels = 1;
 			vidcap->audios = 0;
@@ -139,7 +139,7 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			vidchan->flags = 0;
 			vidchan->tuners = 0;
 			vidchan->type = VIDEO_TYPE_CAMERA;
-			strcpy(vidchan->name, "EffecTV");
+			strncpy(vidchan->name, "EffecTV", 32);
 			return 0;
 		}
 
