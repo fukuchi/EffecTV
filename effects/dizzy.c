@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
- * DizzyTV - Alpha blending with zoomed and rotated images.
+ * VertigoTV - Alpha blending with zoomed and rotated images.
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  */
@@ -18,7 +18,7 @@ int dizzyStop();
 int dizzyDraw();
 int dizzyEvent();
 
-static char *effectname = "DizzyTV";
+static char *effectname = "VertigoTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *current_buffer, *alt_buffer;

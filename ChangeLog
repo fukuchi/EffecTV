@@ -1,3 +1,7 @@
+2001/10/12	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
+	* effects/dizzy.c: DizzyTV is renamed to VertigoTV, after the masterpiece
+	  of Hitchcock.
+
 2001/10/10	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/dizzy.c: Bugfixes and some parameters now can be controlable.
 	* doc.japanese/{README,effectv.1}: Catched up 0.3.3.
