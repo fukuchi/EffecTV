@@ -1,6 +1,6 @@
 FAQ
 ===
-Last updated 2001/5/24 for release 0.2.99
+Last updated 2001/9/4 for release 0.3.2
 
 Contents
 --------
@@ -13,6 +13,7 @@ Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
 Q6: Why don't you port EffecTV to ANY-GREAT-OS?
 Q7: How can I capture the video output from EffecTV to harddisk?
 Q8: EffecTV is slow.
+Q9: I upgraded the Video4Linux driver(or the kernel) and I got error...
 
 ----------
 Q1: I got a distorted/still/gray scale/shrunken image.
@@ -102,3 +103,20 @@ depth mode.
 
 If your video capturing device does not support 32bit pixel format, EffecTV
 converts captured images to 32bit format. This also makes EffecTV slow.
+----------
+Q9: I upgraded the Video4Linux driver(or the kernel) and I got error...
+
+Since I update to the new Kernel 2.4.6 I can't use my capture card with
+EffecTV. When I try to start EffecTV, I get the following Error:
+
+video_init: Can't find a supported pixel format.
+Video initialization failed.
+
+A: Since kernel 2.4.6, the most of Video4Linux driver output only a native
+pixel format. Before 2.4.6, some drivers converted its native format to a
+popular format supported by EffecTV, so it worked.
+Since EffecTV-0.3.1, some pixel format converters were added, but it is not
+completed.
+
+If you got that error, Try 'palettecheck' utility in 'tools' directory and
+please attach an output to a bug report mail and send us it.

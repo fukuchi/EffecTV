@@ -1,3 +1,11 @@
+2001/09/04	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* tools/{Makefile,README,palettecheck.c}: Added a capability checking tool.
+	* video.c, palette.c: Added some error messages.
+	* FAQ: Added Q9.
+
+2001/09/03	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* palette.c: YUV420P format support was added.
+
 2001/08/29	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* burn.c: a bug fix of the little optimization.
 	* README.vloopback: new patch was added.
