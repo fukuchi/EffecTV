@@ -1,0 +1,104 @@
+How to Write New Effect
+=======================
+
+This documents describes how to program a new effect for EffecTV.
+
+Introduction
+------------
+
+If you have an idea of good effect, why don't you write it? Yes, realization
+of your idea may be difficult. You have to pay a great effort to realize your
+idea as an effect, but the most part of your work is the algorithm.
+Fortunately, if you already have the algorithm, it is very easy to write an
+effect for EffecTV. You do not need to know about video capturing interface
+and direct video memory access or X11 programming. EffecTV hides them behind
+its abstraction layer.
+
+Getting started
+---------------
+Now, you have an idea of for a new effect, say ``NegaTV'', that shows the
+negative image of incoming objects (yes, i know that is a *not* good
+effect, just the example). At first, you should find an effect similar to
+yours.   Let's start from MosaicTV. MosaicTV can be found at: 
+EffecTV/effects/mosaic.c.  You may use this as a base for your new effect
+as follows:
+
+tools/AddEffect.pl negatv mosaic
+
+This copies mosaic.c to negatv.c, and makes the following changes:
+
+1) Changes the names of public functions in negatv.c
+2) Modifies effects/Makefile
+3) Modifies effects/effects.h
+4) Registers your effect to main.c
+
+There are now four public functions in negatv.c:
+int negatvStart();
+int negatvStop();
+int negatvDraw();
+int negatvEvent();
+effect *negatvRegister();
+
+You may, if you wish, change the effect name as follows:
+Next, you may want to rename the effect name. See below;
+static char *effectname = "negatv"; --to--
+static char *effectname = "NegaTV";
+
+The first make
+--------------
+OK, your new effect is added. Type 'make'. If it was compiled successfully,
+then launch EffecTV and check that you effect registered. Of course, NegaTV is
+completely same as MosaicTV at now.
+
+Here's a quick overview of what those public functions do:
+
+-----
+negatvStart()
+
+This is called whenever your effect is started up. You may do things like
+allocate memory, etc here.
+-----
+negatvStop()
+
+Called when your effect is started. be sure to free() the malloc()s!
+-----
+negatvDraw() 
+
+This is the most important of all! This function is called everytime we
+get a new frame of video. Most plugins do something like this to get the
+video:
+
+RGB32 *src = video_getaddress(); (NOTE: THIS MAY CHANGE SOON!)
+RGB32 *dest =
+	(scale!=0?image_stretching_buffer:screen_getaddress()); 
+		(NOTE: this may change soon!)
+
+'src' is where the video data comes from, and 'dest' is where to put your
+results.  Most plugins loop through as such:
+
+	for (y=0 ; y < video_height;y++) {
+		for (x = 0 ; x < video_width ; x++) {
+			*(dest+x+y*video_width) =
+				*(src+x+y*video_width);
+		}
+	}
+
+Now, for NegaTV, we want to invert everything. That's not hard.
+We have macros, RED(n),GREEN(n),BLUE(n), and RGB(n) to help us out, so for
+negatvDraw, we'll use the above, except that the *(dest....) line becomes:
+	RGB32 t;
+	*(dest+x+y*video_width) = RGB(255 - RED(t),255-GREEN(t),
+					255-BLUE(t));
+
+The 255 comes from the fact that we have 8 bits for R,G,B, and 2^8 = 256,
+so the values can be 0 to 255.
+
+NegaTV is now completed! Now recompile (make), and look at your beautiful
+new effect. This one isn't included in EffecTV, so you can follow the
+example and actually add it.
+
+For more effect ideas, look at the code to existing effects.
+
+Have fun!
+
+Written originally by Fukuchi Kentarou, updated / appended by Buddy Smith.
