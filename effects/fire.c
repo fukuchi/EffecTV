@@ -106,7 +106,7 @@ int fireStart()
 	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
 	screen_clear(0);
 	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_GREY) < 0)
+	if(video_setformat(VIDEO_PALETTE_GREY))
 		return -1;
 	if(video_grabstart())
 		return -1;

@@ -107,7 +107,7 @@ int burnStart()
 {
 	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
 	format = video_getformat();
-	if(video_setformat(VIDEO_PALETTE_RGB32) < 0)
+	if(video_setformat(VIDEO_PALETTE_RGB32))
 		return -1;
 	if(video_grabstart())
 		return -1;
