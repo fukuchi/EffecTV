@@ -42,6 +42,12 @@ int screen_height;
  * or scale of width and height are different, screen_scale is set to -1. */
 int screen_scale;
 
+#ifdef RGB_BGR_CONVERSION
+/* Temporal buffer for pixel format conversion */
+unsigned char *bgr_buf;
+#endif
+
+
 /* Screen initialization.
  * Before calling this function, screen properties(scale, doublebuf, hwsurface,
  * fullscreen) must be set. In the initializing process, those variables may be
@@ -113,6 +119,16 @@ int screen_init(int w, int h, int s)
 			fprintf(stderr, "Double buffer mode is not supported.\n");
 		}
 	}
+
+#ifdef RGB_BGR_CONVERSION
+	bgr_buf = (unsigned char *)malloc(screen_width * screen_height * 4);
+	if(bgr_buf == NULL) {
+		fprintf(stderr, "Memory allocation failed.\n");
+		SDL_Quit();
+		return -1;
+	}
+#endif
+
 	SDL_ShowCursor(SDL_DISABLE);
 	atexit(screen_quit);
 	screeninfo = SDL_GetVideoInfo();
@@ -150,6 +166,9 @@ void screen_setcaption(const char *str)
  * both buffers are cleared. */
 void screen_clear(int color)
 {
+#ifdef RGB_BGR_CONVERSION
+	bzero(bgr_buf, screen_width * screen_height * sizeof(RGB32));
+#endif
 	SDL_FillRect(screen, NULL, color);
 	screen_update();
 	if(doublebuf) {
@@ -166,3 +185,39 @@ void screen_fullscreen()
 			fullscreen ^= 1;
 	}
 }
+
+#ifdef RGB_BGR_CONVERSION
+/* Returns an address of the framebuffer */
+unsigned char *screen_getaddress()
+{
+	return bgr_buf;
+}
+
+/* Updates the screen */
+int screen_update()
+{
+	int i;
+	int j;
+	unsigned char *src, *dest;
+	
+	if(screen_mustlock()) {
+		if(screen_lock() < 0) {
+			return 0;
+		}
+	}
+	src = bgr_buf;
+	dest = (unsigned char *)screen->pixels;
+	j = screen_width * screen_height;
+	for(i=0; i<j; i++) {
+		dest[i*4] = src[i*4+2];
+		dest[i*4+1] = src[i*4+1];
+		dest[i*4+2] = src[i*4];
+	}
+	if(screen_mustlock()) {
+		screen_unlock();
+	}
+	SDL_Flip(screen);
+	return 0;
+}
+
+#endif /* RGB_BGR_CONVERSION */

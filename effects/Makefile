@@ -4,7 +4,7 @@ include ../config.mk
 
 CC = gcc
 NASM = nasm
-CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -I.. -I../v4lutils `sdl-config --cflags`
+CFLAGS = $(CONFIG) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config --cflags`
 #CFLAGS = -g -I.. -I../v4lutils `sdl-config --cflags`
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 

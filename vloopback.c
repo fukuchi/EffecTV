@@ -181,7 +181,7 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			if(vidpic->palette != pixel_format) {
 				converter = palette_get_supported_converter_fromRGB32(vidpic->palette);
 				if(converter == NULL) {
-					fprintf(stderr, "vloopback:unsupported pixel format(%d) is requested.\n",vidpic->palette);
+					fprintf(stderr, "vloopback: unsupported pixel format(%d) is requested.\n",vidpic->palette);
 					return EINVAL;
 				}
 				pixel_format = vidpic->palette;
@@ -276,17 +276,17 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 			struct video_mmap *vidmmap = arg;
 
 			if(vidmmap->width > MAX_WIDTH || vidmmap->height > MAX_HEIGHT) {
-				fprintf(stderr, "vloopback:requested capture size is too big(%dx%d).\n",vidmmap->width, vidmmap->height);
+				fprintf(stderr, "vloopback: requested capture size is too big(%dx%d).\n",vidmmap->width, vidmmap->height);
 				return EINVAL;
 			}
 			if(vidmmap->width < MIN_WIDTH || vidmmap->height < MIN_HEIGHT) {
-				fprintf(stderr, "vloopback:requested capture size is to small(%dx%d).\n",vidmmap->width, vidmmap->height);
+				fprintf(stderr, "vloopback: requested capture size is to small(%dx%d).\n",vidmmap->width, vidmmap->height);
 				return EINVAL;
 			}
 			if(vidmmap->format != pixel_format) {
 				converter = palette_get_supported_converter_fromRGB32(vidmmap->format);
 				if(converter == NULL) {
-					fprintf(stderr, "vloopback:unsupported pixel format(%d) is requested.\n",vidmmap->format);
+					fprintf(stderr, "vloopback: unsupported pixel format(%d) is requested.\n",vidmmap->format);
 					return EINVAL;
 				}
 				pixel_format = vidmmap->format;

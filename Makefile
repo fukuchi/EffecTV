@@ -2,27 +2,21 @@
 
 include ./config.mk
 
-# the following lines set destination directory for a compiled program and
-# manual page.
-prefix = /usr/local
-exec_prefix = ${prefix}
-
-bindir = $(DESTDIR)${exec_prefix}/bin
-mandir = $(DESTDIR)${prefix}/man
-
-INSTALL = /usr/bin/install -c
-
 CC = gcc
 NASM = nasm
-CFLAGS = $(CONFIG) -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops -Iv4lutils `sdl-config --cflags`
+INSTALL = /usr/bin/install -c
+
+CFLAGS = $(CONFIG) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
 #CFLAGS = $(CONFIG) -g -Iv4lutils `sdl-config --cflags`
 LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
+PROGRAM = effectv
+
+COREOBJS = main.o screen.o video.o frequencies.o palette.o
 VLOOPBACKOBJS = vloopback.o
 UTILS = utils.o yuv.o buffer.o image.o
 
-PROGRAM = effectv
-OBJS = main.o screen.o video.o frequencies.o palette.o $(UTILS)
+OBJS = $(COREOBJS) $(UTILS)
 
 ifeq ($(USE_VLOOPBACK), yes)
 OBJS += $(VLOOPBACKOBJS)
@@ -30,6 +24,8 @@ endif
 
 LIBEFFECTS = effects/libeffects.a
 SUBDIRS = effects v4lutils tools
+
+### rules
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<

@@ -1,8 +1,8 @@
 # Makefile for v4lutils
 
 CC = gcc
+CFLAGS = $(CONFIG) $(CFLAGS.opt)
 #CFLAGS = -g -Wall
-CFLAGS = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops
 LIBS =
 
 %.o: %.c
