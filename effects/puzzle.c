@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * PuzzleTV - separates the image into blocks and scrambles them.
  *            The blocks can be moved interactively.
@@ -11,13 +11,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int puzzleStart();
-int puzzleStop();
-int puzzleDraw();
-int puzzleEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 #define BLOCKSIZE 80
 
@@ -74,15 +74,15 @@ effect *puzzleRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = puzzleStart;
-	entry->stop = puzzleStop;
-	entry->draw = puzzleDraw;
-	entry->event = puzzleEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int puzzleStart()
+static int start()
 {
 	int i, a, b, c;
 
@@ -101,41 +101,21 @@ int puzzleStart()
 	spacepos = blocknum-1;
 	spacex = blockw-1;
 	spacey = blockh-1;
-	if(video_grabstart())
-		return -1;
+
 	stat = 1;
 	return 0;
 }
 
-int puzzleStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int puzzleDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int  x, y, xx, yy, i;
-	RGB32 *src, *dest;
 	RGB32 *p, *q;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	i = 0;
 	for(y=0; y<blockh; y++) {
@@ -177,19 +157,11 @@ int puzzleDraw()
 		q = dest + (blockh * blocksize) * video_width;
 		memcpy(q, p, marginh*video_width*sizeof(RGB32));
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
-int puzzleEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	int tmp, nextpos;
 

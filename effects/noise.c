@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * NoiseTV - make incoming objects noisy.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -8,13 +8,13 @@
  */
 
 #include <stdlib.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int noiseStart();
-int noiseStop();
-int noiseDraw();
-int noiseEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "NoiseTV";
 static int stat;
@@ -40,19 +40,17 @@ effect *noiseRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = noiseStart;
-	entry->stop = noiseStop;
-	entry->draw = noiseDraw;
-	entry->event = noiseEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int noiseStart()
+static int start()
 {
 	image_set_threshold_y(40);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -60,35 +58,16 @@ int noiseStart()
 	return 0;
 }
 
-int noiseStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int noiseDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i;
-	RGB32 *src, *dest;
 	unsigned char *diff;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	diff = image_diff_filter(image_bgsubtract_y(src));
 	for(i=0; i<video_area; i++) {
@@ -100,19 +79,11 @@ int noiseDraw()
 		src++;
 		dest++;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
-int noiseEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

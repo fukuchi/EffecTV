@@ -1,3 +1,64 @@
+2003/12/15	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* Updated Copyrights years to 2003.
+	* EffecTV.h, effect.h, effects/Makefile:
+	  - Now all lines of effect.h moved to EffecTV.h again.
+	  - All effects includes EffecTV.h, not effect.h.
+	* EffecTV.h, effect/effects.h, main.c:
+	  - "effectRegistFunc" has been renamed to "effectRegisterFunc". (haha..)
+	* main.c:
+	  - Removed SDL_GetModState() from PollEvent loop. Now it looks up
+	    SDL_Event.key.keysym.mod. (Update in 7/7 was not done in this branch?)
+	* Branch "simplified" has been merged to the main trunk.
+
+2003/12/13	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/{diff.c,spiral.c}:
+	  - Added memset() calls to initialize buffers. (Thanks Niels)
+	* effects/Deinterlace.c:
+	  - Bug fix to avoid boudnary violation. (Thanks Niels)
+	* Code cleaning up.
+	* EffecTV.h, config.mk:
+	  - DEFAULT_VIDEO_DEVICE is now set from config.mk.
+
+2003/12/12	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* README, README.vloopback, README.vloopback83:
+	  - Removed patches for vloopback. vloopback-0.91 includes those hacks.
+	* EffecTV.h:
+	  - Changed version to 0.3.9.
+	* main.c, video.c:
+	  - Now palette_init() is called from main, not video.
+	* main.c, palette.c, image.c, utils.c:
+	  - Added *_end() to free allocated memory. This is useful for memory leak
+	    detection.
+
+2003/12/9	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* All effects now are passed RGB32 *src and *dest, therefore,
+	  {video,screen}_getaddress() were removed from draw().
+
+2003/12/3	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* *.h: "void" were supplied to functions have no argument.
+
+2003/11/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* All effects now include effect.h instead of EffecTV.h.
+	* New modes have been added to FireTV.
+
+2003/11/29	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* Simplifying continues...
+	  - Made main loop to call image_stretch_buffer_clear() before start().
+
+2003/11/28	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* A new branch "simplified" has been created.
+	  - The most of simplifying process are derived from BSB (done by Buddy).
+	  - Now all methods of effects become static, and are given simple name.
+	    e.g. start() instead of dumbStart().
+	  - video_grabstart() and video_grabstop() have been moved to main loop
+	    from start() and stop().
+	  - video_syncframe() and video_grabframe() have been moved to main loop
+	    from draw().
+	  - "if(screen_mustlock()) ..." has been capsulated in screen_lock().
+	  - Now screen_clear(0) is called before calling start().
+	* Simplifying continues...
+	  - screen_lock() and screen_unlock almost have been removed from effects.
+
 2003/10/16      Sam Mertens             <smertens@users.sourceforge.net>
 	* config.mk: Changed deprecated -mpentiumpro to -march=pentiumpro
 	  (Tested with both gcc 2.95, gcc 3.3)

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * image.c: utilities for image processing.
  *
@@ -20,16 +20,24 @@ static unsigned char *diff2;
 /* Initializer is called from utils_init(). */
 int image_init()
 {
-	stretching_buffer = (RGB32 *)malloc(video_area*sizeof(RGB32));
-	background = (RGB32 *)malloc(video_area*sizeof(RGB32));
-	diff = (unsigned char *)malloc(video_area*sizeof(unsigned char));
-	diff2 = (unsigned char *)malloc(video_area*sizeof(unsigned char));
+	stretching_buffer = (RGB32 *)malloc(video_area * sizeof(RGB32));
+	background = (RGB32 *)malloc(video_area * sizeof(RGB32));
+	diff = (unsigned char *)malloc(video_area * sizeof(unsigned char));
+	diff2 = (unsigned char *)malloc(video_area * sizeof(unsigned char));
 	if(stretching_buffer == NULL || background == NULL || diff == NULL || diff2 == NULL) {
 		return -1;
 	}
-	bzero(diff2, video_area*sizeof(unsigned char));
+	memset(diff2, 0, video_area * sizeof(unsigned char));
 
 	return 0;
+}
+
+void image_end()
+{
+	free(stretching_buffer);
+	free(background);
+	free(diff);
+	free(diff2);
 }
 
 void image_stretching_buffer_clear(RGB32 color)

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * FireTV - clips incoming objects and burn them.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -10,13 +10,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int fireStart();
-int fireStop();
-int fireDraw();
-int fireEvent(SDL_Event *);
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *);
 
 #define MaxColor 120
 #define Decay 15
@@ -26,6 +26,7 @@ static char *effectname = "FireTV";
 static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];
+static int mode = 0;
 
 static int setBackground()
 {
@@ -72,24 +73,20 @@ effect *fireRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = fireStart;
-	entry->stop = fireStop;
-	entry->draw = fireDraw;
-	entry->event = fireEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	makePalette();
 
 	return entry;
 }
 
-int fireStart()
+static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	bzero(buffer, video_area);
-	screen_clear(0);
-	image_stretching_buffer_clear(0);
-	if(video_grabstart())
-		return -1;
+	memset(buffer, 0, video_area);
 	if(setBackground())
 		return -1;
 
@@ -97,32 +94,45 @@ int fireStart()
 	return 0;
 }
 
-int fireStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
-int fireDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i, x, y;
 	unsigned char v;
-	RGB32 *dest;
 	unsigned char *diff;
 
-	if(video_syncframe())
-		return -1;
-
-	diff = image_bgsubtract_y((RGB32 *)video_getaddress());
-	for(i=0; i<video_area-video_width; i++) {
-		buffer[i] |= diff[i];
+	switch(mode) {
+		case 0:
+		default:
+			diff = image_bgsubtract_y(src);
+			for(i=0; i<video_area-video_width; i++) {
+				buffer[i] |= diff[i];
+			}
+			break;
+		case 1:
+			for(i=0; i<video_area-video_width; i++) {
+				//v = (src[i] & 0xff) | ((src[i]>>8) & 0xff) | ((src[i]>>16) & 0xff);
+				v = src[i] & 0xff;
+				if(v < 60) {
+					buffer[i] |= 0xff - v;
+				}
+			}
+			break;
+		case 2:
+			for(i=0; i<video_area-video_width; i++) {
+				//v = (src[i] & 0xff) | ((src[i]>>8) & 0xff) | ((src[i]>>16) & 0xff);
+				v = (src[i]>>16) & 0xff;
+				if(v > 150) {
+					buffer[i] |= v;
+				}
+			}
+			break;
 	}
-	if(video_grabframe())
-		return -1;
 
 	for(x=1; x<video_width-1; x++) {
 		i = video_width + x;
@@ -136,37 +146,35 @@ int fireDraw()
 		}
 	}
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 	for(y=0; y<video_height; y++) {
 		for(x=1; x<video_width-1; x++) {
 			dest[y*video_width+x] = palette[buffer[y*video_width+x]];
 		}
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 
 	return 0;
 }
 
-int fireEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			setBackground();
+			if(mode == 0) {
+				setBackground();
+			}
+			break;
+		case SDLK_1:
+		case SDLK_KP1:
+			mode = 0;
+			break;
+		case SDLK_2:
+		case SDLK_KP2:
+			mode = 1;
+			break;
+		case SDLK_3:
+		case SDLK_KP3:
+			mode = 2;
 			break;
 		default:
 			break;

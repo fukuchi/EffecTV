@@ -18,21 +18,22 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
 #include <math.h>
+#include "EffecTV.h"
 #include "utils.h"
-int TransFormStart();
-int TransFormStop();
-int TransFormDraw();
-int TransFormEvent(SDL_Event *);
+
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *);
 static char *effectname = "TransFormTV";
 static int state = 0;
 
-int **TableList;
+static int **TableList;
 #define TableMax  6 /* # of transforms */
-int transform = 0; /* Which transform to use */
+static int transform = 0; /* Which transform to use */
 
-int mapFromT(int x,int y, int t) {
+static int mapFromT(int x,int y, int t) {
   int xd,yd;
   yd = y + (fastrand() >> 30)-2;
   xd = x + (fastrand() >> 30)-2;
@@ -41,6 +42,7 @@ int mapFromT(int x,int y, int t) {
   }
   return xd + yd*video_width;
 }
+
 effect *TransFormRegister()
 {
 	effect *entry;
@@ -52,14 +54,14 @@ effect *TransFormRegister()
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = TransFormStart;
-	entry->stop = TransFormStop;
-	entry->event = TransFormEvent;
-	entry->draw = TransFormDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->event = event;
+	entry->draw = draw;
 	return entry;
 }
 
-void SquareTableInit()
+static void SquareTableInit()
 {
 	const int size = 16;
 	int x, y, tx, ty;
@@ -85,10 +87,11 @@ void SquareTableInit()
 	}
 }
 
-int TransFormStart()
+static int start()
 {
   int x,y,i;
 //   int xdest,ydest;
+
   for (i=0;i < TableMax ; i++) {
     TableList[i]= malloc(sizeof(int) * video_width * video_height);
   }
@@ -107,46 +110,30 @@ int TransFormStart()
   }
   SquareTableInit();
 
-  if(video_grabstart())
-    return -1;
   state = 1;
   return 0;
 }
 
-int TransFormStop()
+static int stop()
 {
   int i;
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
+
+  if(state) {
+	state = 0;
 	for (i=0; i < TableMax ; i++) {
 	  free(TableList[i]);
 	}
 
+  }
 	return 0;
 }
 
-int TransFormDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
   int x,y;
   static int t=0;
-  RGB32 *src,*dst;
   t++;
 
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if (stretch) {
-	  dst = stretching_buffer;
-	} else {
-	 dst = (RGB32 *)screen_getaddress();
-	}
 	for (y=0;y < video_height;y++)
 	  for (x=0;x < video_width;x++) {
 	    int dest,value;
@@ -163,21 +150,12 @@ int TransFormDraw()
 	    *(RGB32 *)(dst+x+y*video_width) = value;
 	    
 	  }
-	if (stretch)
-	  image_stretch_to_screen();
-	
-	if(screen_mustlock()) {
-	  screen_unlock();
-	}
-	
-	if(video_grabframe())
-	  return -1;
-	
+
 	return 0;
 }
 
 
-int TransFormEvent(SDL_Event *event) {
+static int event(SDL_Event *event) {
   if (event->type == SDL_KEYDOWN) {
     switch(event->key.keysym.sym) {
     case SDLK_SPACE:

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * EffecTV.h: common header
  *
@@ -26,19 +26,18 @@
 #include <SDL/SDL.h>
 #include "screen.h"
 #include "video.h"
-#ifdef USE_VLOOPBACK
-#include "vloopback.h"
-#endif
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 3
-#define VERSION_PATCH 8
-#define VERSION_STRING "0.3.8"
+#define VERSION_PATCH 9
+#define VERSION_STRING "0.3.9"
 
 #define DEFAULT_VIDEO_WIDTH 320
 #define DEFAULT_VIDEO_HEIGHT 240
 
+#ifndef DEFAULT_VIDEO_DEVICE
 #define DEFAULT_VIDEO_DEVICE "/dev/video0"
+#endif
 #define DEFAULT_DEPTH 32
 #define DEFAULT_PALETTE VIDEO_PALETTE_RGB32
 #define DEFAULT_VIDEO_NORM VIDEO_MODE_NTSC
@@ -50,7 +49,19 @@
 #define SDL_ENABLE 1
 #endif
 
-#include "effect.h"
+typedef unsigned int RGB32;
+#define PIXEL_SIZE (sizeof(RGB32))
+
+typedef struct _effect
+{
+	char *name;
+	int (*start)(void);
+	int (*stop)(void);
+	int (*draw)(RGB32 *src, RGB32 *dest);
+	int (*event)(SDL_Event *event);
+} effect;
+
+typedef effect *effectRegisterFunc(void);
 
 extern int debug;
 

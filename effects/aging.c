@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * AgingTV - film-aging effect.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,40 +9,18 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../effect.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int agingStart();
-int agingStop();
-int agingDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "AgingTV";
 static int state = 0;
-static RGB32 *framebuffer;
 static int area_scale;
 
 static int aging_mode;
-
-static void coloraging_double(RGB32 *src, RGB32 *dest)
-{
-	RGB32 a, b;
-	int x, y;
-	const int width = screen_width;
-
-	for(y=0; y<video_height; y++) {
-		for(x=0; x<video_width; x++) {
-			a = *src++;
-			b = (a & 0xfcfcfc)>>2;
-			a = a - b + 0x181818 + ((inline_fastrand()>>8)&0x101010);
-			dest[0] = a;
-			dest[1] = a;
-			dest[width] = a;
-			dest[width+1] = a;
-			dest += 2;
-		}
-		dest += width;
-	}
-}
 
 static void coloraging(RGB32 *src, RGB32 *dest)
 {
@@ -72,8 +50,8 @@ static void scratching(RGB32 *dest)
 {
 	int i, y, y1, y2;
 	RGB32 *p, a, b;
-	const int width = screen_width;
-	const int height = screen_height;
+	const int width = video_width;
+	const int height = video_height;
 
 	for(i=0; i<scratch_lines; i++) {
 		if(scratches[i].life) {
@@ -123,8 +101,8 @@ static void dusts(RGB32 *dest)
 	int dnum;
 	int d, len;
 	int x, y;
-	const int width = screen_width;
-	const int height = screen_height;
+	const int width = video_width;
+	const int height = video_height;
 
 	if(dust_interval == 0) {
 		if((fastrand()&0xf0000000) == 0) {
@@ -158,8 +136,8 @@ static void pits(RGB32 *dest)
 	int i, j;
 	int pnum, size, pnumscale;
 	int x, y;
-	const int width = screen_width;
-	const int height = screen_height;
+	const int width = video_width;
+	const int height = video_height;
 
 	pnumscale = area_scale * 2;
 	if(pits_interval) {
@@ -189,19 +167,14 @@ effect *agingRegister()
 {
 	effect *entry;
 
-	sharedbuffer_reset();
-	framebuffer = (RGB32 *)sharedbuffer_alloc(screen_width*screen_height*sizeof(RGB32));
-	if(framebuffer == NULL)
-		return NULL;
-
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = agingStart;
-	entry->stop = agingStop;
-	entry->draw = agingDraw;
-	entry->event = NULL; //agingEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = NULL;
 
 	return entry;
 }
@@ -214,66 +187,36 @@ static void aging_mode_switch()
 			scratch_lines = 7;
 	/* Most of the parameters are tuned for 640x480 mode */
 	/* area_scale is set to 10 when screen size is 640x480. */
-			area_scale = screen_width * screen_height / 64 / 480;
+			area_scale = video_width * video_height / 64 / 480;
 	}
 	if(area_scale <= 0)
 		area_scale = 1;
 }
 
-int agingStart()
+static int start()
 {
 	aging_mode = 0;
 	aging_mode_switch();
-	if(video_grabstart())
-		return -1;
+
 	state = 1;
 	return 0;
 }
 
-int agingStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
+	state = 0;
 
 	return 0;
 }
 
-int agingDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-	int width = screen_width;
-	int height = screen_height;
+	coloraging(src, dest);
 
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	if(stretch) {
-		if(screen_scale == 2) {
-			coloraging_double((RGB32 *)video_getaddress(), framebuffer);
-		} else {
-			coloraging((RGB32 *)video_getaddress(), stretching_buffer);
-			image_stretch(stretching_buffer, video_width, video_height,
-				framebuffer, width, height);
-		}
-	} else {
-		coloraging((RGB32 *)video_getaddress(), framebuffer);
-	}
-
-	scratching(framebuffer);
-	pits(framebuffer);
+	scratching(dest);
+	pits(dest);
 	if(area_scale > 1)
-		dusts(framebuffer);
-	memcpy(screen_getaddress(), framebuffer, width*height*sizeof(RGB32));
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
+		dusts(dest);
 
 	return 0;
 }

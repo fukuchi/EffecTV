@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * WarholTV - Hommage aux Andy Warhol
  * Copyright (C) 2002 Jun IIO
@@ -9,12 +9,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int warholStart();
-int warholStop();
-int warholDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "WarholTV";
 static int state = 0;
@@ -32,47 +32,31 @@ effect *warholRegister()
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = warholStart;
-	entry->stop = warholStop;
-	entry->draw = warholDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int warholStart()
+static int start()
 {
-	if(video_grabstart())
-		return -1;
 	state = 1;
 	return 0;
 }
 
-int warholStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
 #define DIVIDER		3
-int warholDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
 	int p, q, x, y, i;
-  	RGB32 *src, *dst;
 
-	if(video_syncframe())
-	  return -1;
-	if(screen_mustlock()) {
-	  if(screen_lock() < 0) {
-	    return video_grabframe();
-	  }
-	}
-	src = (RGB32 *)video_getaddress();
-	dst = (stretch) ? stretching_buffer : (RGB32 *)screen_getaddress();
 	for (y = 0; y < video_height; y++)
 	  for (x = 0; x < video_width; x++)
 	    {
@@ -83,15 +67,5 @@ int warholDraw()
 	      *dst++ = src[q * video_width + p] ^ colortable[i];
 	    }
 
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-	  screen_unlock();
-	}
-	
-	if(video_grabframe())
-	  return -1;
-	
 	return 0;
 }

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * video.c: video manager
  *
@@ -122,14 +122,11 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h, int pa
 		return -1;
 	}
 	/* detecting a pixel format supported by the v4l driver.
-	 * video_set_grabformat() overwrites both 'converter' and 'converter_hflip'.
-	 * If 'converter' is non-NULL, palette converter must be initialized. */
+	 * video_set_grabformat() overwrites both 'converter' and
+	 * 'converter_hflip'. */
 	if(video_set_grabformat(palette)) {
 		fprintf(stderr, "video_init: Can't find a supported pixel format.\n");
 		return -1;
-	}
-	if(converter) {
-		if(palette_init()) return -1;
 	}
 
 	v4lgetpicture(&vd);

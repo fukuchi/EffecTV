@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * HolographicTV - Holographic vision
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,13 +9,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int holoStart();
-int holoStop();
-int holoDraw();
-int holoEvent(SDL_Event *);
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *);
 
 #define MAGIC_THRESHOLD 40
 
@@ -29,8 +29,7 @@ static int setBackground()
 	int i;
 	RGB32 *src, *tmp;
 
-	screen_clear(0);
-	tmp = (RGB32 *)malloc(video_area * sizeof(RGB32));
+	tmp = (RGB32 *)malloc(video_area * PIXEL_SIZE);
 	if(tmp == NULL)
 		return -1;
 
@@ -40,7 +39,7 @@ static int setBackground()
 /* step 1: grab frame-1 to buffer-1 */
 	video_syncframe();
 	src = (RGB32 *)video_getaddress();
-	memcpy(bgimage, src, video_area*sizeof(RGB32));
+	memcpy(bgimage, src, video_area * sizeof(RGB32));
 	video_grabframe();
 /* step 2: add frame-2 to buffer-1 */
 	video_syncframe();
@@ -67,23 +66,19 @@ static int setBackground()
 	image_bgset_y(bgimage);
 
 	for(i=0; i<2; i++) {
-		if(screen_mustlock()) {
-			if(screen_lock() < 0) {
-				break;
-			}
+		if(screen_lock() < 0) {
+			break;
 		}
 		if(stretch) {
 			if(i == 0) {
-				memcpy(stretching_buffer, bgimage, video_area*sizeof(RGB32));
+				memcpy(stretching_buffer, bgimage, video_area*PIXEL_SIZE);
 			}
 			image_stretch_to_screen();
 		} else {
 			memcpy((RGB32 *)screen_getaddress(), bgimage,
-					video_area*sizeof(RGB32));
+					video_area*PIXEL_SIZE);
 		}
-		if(screen_mustlock()) {
-			screen_unlock();
-		}
+		screen_unlock();
 		screen_update();
 		if(doublebuf == 0)
 			break;
@@ -107,7 +102,7 @@ effect *holoRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	bgimage = (RGB32 *)sharedbuffer_alloc(video_area*sizeof(RGB32));
+	bgimage = (RGB32 *)sharedbuffer_alloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
 	}
@@ -119,19 +114,17 @@ effect *holoRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = holoStart;
-	entry->stop = holoStop;
-	entry->draw = holoDraw;
-	entry->event = holoEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int holoStart()
+static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -139,39 +132,22 @@ int holoStart()
 	return 0;
 }
 
-int holoStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
+	state = 0;
 	return 0;
 }
 
-int holoDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	static int phase=0;
 	int x, y;
 	unsigned char *diff;
-	RGB32 *src, *dest, *bg;
+	RGB32 *bg;
 	RGB32 s, t;
 	int r, g, b;
 
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
 	diff = image_diff_filter(image_bgsubtract_y(src));
-
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	diff += video_width;
 	dest += video_width;
@@ -240,20 +216,12 @@ int holoDraw()
 			}
 		}
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 	phase-=37;
 
 	return 0;
 }
 
-int holoEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

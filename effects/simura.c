@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * SimuraTV - color distortion and mirrored image effector
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,13 +9,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int simuraStart();
-int simuraStop();
-int simuraDraw();
-int simuraEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "SimuraTV";
 static int stat;
@@ -79,52 +79,31 @@ effect *simuraRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = simuraStart;
-	entry->stop = simuraStop;
-	entry->draw = simuraDraw;
-	entry->event = simuraEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int simuraStart()
+static int start()
 {
 	color = 0;
 	mirror = 0;
-	if(video_grabstart())
-		return -1;
 
 	stat = 1;
 	return 0;
 }
 
-int simuraStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int simuraDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-	RGB32 *src, *dest;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 	switch(mirror) {
 	case 1:
 		mirror_l(src, dest);
@@ -155,20 +134,12 @@ int simuraDraw()
 		mirror_no(src, dest);
 		break;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
 
-int simuraEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * MosaicTV - censors incoming objects
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,16 +9,16 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define MAGIC_THRESHOLD 50
 #define CENSOR_LEVEL 20
 
-int mosaicStart();
-int mosaicStop();
-int mosaicDraw();
-int mosaicEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "MosaicTV";
 static int stat;
@@ -44,19 +44,17 @@ effect *mosaicRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = mosaicStart;
-	entry->stop = mosaicStop;
-	entry->draw = mosaicDraw;
-	entry->event = mosaicEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int mosaicStart()
+static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -64,39 +62,20 @@ int mosaicStart()
 	return 0;
 }
 
-int mosaicStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int mosaicDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y, xx, yy, v;
 	int count;
-	RGB32 *src, *dest;
 	RGB32 *p, *q;
 	unsigned char *diff, *r;
 
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
 	diff = image_bgsubtract_y(src);
-
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	for(y=0; y<video_height-7; y+=8) {
 		for(x=0; x<video_width-7; x+=8) {
@@ -125,19 +104,11 @@ int mosaicDraw()
 			}
 		}
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
-int mosaicEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

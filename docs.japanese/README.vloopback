@@ -1,9 +1,5 @@
-*注意*
-vloopback-0.90は、パイプの生成部と一部シグナルの取り扱い部に問題があります。
-このドキュメント("README.vloopback")の英語版の末尾に添付されているパッチを
-vloopback-0.90に適用するとこの問題は解決します。が、これはあくまでも非公式の
-ものです。
+EffecTVはバージョン0.3.9より、vloopbackのバージョン0.91以降にのみ対応します。
+0.90以前の版では、パッチを当てないと正しく動作しなかったのですが、0.91より不具
+合は解消されました。最新のvloopbackは以下の場所で入手できます。
 
-"README.vloopback"に添付されているパッチは、vloopback-0.83には適用できません。
-vloopback-0.90の使用を推奨しますが、vloopback-0.83を使用したい場合には、
-"README.vloopback83"を読んでください。
+http://motion.sourceforge.net/vloopback/

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * From main.c of warp-1.1:
  *
@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 #include <math.h>
 
@@ -20,21 +20,18 @@
 #define M_PI	3.14159265358979323846
 #endif
 
-void initWarp();
-void disposeWarp ();
-void doWarp (int xw, int yw, int cw); 
+static void initWarp();
+static void disposeWarp ();
+static void doWarp (int xw, int yw, int cw,RGB32 *src,RGB32 *dst);
 
-int *offstable;
-Sint32 *disttable;
-Sint32 ctable[1024];
-Sint32 sintable[1024+256];
+static int *offstable;
+static Sint32 *disttable;
+static Sint32 ctable[1024];
+static Sint32 sintable[1024+256];
 
-int warpStart();
-int warpStop();
-int warpDraw();
-
-
-
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "warpTV";
 static int state = 0;
@@ -47,33 +44,30 @@ effect *warpRegister()
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = warpStart;
-	entry->stop = warpStop;
-	entry->draw = warpDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 	return entry;
 }
 
-int warpStart()
+static int start()
 {
-	if(video_grabstart())
-		return -1;
+    initWarp();
 	state = 1;
-        initWarp();
 	return 0;
 }
 
-int warpStop()
+static int stop()
 {
 	if(state) {
-		video_grabstop();
 		state = 0;
+		disposeWarp();
 	}
-	disposeWarp();
 	return 0;
 }
 
-void initSinTable () {
+static void initSinTable () {
 	Sint32	*tptr, *tsinptr;
 	double	i;
 
@@ -86,7 +80,7 @@ void initSinTable () {
 		*tptr++ = *tsinptr++;
 }
 
-void initOffsTable () {
+static void initOffsTable () {
 	int y;
 	
 	for (y = 0; y < video_height; y++) {
@@ -94,7 +88,7 @@ void initOffsTable () {
 	}
 }
       
-void initDistTable () {
+static void initDistTable () {
 	Sint32	halfw, halfh, *distptr;
 #ifdef PS2
 	float	x,y,m;
@@ -120,7 +114,7 @@ void initDistTable () {
 #endif
 }
 
-void initWarp () {
+static void initWarp () {
 
   offstable = (int *)malloc (video_height * sizeof (int));      
   disttable = malloc (video_width * video_height * sizeof (int));
@@ -130,23 +124,16 @@ void initWarp () {
 
 }
 
-void disposeWarp () {
+static void disposeWarp () {
   free (disttable);
   free (offstable);
   
 }
 
-int warpDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
   static int tval = 0;
   int xw,yw,cw;
-  if(video_syncframe())
-    return -1;
-  if(screen_mustlock()) {
-    if(screen_lock() < 0) {
-      return video_grabframe();
-    }
-  }
 
   xw  = (int) (sin((tval+100)*M_PI/128) * 30);
   yw  = (int) (sin((tval)*M_PI/256) * -35);
@@ -154,33 +141,23 @@ int warpDraw()
   xw += (int) (sin((tval-10)*M_PI/512) * 40);
   yw += (int) (sin((tval+30)*M_PI/512) * 40);	  
 
-  doWarp(xw,yw,cw);
+  doWarp(xw,yw,cw,src,dst);
   tval = (tval+1) &511;
-  if (stretch) {
-    image_stretch_to_screen();
-  }
-  if(screen_mustlock()) {
-    screen_unlock();
-  }
-  
-  if(video_grabframe())
-    return -1;
   
   return 0;
 }
-void doWarp (int xw, int yw, int cw) {
+
+static void doWarp (int xw, int yw, int cw,RGB32 *src,RGB32 *dst) {
         Sint32 c,i, x,y, dx,dy, maxx, maxy;
         Sint32 width, height, skip, *ctptr, *distptr;
         Uint32 *destptr;
 //	Uint32 **offsptr;
-	RGB32 *src;
 
         ctptr = ctable;
         distptr = disttable;
         width = video_width;
         height = video_height;
-	src = (RGB32 *)video_getaddress();
-        destptr = (stretch?stretching_buffer:(Uint32 *) screen_getaddress());
+        destptr = dst;
 	skip = 0 ; /* video_width*sizeof(RGB32)/4 - video_width;; */
         c = 0;
         for (x = 0; x < 512; x++) {

@@ -8,12 +8,12 @@ CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config -
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
 
 LIBEFFECTS = libeffects.a
-EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZZY) \
-          $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
-          $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
-          $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
+EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
+		  $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) \
+		  $(SIMURA) $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) $(TRANSFORM) \
+		  $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
           $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(RDS) \
-          $(LENS) $(DIFF) $(SCROLL) $(HINTDEPINT) $(WARHOL)
+          $(LENS) $(DIFF) $(SCROLL) $(WARHOL)
 
 SUBDIRS =
 
@@ -43,7 +43,6 @@ ifeq ($(USE_NASM), yes)
 BLURZOOM += blurzoomcore.o
 endif
 BALTAN = baltan.o
-DIZZY = Dizzy.o Dizzy.so
 STREAK = streak.o
 ONED = 1d.o
 DOT = dot.o
@@ -75,7 +74,6 @@ RDS = rds.o
 LENS = lens.o
 DIFF = diff.o
 SCROLL = scroll.o
-HINTDEPINT = #hintdepint.o
 WARHOL = warhol.o
 
 $(LIBEFFECTS): $(EFFECTS)

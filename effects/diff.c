@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * diff.c: color independant differencing.  Just a little test.
  *  copyright (c) 2001 Sam Mertens.  This code is subject to the provisions of
@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #ifndef max
@@ -24,12 +24,12 @@
 
 #define TOLERANCE_STEP  4
 
-int diffStart();
-int diffStop();
-int diffDraw();
-int diffEvent();
-void diffUpdate();
-void diffSave();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
+//static void diffUpdate();
+//static void diffSave();
 static char *effectname = "DiffTV";
 static int state = 0;
 
@@ -42,7 +42,7 @@ effect *diffRegister()
 	effect *entry;
 
 	sharedbuffer_reset();
-	prevbuf = (RGB32*)sharedbuffer_alloc(video_height * video_width * sizeof(RGB32));
+	prevbuf = (RGB32*)sharedbuffer_alloc(video_area * PIXEL_SIZE);
 	if(prevbuf == NULL) {
 		return NULL;
 	}
@@ -53,70 +53,39 @@ effect *diffRegister()
 	}
 
 	entry->name = effectname;
-	entry->start = diffStart;
-	entry->stop = diffStop;
-	entry->draw = diffDraw;
-	entry->event = diffEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int diffStart()
+static int start()
 {
     
 #ifdef DEBUG 
     v4lprint(&vd);
 #endif
 
-    if (video_grabstart())
-    {
-        return -1;
-    }
-    
+	memset(prevbuf, 0, video_area * PIXEL_SIZE);
     state = 1;
 	return 0;
 }
 
-int diffStop()
+static int stop()
 {
-	if(state) {
-        video_grabstop();
-	  state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
-int diffDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
     int i;
     int x,y;
     unsigned int src_red, src_grn, src_blu;
     unsigned int old_red, old_grn, old_blu;
     unsigned int red_val, red_diff, grn_val, grn_diff, blu_val, blu_diff;
-    RGB32* src;
-    RGB32* dest;
-    
-
-    if (video_syncframe())
-    {
-        return -1;
-    }
-    src = (RGB32*)video_getaddress();
-
-    if (stretch) {
-        dest = stretching_buffer;
-    } else {
-        dest = (RGB32*)screen_getaddress();
-    }
-
-    if (video_grabframe())
-        return -1;
-    if (screen_mustlock()) {
-        if (0 > screen_lock()) {
-            return 0;
-        }
-    }
     
     i = 0;
     for (y = 0; y < video_height; y++)
@@ -196,20 +165,12 @@ int diffDraw()
             i++;
         }
     }
-            
-    if (stretch) {
-        image_stretch_to_screen();
-    }
 
-    if (screen_mustlock()) {
-        screen_unlock();
-    }
-    
 	return 0;
 }
 
 
-int diffEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

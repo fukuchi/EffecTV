@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * PredatorTV - makes incoming objects invisible like the Predator.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,13 +9,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int predatorStart();
-int predatorStop();
-int predatorDraw();
-int predatorEvent(SDL_Event *);
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *);
 
 #define MAGIC_THRESHOLD 40
 
@@ -28,8 +28,7 @@ static int setBackground()
 	int i;
 	RGB32 *src, *tmp;
 
-	screen_clear(0);
-	tmp = (RGB32 *)malloc(video_area * sizeof(RGB32));
+	tmp = (RGB32 *)malloc(video_area * PIXEL_SIZE);
 	if(tmp == NULL)
 		return -1;
 
@@ -66,10 +65,8 @@ static int setBackground()
 	image_bgset_y(bgimage);
 
 	for(i=0; i<2; i++) {
-		if(screen_mustlock()) {
-			if(screen_lock() < 0) {
-				break;
-			}
+		if(screen_lock() < 0) {
+			break;
 		}
 		if(stretch) {
 			if(i == 0) {
@@ -80,9 +77,7 @@ static int setBackground()
 			memcpy((RGB32 *)screen_getaddress(), bgimage,
 					video_area*sizeof(RGB32));
 		}
-		if(screen_mustlock()) {
-			screen_unlock();
-		}
+		screen_unlock();
 		screen_update();
 		if(doublebuf == 0)
 			break;
@@ -97,7 +92,7 @@ effect *predatorRegister()
 	effect *entry;
 	
 	sharedbuffer_reset();
-	bgimage = (RGB32 *)sharedbuffer_alloc(video_area*sizeof(RGB32));
+	bgimage = (RGB32 *)sharedbuffer_alloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
 	}
@@ -108,19 +103,17 @@ effect *predatorRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = predatorStart;
-	entry->stop = predatorStop;
-	entry->draw = predatorDraw;
-	entry->event = predatorEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int predatorStart()
+static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -128,38 +121,19 @@ int predatorStart()
 	return 0;
 }
 
-int predatorStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
+	state = 0;
 	return 0;
 }
 
-int predatorDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 	unsigned char *diff;
-	RGB32 *dest, *src;
 
-	if(video_syncframe())
-		return -1;
-	diff = image_bgsubtract_y((RGB32 *)video_getaddress());
-	if(video_grabframe())
-		return -1;
+	diff = image_bgsubtract_y(src);
 	diff = image_diff_filter(diff);
-
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	dest += video_width;
 	diff += video_width;
@@ -176,17 +150,11 @@ int predatorDraw()
 			dest++;
 		}
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 
 	return 0;
 }
 
-int predatorEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * palette.c: pixel format converter
  *
@@ -56,6 +56,12 @@ int palette_init()
 		clip[i] = 255;
 
 	return 0;
+}
+
+void palette_end(void)
+{
+	free(GB65table);
+	free(GB55table);
 }
 
 static inline void check_buffer(int width, int height)

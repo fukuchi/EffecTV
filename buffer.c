@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * buffer.c: shared buffer manager
  *
@@ -26,6 +26,11 @@ int sharedbuffer_init()
 		return -1;
 	else
 		return 0;
+}
+
+void sharedbuffer_end()
+{
+	free(sharedbuffer);
 }
 
 /* The effects uses shared buffer must call this function at first in

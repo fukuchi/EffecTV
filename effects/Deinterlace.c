@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * DeinterlaceTV - deinterlaces the video.
  * Copyright (C) 2001 Casandro (einStein@donau.de
@@ -9,13 +9,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 #include <math.h>
 
-int DeinterlaceStart();
-int DeinterlaceStop();
-int DeinterlaceDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dst);
 
 static char *effectname = "DeinterlaceTV";
 static int state = 0;
@@ -28,29 +28,23 @@ effect *DeinterlaceRegister()
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = DeinterlaceStart;
-	entry->stop = DeinterlaceStop;
-	entry->draw = DeinterlaceDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int DeinterlaceStart()
+static int start()
 {
-	if(video_grabstart())
-		return -1;
 	state = 1;
 	return 0;
 }
 
-int DeinterlaceStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
@@ -74,7 +68,7 @@ static int MixPixels(int a,int b)
 		   (( BLUE(a)+ BLUE(b))/2));
 }
 
-int DeinterlaceDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
   int x,y;
   int zeile1a,zeile2a,zeile3a,zeile4a;
@@ -82,24 +76,9 @@ int DeinterlaceDraw()
   int zeile1c,zeile2c,zeile3c,zeile4c;
   int outp1,outp2,outp3,outp4,outp5,outp6;
   int d1,d2;
-  RGB32 *src,*dst;
-   
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dst = stretching_buffer;
-	} else {
-		dst = (RGB32 *)screen_getaddress();
-	}
-	
+
 	for (y=1;y < video_height-2; y+=2)
-	  for (x=0;x<video_width; x+=3){
+	  for (x=0;x<video_width-2; x+=3){
 	    zeile1a = *(RGB32 *)(src+(y-1)*video_width+x);
 	    zeile2a = *(RGB32 *)(src+(y+0)*video_width+x);
 	    zeile3a = *(RGB32 *)(src+(y+1)*video_width+x);
@@ -136,15 +115,5 @@ int DeinterlaceDraw()
 	    *(RGB32 *)(dst+x+2+(y+0)*video_width) = outp6;
 	  }				  
 	
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-
-	if(video_grabframe())
-		return -1;
-
 	return 0;
 }

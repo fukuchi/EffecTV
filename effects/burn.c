@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * BurningTV - burns incoming objects.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -10,13 +10,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int burnStart();
-int burnStop();
-int burnDraw();
-int burnEvent(SDL_Event *);
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *);
 
 #define MaxColor 120
 #define Decay 15
@@ -72,24 +72,20 @@ effect *burnRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = burnStart;
-	entry->stop = burnStop;
-	entry->draw = burnDraw;
-	entry->event = burnEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	makePalette();
 
 	return entry;
 }
 
-int burnStart()
+static int start()
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	bzero(buffer, video_area);
-	image_stretching_buffer_clear(0);
-	screen_clear(0);
-	if(video_grabstart())
-		return -1;
+	memset(buffer, 0, video_area);
 	if(setBackground())
 		return -1;
 
@@ -97,27 +93,19 @@ int burnStart()
 	return 0;
 }
 
-int burnStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
+	state = 0;
 	return 0;
 }
 
-int burnDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i, x, y;
 	unsigned char v, w;
 	RGB32 a, b;
-	RGB32 *src, *dest;
 	unsigned char *diff;
 
-	if(video_syncframe())
-		return -1;
-
-	src = (RGB32 *)video_getaddress();
 	diff = image_bgsubtract_y(src);
 	for(x=1; x<video_width-1; x++) {
 		v = 0;
@@ -128,7 +116,6 @@ int burnDraw()
 		}
 	}
 	for(x=1; x<video_width-1; x++) {
-		w = 0;
 		i = video_width + x;
 		for(y=1; y<video_height; y++) {
 			v = buffer[i];
@@ -140,16 +127,6 @@ int burnDraw()
 		}
 	}
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 	i = 1;
 	for(y=0; y<video_height; y++) {
 		for(x=1; x<video_width-1; x++) {
@@ -160,19 +137,11 @@ int burnDraw()
 		}
 		i += 2;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
-int burnEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

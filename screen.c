@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * screen.c: screen manager
  *
@@ -184,6 +184,21 @@ void screen_fullscreen()
 		if(SDL_WM_ToggleFullScreen(screen))
 			fullscreen ^= 1;
 	}
+}
+
+/* Lock the screen, if needed. */
+int screen_lock()
+{
+	if(SDL_MUSTLOCK(screen))
+		return SDL_LockSurface(screen);
+	return 0;
+}
+
+/* Unlock the screen, if needed. */
+void screen_unlock()
+{
+	if(SDL_MUSTLOCK(screen))
+		SDL_UnlockSurface(screen);
 }
 
 #ifdef RGB_BGR_CONVERSION

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * lensTV - old skool Demo lens Effect
  * Code taken from "The Demo Effects Colletion" 0.0.4
@@ -25,27 +25,25 @@
 #include <string.h>
 #include <math.h>
 
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int lensStart();
-int lensStop();
-int lensDraw();
-int lensEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dst);
+static int event();
 static void init();
 static int x=16,y=16;
 static int xd=5,yd=5;
 static int lens_width=150;
 static int lens_zoom = 30;
 
-int g_cursor_local = SDL_ENABLE;
-
 static char *effectname = "lensTV";
 static int state = 0;
 static int *lens = NULL;
 static int mode ;
 
-void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
+static void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 {
     int x, y, noy,pos, nox;
 	int *p;
@@ -72,66 +70,36 @@ effect *lensRegister()
 	if(entry == NULL) return NULL;
 
 	entry->name = effectname;
-	entry->start = lensStart;
-	entry->stop = lensStop;
-	entry->draw = lensDraw;
-	entry->event = lensEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int lensStart()
+static int start()
 {
-
-	if(video_grabstart())
-		return -1;
-	state = 1;
 	init();
+	state = 1;
 	return 0;
 }
 
-int lensStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
-int lensDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
-
-	RGB32 *src,*dst;
-
-
-	src = (RGB32 *)video_getaddress();
-	if (stretch) {
-		dst = stretching_buffer;
-		} else {
-		dst = (RGB32 *)screen_getaddress();
-	}
-
-	if (stretch) image_stretch_to_screen();
-	if(video_syncframe()) return -1;
-	//src = (RGB32 *)video_getaddress();
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-		return video_grabframe();
-		}
-	}
-
-
-  	memcpy(dst, src, video_height*video_width*sizeof(RGB32));
+  	memcpy(dst, src, video_area * PIXEL_SIZE);
   	apply_lens(x,y,src,dst);
 	if (mode==1){
   		x+= xd; y+=yd;
   		if (x > (video_width - lens_width - 5) || x < 5) xd = -xd;
   		if (y > (video_height - lens_width - 5) || y < 5) yd = -yd;
 	}
-	if(screen_mustlock()) screen_unlock();
-  	if(video_grabframe())  return -1;
 
   	return 0;
 } 
@@ -283,7 +251,7 @@ static void clipmag()
 	if(x>=video_width-lens_width/2-1)x=video_width-lens_width/2-1;
 }
 
-int lensEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 		if(event->type == SDL_KEYDOWN) {
 			switch(event->key.keysym.sym) {

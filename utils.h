@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * utils.h: header file for utils
  *
@@ -19,12 +19,13 @@
 /*
  * utils.c
  */
-int utils_init();
+int utils_init(void);
+void utils_end(void);
 
 void HSItoRGB(double H, double S, double I, int *r, int *g, int *b);
 
 extern unsigned int fastrand_val;
-unsigned int fastrand();
+unsigned int fastrand(void);
 void fastsrand(unsigned int);
 #define inline_fastrand() (fastrand_val=fastrand_val*1103515245+12345)
 
@@ -32,8 +33,9 @@ void fastsrand(unsigned int);
  * buffer.c
  */
 
-int sharedbuffer_init();
-void sharedbuffer_reset();
+int sharedbuffer_init(void);
+void sharedbuffer_end(void);
+void sharedbuffer_reset(void);
 unsigned char *sharedbuffer_alloc(int);
 
 /*
@@ -41,10 +43,11 @@ unsigned char *sharedbuffer_alloc(int);
  */
 
 RGB32 *stretching_buffer;
-int image_init();
+int image_init(void);
+void image_end(void);
 void image_stretching_buffer_clear(RGB32 color);
 void image_stretch(RGB32 *, int, int, RGB32 *, int, int);
-void image_stretch_to_screen();
+void image_stretch_to_screen(void);
 
 void image_set_threshold_y(int threshold);
 void image_bgset_y(unsigned int *src);
@@ -70,7 +73,7 @@ extern int RtoY[256], RtoU[256], RtoV[256];
 extern int GtoY[256], GtoU[256], GtoV[256];
 extern int BtoY[256],            BtoV[256];
 
-int yuv_init();
+int yuv_init(void);
 unsigned char yuv_RGBtoY(int);
 
 #endif /* __UTILS_H__ */

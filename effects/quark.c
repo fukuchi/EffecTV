@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * QuarkTV - motion disolver.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,14 +9,14 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define PLANES 16
 
-int quarkStart();
-int quarkStop();
-int quarkDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "QuarkTV";
 static int state = 0;
@@ -34,39 +34,34 @@ effect *quarkRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = quarkStart;
-	entry->stop = quarkStop;
-	entry->draw = quarkDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int quarkStart()
+static int start()
 {
 	int i;
 	
-	buffer = (RGB32 *)malloc(video_area*sizeof(RGB32)*PLANES);
+	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE * PLANES);
 	if(buffer == NULL)
 		return -1;
-	bzero(buffer, video_area*sizeof(RGB32)*PLANES);
+	memset(buffer, 0, video_area * PIXEL_SIZE * PLANES);
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 	plane = PLANES - 1;
-	if(video_grabstart()) {
-		free(buffer);
-		buffer = NULL;
-		return -1;
-	}
 
 	state = 1;
+
 	return 0;
 }
 
-int quarkStop()
+static int stop()
 {
 	if(state) {
-		video_grabstop();
 		if(buffer) {
 			free(buffer);
 			buffer = NULL;
@@ -77,40 +72,20 @@ int quarkStop()
 	return 0;
 }
 
-int quarkDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i;
 	int cf;
-	RGB32 *src, *dest;
 
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
-	memcpy(planetable[plane], src, video_area*sizeof(RGB32));
-	if(video_grabframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
+	memcpy(planetable[plane], src, video_area * PIXEL_SIZE);
+
 	for(i=0; i<video_area; i++) {
 		cf = (plane + (inline_fastrand()>>24))&(PLANES-1);
 		dest[i] = (planetable[cf])[i];
 		/* The reason why I use high order 8 bits is written in utils.c
 		(or, 'man rand') */
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
+
 	plane--;
 	if(plane<0)
 		plane = PLANES - 1;

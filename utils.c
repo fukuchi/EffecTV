@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * utils.c: utilities
  *
@@ -16,6 +16,11 @@ int utils_init()
 	if(image_init())
 		return -1;
 	return 0;
+}
+
+void utils_end()
+{
+	image_end();
 }
 
 /*

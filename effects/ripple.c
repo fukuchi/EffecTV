@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * RippleTV - Water ripple effect.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -11,15 +11,15 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define MAGIC_THRESHOLD 70
 
-int rippleStart();
-int rippleStop();
-int rippleDraw();
-int rippleEvent(SDL_Event *event);
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *event);
 
 static int mode = 0; // 0 = motion detection / 1 = rain
 static char *effectname = "RippleTV";
@@ -78,25 +78,23 @@ effect *rippleRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = rippleStart;
-	entry->stop = rippleStop;
-	entry->draw = rippleDraw;
-	entry->event = rippleEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	setTable();
 
 	return entry;
 }
 
-int rippleStart()
+static int start()
 {
-	bzero(map, map_h*map_w*3*sizeof(int));
-	bzero(vtable, map_h*map_w*2*sizeof(signed char));
+	memset(map, 0, map_h*map_w*3*sizeof(int));
+	memset(vtable, 0, map_h*map_w*2*sizeof(signed char));
 	map1 = map;
 	map2 = map + map_h*map_w;
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -104,13 +102,9 @@ int rippleStart()
 	return 0;
 }
 
-int rippleStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
@@ -236,23 +230,17 @@ static void raindrop()
 	period--;
 }
 
-int rippleDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y, i;
 	int dx, dy;
 	int h, v;
 	int width, height;
 	int *p, *q, *r;
-	RGB32 *src, *dest;
 	signed char *vp;
 #ifdef DEBUG
 	RGB32 *dest2;
 #endif
-
-	if(video_syncframe())
-		return -1;
-
-	src = (RGB32 *)video_getaddress();
 
 	/* impact from the motion or rain drop */
 	if(mode) {
@@ -323,18 +311,6 @@ int rippleDraw()
 		vp+=2;
 	}
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-
 	height = video_height;
 	width = video_width;
 	vp = vtable;
@@ -402,25 +378,16 @@ int rippleDraw()
 		dest2[y*video_width+x*2+1] = 0xffffff;
 	}
 #endif
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
-
 
 	return 0;
 }
 
-int rippleEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			bzero(map, map_h*map_w*2*sizeof(int));
+			memset(map, 0, map_h*map_w * 2 * sizeof(int));
 			break;
 		case SDLK_r:
 			mode = ~mode;

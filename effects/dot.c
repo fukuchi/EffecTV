@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * DotTV: convert gray scale image into a set of dots
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,14 +9,14 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 #include "heart.inc"
 
-int dotStart();
-int dotStop();
-int dotDraw();
-int dotEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 #define DOTDEPTH 5
 #define DOTMAX (1<<DOTDEPTH)
@@ -222,10 +222,10 @@ effect *dotRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = dotStart;
-	entry->stop = dotStop;
-	entry->draw = dotDraw;
-	entry->event = dotEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	makePattern();
 	makeHeartPattern();
@@ -233,27 +233,17 @@ effect *dotRegister()
 	return entry;
 }
 
-int dotStart()
+static int start()
 {
-	screen_clear(0);
 	init_sampxy_table();
-	if(stretch) {
-		image_stretching_buffer_clear(0);
-	}
-	if(video_grabstart())
-		return -1;
 
 	state = 1;
 	return 0;
 }
 
-int dotStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
@@ -311,21 +301,12 @@ static void drawHeart(int xx, int yy, unsigned char c, RGB32 *dest)
 	}
 }
 
-int dotDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 	int sx, sy;
-	RGB32 *src, *dest;
 
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	dest = (RGB32 *)screen_getaddress();
+	dest = (RGB32 *)screen_getaddress(); // cheater! cheater!
 
 	if(mode) {
 		for(y=0; y<dots_height; y++) {
@@ -344,16 +325,11 @@ int dotDraw()
 			}
 		}
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
-	return 0;
+	return 1; // undocumented feature ;-)
 }
 
-int dotEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * VertigoTV - Alpha blending with zoomed and rotated images.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -10,13 +10,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int dizzyStart();
-int dizzyStop();
-int dizzyDraw();
-int dizzyEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "VertigoTV";
 static int state = 0;
@@ -84,50 +84,38 @@ effect *dizzyRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = dizzyStart;
-	entry->stop = dizzyStop;
-	entry->draw = dizzyDraw;
-	entry->event = dizzyEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int dizzyStart()
+static int start()
 {
-	bzero(buffer, video_area * 2 * sizeof(RGB32));
+	memset(buffer, 0, video_area * 2 * PIXEL_SIZE);
 	current_buffer = buffer;
 	alt_buffer = buffer + video_area;
 	phase = 0;
-
-	if(video_grabstart())
-		return -1;
 
 	state = 1;
 	return 0;
 }
 
-int dizzyStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
-int dizzyDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-	RGB32 *src, *dest;
 	RGB32 *p;
 	RGB32 v;
 	int x, y;
 	int ox, oy;
 	int i;
-
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
 
 	setParams();
 	p = alt_buffer;
@@ -148,27 +136,8 @@ int dizzyDraw()
 		sy += dx;
 	}
 
-	if(video_grabframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-
 	memcpy(dest, alt_buffer, video_area*sizeof(RGB32));
 
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 	p = current_buffer;
 	current_buffer = alt_buffer;
 	alt_buffer = p;
@@ -176,7 +145,7 @@ int dizzyDraw()
 	return 0;
 }
 
-int dizzyEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

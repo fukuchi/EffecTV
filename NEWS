@@ -1,3 +1,14 @@
+Overview of Changes in EffecTV-0.3.9
+====================================
+* API of effect module has been simplified.
+
+* The supported version of vloopback has been changed from 0.90 to 0.91.
+  Older version is no longer supported.
+
+* Some new modes have been added to FireTV.
+
+* Some bug fixes.
+
 Overview of Changes in EffecTV-0.3.8
 ====================================
 * New effects BrokenTV and WarholTV developed by Jun IIO was added.

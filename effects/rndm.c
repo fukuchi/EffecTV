@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * rndmTV Random noise based on video signal
  * (c)2002 Ed Tannenbaum <et@et-arts.com>
@@ -9,18 +9,18 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int rndmEvent();
-int rndmStart();
-int rndmStop();
-int rndmDraw();
+static int event();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
-int rgrabtime=1;
-int rgrab=0;
-int rthecolor=0xffffffff;
-int rmode=1;
+static int rgrabtime=1;
+static int rgrab=0;
+static int rthecolor=0xffffffff;
+static int rmode=1;
 
 static char *effectname = "RndmTV";
 static int state = 0;
@@ -33,54 +33,31 @@ effect *rndmRegister()
 	if(entry == NULL) return NULL;
 
 	entry->name = effectname;
-	entry->start = rndmStart;
-	entry->stop = rndmStop;
-	entry->draw = rndmDraw;
-	entry->event = rndmEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int rndmStart()
+static int start()
 {
-
-	if(video_grabstart())
-		return -1;
 	state = 1;
 	return 0;
 }
 
-int rndmStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
 
-int rndmDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
 	int i, tmp, rtmp;
-	RGB32 *src,*dst;
 
-
-	src = (RGB32 *)video_getaddress();
-	if (stretch) {
-		dst = stretching_buffer;
-  		} else {
-		dst = (RGB32 *)screen_getaddress();
-	}
-
-	if (stretch) image_stretch_to_screen();
-	if(video_syncframe())return -1;
-  	if(screen_mustlock()) {
-    		if(screen_lock() < 0) {
-      			return video_grabframe();
-    		}
-	}
 	rgrab++;
 	if (rgrab>=rgrabtime){
 		rgrab=0;
@@ -130,14 +107,13 @@ int rndmDraw()
 			}
 		}
 	}
-	if(screen_mustlock()) screen_unlock();
-  	if(video_grabframe()) return -1;
+
   	return 0;
 }
 
 
 
-int rndmEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 
 	if(event->type == SDL_KEYDOWN) {

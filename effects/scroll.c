@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentarou
+ * Copyright (C) 2001-2003 FUKUCHI Kentarou
  *
  * BrokenTV - simulate broken VTR.
  * Copyright (C) 2002 Jun IIO
@@ -9,12 +9,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int scrollStart();
-int scrollStop();
-int scrollDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "BrokenTV";
 static int state = 0;
@@ -32,52 +32,30 @@ effect *scrollRegister()
 	if(entry == NULL) return NULL;
 	
 	entry->name = effectname;
-	entry->start = scrollStart;
-	entry->stop = scrollStop;
-	entry->draw = scrollDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int scrollStart()
+static int start()
 {
-	if(video_grabstart())
-		return -1;
+	offset = 0;
 	state = 1;
 
-	offset = 0;
-
 	return 0;
 }
 
-int scrollStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
-int scrollDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-  	RGB32 *src, *dest;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-	  	dest = stretching_buffer;
-	} else {
-	  	dest = (RGB32 *)screen_getaddress();
-	}
 	memcpy (dest, src+(video_height - offset)*video_width, 
 		offset * video_width * sizeof (RGB32));
 	memcpy (dest+offset*video_width, src,
@@ -86,16 +64,6 @@ int scrollDraw()
 
 	offset += SCROLL_STEPS;
 	if (offset >= video_height) { offset = 0; }
-
-	if (stretch) {
-	  	image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }

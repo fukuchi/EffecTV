@@ -10,13 +10,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int rdsStart();
-int rdsStop();
-int rdsDraw();
-int rdsEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "RandomDotStereoTV";
 static int stat;
@@ -33,55 +33,32 @@ effect *rdsRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = rdsStart;
-	entry->stop = rdsStop;
-	entry->draw = rdsDraw;
-	entry->event = rdsEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int rdsStart()
+static int start()
 {
-	screen_clear(0);
-	if(video_grabstart())
-		return -1;
-
 	stat = 1;
 	return 0;
 }
 
-int rdsStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int rdsDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y, i;
 	RGB32 *target;
-	RGB32 *src, *dest;
 	RGB32 v;
 	RGB32 R, G, B;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	memset(dest, 0, video_area * PIXEL_SIZE);
 	target = dest;
@@ -163,19 +140,10 @@ int rdsDraw()
 		target += video_width;
 	}
 
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
-
 	return 0;
 }
 
-int rdsEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

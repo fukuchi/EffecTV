@@ -1,6 +1,6 @@
 ;
 ; EffecTV - Realtime Digital Video Effector
-; Copyright (C) 2001-2002 FUKUCHI Kentaro
+; Copyright (C) 2001-2003 FUKUCHI Kentaro
 ;
 ; blurzoomcore.nas : blur and zooming module for RadioacTV
 ; Copyright (C) 2001 FUKUCHI Kentaro
@@ -132,4 +132,3 @@ align 4
 SECTION .bss
 
 zoomyptr	resd 1
-

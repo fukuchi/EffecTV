@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * RadioacTV - motion-enlightment effect.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -10,17 +10,17 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define COLORS 32
 #define MAGIC_THRESHOLD 40
 #define RATIO 0.95
 
-int blurzoomStart();
-int blurzoomStop();
-int blurzoomDraw();
-int blurzoomEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 extern void blurzoomcore();
 
@@ -190,10 +190,10 @@ effect *blurzoomRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = blurzoomStart;
-	entry->stop = blurzoomStop;
-	entry->draw = blurzoomDraw;
-	entry->event = blurzoomEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	setTable();
 	makePalette();
@@ -201,24 +201,21 @@ effect *blurzoomRegister()
 	return entry;
 }
 
-int blurzoomStart()
+static int start()
 {
 	memset(blurzoombuf, 0, buf_area * 2);
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	snapframe = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(snapframe == NULL)
 		return -1;
-	if(video_grabstart())
-		return -1;
 
 	stat = 1;
 	return 0;
 }
 
-int blurzoomStop()
+static int stop()
 {
 	if(stat) {
-		video_grabstop();
 		free(snapframe);
 		stat = 0;
 	}
@@ -226,16 +223,11 @@ int blurzoomStop()
 	return 0;
 }
 
-int blurzoomDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 	RGB32 a, b;
-	RGB32 *src, *dest;
 	unsigned char *diff, *p;
-
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
 
 	if(mode != 2 || snapTime <= 0) {
 		diff = image_bgsubtract_update_y(src);
@@ -256,17 +248,6 @@ int blurzoomDraw()
 	}
 	blurzoomcore();
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-
 	if(mode == 1 || mode == 2) {
 		src = snapframe;
 	}
@@ -286,14 +267,6 @@ int blurzoomDraw()
 			*dest++ = *src++;
 		}
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	if(mode == 1 || mode == 2) {
 		snapTime--;
@@ -305,7 +278,7 @@ int blurzoomDraw()
 	return 0;
 }
 
-int blurzoomEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -30,11 +30,18 @@ USE_NASM = yes
 USE_VLOOPBACK = yes
 
 ## choose vloopback version (only one).
-# version 0.90 or later
-VLOOPBACK_VERSION = 90
-## version 0.83 or former
+# version 0.91 or later
+VLOOPBACK_VERSION = 91
+## version 0.83 or former (obsolete!!)
 # VLOOPBACK_VERSION = 83
 
+### Default settings
+## Set a default device file name of the video input.
+DEFAULT_VIDEO_DEVICE = "/dev/video0"
+
+
+### Memory debug
+#MEM_DEBUG = yes
 
 ###############################################################################
 ### none user configurable settings
@@ -68,4 +75,11 @@ endif
 ifeq ($(USE_VLOOPBACK), yes)
 CONFIG += -DUSE_VLOOPBACK
 CONFIG += -DVLOOPBACK_VERSION=$(VLOOPBACK_VERSION)
+endif
+
+CONFIG += -DDEFAULT_VIDEO_DEVICE=\"$(DEFAULT_VIDEO_DEVICE)\"
+
+ifeq ($(MEM_DEBUG), yes)
+CONFIG += -DMEM_DEBUG
+CFLAGS.opt = -g -O2
 endif

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * nervousTV - The name says it all...
  * Copyright (C) 2002 TANNENBAUM Edo
@@ -8,21 +8,21 @@
  * 2002/2/9 
  *   Original code copied same frame twice, and did not use memcpy().
  *   I modifed those point.
- *   -Kentarou Fukuchi
+ *   -Kentaro Fukuchi
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define PLANES 32
 
 
-int nervousStart();
-int nervousStop();
-int nervousDraw();
-int nervousEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "NervousTV";
 static int state = 0;
@@ -46,22 +46,22 @@ effect *nervousRegister()
 	}
 
 	entry->name = effectname;
-	entry->start = nervousStart;
-	entry->stop = nervousStop;
-	entry->draw = nervousDraw;
-	entry->event = nervousEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int nervousStart()
+static int start()
 {
 	int i;
 
-	buffer = (RGB32 *)malloc(video_area*sizeof(RGB32)*PLANES);
+	buffer = (RGB32 *)malloc(video_area*PIXEL_SIZE*PLANES);
 	if(buffer == NULL)
 		return -1;
-	bzero(buffer, video_area*sizeof(RGB32)*PLANES);
+	memset(buffer, 0, video_area*PIXEL_SIZE*PLANES);
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 
@@ -69,17 +69,14 @@ int nervousStart()
 	stock = 0;
 	timer = 0;
 	readplane = 0;
-	if(video_grabstart())
-		return -1;
 
 	state = 1;
 	return 0;
 }
 
-int nervousStop()
+static int stop()
 {
 	if(state) {
-		video_grabstop();
 		if(buffer)
 			free(buffer);
 		state = 0;
@@ -88,21 +85,12 @@ int nervousStop()
 	return 0;
 }
 
-int nervousDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-	RGB32 *src, *dest;
-
-	if(video_syncframe())
-		return -1;
-
-	src = (RGB32 *)video_getaddress();
 	memcpy(planetable[plane], src, video_area * PIXEL_SIZE);
 	if(stock < PLANES) {
 		stock++;
 	}
-
-	if(video_grabframe())
-		return -1;
 
 	if(mode) {
 		if(timer) {
@@ -120,30 +108,14 @@ int nervousDraw()
 		if(stock > 0)
 			readplane = inline_fastrand() % stock;
 	}
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 	memcpy(dest, planetable[readplane], video_area * PIXEL_SIZE);
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 	plane++;
 	if (plane == PLANES) plane=0;
 
 	return 0;
 }
 
-int nervousEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,15 @@
 #include "utils.h"
 #include "syserr.xbm"
 #include "palette.h"
+#ifdef USE_VLOOPBACK
+#include "vloopback.h"
+#endif
 
 int debug = 0; /* 0 = off, 1 = less debug messages, 2 = more debug messages. */
 int autoplay = 0;
 int autoplay_counter;
 
-static effectRegistFunc *effects_register_list[] =
+static effectRegisterFunc *effects_register_list[] =
 {
 	dumbRegister,
 	quarkRegister,
@@ -75,7 +78,6 @@ static effectRegistFunc *effects_register_list[] =
 	lensRegister,
 	diffRegister,
 	scrollRegister,
-//	hintdepintRegister,
 	warholRegister
 };
 
@@ -149,10 +151,8 @@ static void drawErrorPattern()
 	sw = screen_width;
 	sh = screen_height;
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return;
-		}
+	if(screen_lock() < 0) {
+		return;
 	}
 
 	if(screen_width >= syserr_xbm_width && screen_height >= syserr_xbm_height) {
@@ -198,9 +198,7 @@ static void drawErrorPattern()
 		image_stretch(dest, sw, sh, (RGB32 *)screen_getaddress(), screen_width, screen_height);
 		free(dest);
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
+	screen_unlock();
 	screen_update();
 }
 
@@ -209,7 +207,7 @@ static int registEffects()
 	int i, n;
 	effect *entry;
 
-	n = sizeof(effects_register_list)/sizeof(effectRegistFunc *);
+	n = sizeof(effects_register_list)/sizeof(effectRegisterFunc *);
 	effectsList = (effect **)malloc(n*sizeof(effect *));
 	effectMax = 0;
 	for(i=0;i<n;i++) {
@@ -240,6 +238,10 @@ static int changeEffect(int num)
 		currentEffectNum -= effectMax;
 	currentEffect = effectsList[currentEffectNum];
 	screen_setcaption(currentEffect->name);
+	screen_clear(0);
+	if(stretch) {
+		image_stretching_buffer_clear(0);
+	}
 	if(currentEffect->start() < 0)
 		return 2;
 
@@ -255,6 +257,13 @@ static int startTV()
 	long lastusec=0, usec=0;
 	SDL_Event event;
 	char buf[256];
+	RGB32 *src, *dest;
+
+	ret = video_grabstart();
+	if(ret != 0) {
+		fprintf(stderr, "Failed to grab image.\n");
+		exit(1);
+	}
 
 	currentEffectNum = 0;
 	currentEffect = NULL;
@@ -270,33 +279,65 @@ static int startTV()
 	}
 	while(flag) {
 		if(flag == 1) {
-			ret = currentEffect->draw();
-			if(ret < 0) {
+			ret = video_syncframe();
+			if(ret != 0) {
 				flag = 2;
-			} else if(ret == 0) {
-#ifdef USE_VLOOPBACK
-				if(vloopback) {
-					vloopback_push();
+			} else {
+				if(screen_lock() == 0) {
+					src = (RGB32 *)video_getaddress();
+					if(stretch) {
+						dest = stretching_buffer;
+					} else {
+						dest = (RGB32 *)screen_getaddress();
+					}
+
+					ret = currentEffect->draw(src, dest);
+
+					if(ret == 0) {
+						if(stretch) {
+							image_stretch_to_screen();
+						}
+					}
+
+					screen_unlock();
 				}
+
+				if(ret < 0) {
+					flag = 2;
+				} else {
+#ifdef USE_VLOOPBACK
+					if(vloopback) {
+						vloopback_push();
+					}
 #endif
-				screen_update();
+					screen_update();
+				}
+				ret = video_grabframe();
+				if(ret != 0) {
+					flag = 2;
+				}
 			}
 		}
 		if (flag == 2) {
 			drawErrorPattern();
 			flag = 3;
 		}
+		if (flag == 3) {
+			usleep(300);
+		}
+
 		if(fps) {
 			frames++;
 			if(frames == 100) {
 				gettimeofday(&tv, NULL);
 				usec = tv.tv_sec*1000000+tv.tv_usec;
-				sprintf(buf, "%s (%2.2f fps)", currentEffect->name, (float)100000000/(usec - lastusec));
+				snprintf(buf, 256, "%s (%2.2f fps)", currentEffect->name, (float)100000000/(usec - lastusec));
 				screen_setcaption(buf);
 				lastusec = usec;
 				frames = 0;
 			}
 		}
+
 		if(autoplay) {
 			autoplay_counter--;
 			if(autoplay_counter == 0) {
@@ -304,6 +345,7 @@ static int startTV()
 				flag = changeEffect(currentEffectNum+1);
 			}
 		}
+
 		while(SDL_PollEvent(&event)) {
 			if(event.type == SDL_KEYDOWN) {
 				switch(event.key.keysym.sym) {
@@ -351,7 +393,7 @@ static int startTV()
 					video_change_contrast(-4096);
 					break;
 				case SDLK_RETURN:
-					if(SDL_GetModState() & (KMOD_LALT | KMOD_RALT)) {
+					if(event.key.keysym.mod & KMOD_ALT) {
 						screen_fullscreen();
 					}
 					break;
@@ -375,6 +417,9 @@ static int startTV()
 		}
 	}
 	currentEffect->stop();
+
+	video_grabstop();
+
 	return 0;
 }
 
@@ -512,6 +557,8 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing palette name.\n");
 				exit(1);
 			}
+		} else if(strncmp(option, "debug", 5) == 0) {
+			debug = 1;
 		} else if(strncmp(option, "help", 1) == 0) {
 			usage();
 			exit(0);
@@ -535,6 +582,10 @@ int main(int argc, char **argv)
 		v4ldebug(1);
 	}
 
+	if(palette_init()) {
+		fprintf(stderr, "Palette initialization failed.\n");
+		exit(1);
+	}
 	if(video_init(devfile, channel, norm, freqtab, vw, vh, palette)) {
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
@@ -572,6 +623,14 @@ int main(int argc, char **argv)
 
 //	showTitle();
 	startTV();
+
+#ifdef MEM_DEBUG
+	if(debug) {
+		palette_end();
+		utils_end();
+		sharedbuffer_end();
+	}
+#endif
 
 	return 0;
 }

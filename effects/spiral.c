@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * spiral.c: a 'spiraling' effect (even though it isn't really a spiral)
  *  code originally derived from quark.c; additions and changes are
@@ -60,7 +60,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #ifndef max
@@ -120,14 +120,14 @@ typedef char WaveEl;
 
 #define FOCUS_INCREMENT_PRESET  (M_PI/2.0)
 
-int spiralStart();
-int spiralStop();
-int spiralDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
-int spiralEvent();
-void spiralCreateMap();
-WaveEl* spiralDefineWaves();
-void spiralMoveFocus();
+static int event();
+static void spiralCreateMap();
+static WaveEl* spiralDefineWaves();
+static void spiralMoveFocus();
 
 static char *effectname_base = "SpiralTV";
 static char effectname[128] = "";
@@ -148,7 +148,7 @@ static int g_focus_x = 0;
 static int g_focus_y = 0;
 
 static WaveEl* g_wave_table = NULL;
-const char* g_wave_names[WAVE_COUNT] = { "Concentric A",
+static const char* g_wave_names[WAVE_COUNT] = { "Concentric A",
                                          "Sawtooth Up",
                                          "Sawtooth Down",
                                          "Triangle",
@@ -172,7 +172,7 @@ static int g_focus_radius = 100;
 static double g_focus_degree = 1.0;
 static double g_focus_increment = FOCUS_INCREMENT_PRESET;
 
-void spiralSetName()
+static void spiralSetName()
 {
             sprintf(effectname, "%s:%s (%0.2fi/%df/%dd)", effectname_base,
                     g_wave_names[mode],
@@ -199,22 +199,20 @@ effect *spiralRegister()
 
     strcpy(effectname, effectname_base);
 	entry->name = effectname;
-	entry->start = spiralStart;
-	entry->stop = spiralStop;
-	entry->draw = spiralDraw;
-    entry->event = spiralEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+    entry->event = event;
 
     g_focus_x = (video_width/2);
     g_focus_y = (video_height/2);
 	return entry;
 }
 
-int spiralStart()
+static int start()
 {
 	int i;
-    int screen_area;
 
-    screen_area = video_width * video_height;
     g_focus_radius = video_width / 2;
     /*
     ** Allocate space for the frame buffers.  A lot of memory is required -
@@ -223,15 +221,16 @@ int spiralStart()
     **
     ** Multiply by 4 for 640x480!
     */
-	buffer = (unsigned int *)malloc(screen_area * PIXEL_SIZE * PLANES);
+	buffer = (unsigned int *)malloc(video_area * PIXEL_SIZE * PLANES);
 	if(buffer == NULL)
 		return -1;
+	memset(buffer, 0, video_area * PIXEL_SIZE * PLANES);
 
     /*
     ** Set up the array of pointers to the frame buffers
     */
 	for(i=0;i<PLANES;i++) {
-		planetable[i] = &buffer[screen_area * i];
+		planetable[i] = &buffer[video_area * i];
     }
 
     /*
@@ -255,12 +254,6 @@ int spiralStart()
 #ifdef DEBUG 
     v4lprint(&vd);
 #endif
-    
-	if (video_grabstart())
-    {
-		return -1;
-    }
-        
 
     g_cursor_state = SDL_ShowCursor(SDL_QUERY);
     SDL_ShowCursor(g_cursor_local);
@@ -269,11 +262,9 @@ int spiralStart()
 	return 0;
 }
 
-int spiralStop()
+static int stop()
 {
 	if(state) {
-		video_grabstop();
-        
 		if(buffer)
         {
 			free(buffer);
@@ -295,30 +286,12 @@ int spiralStop()
 	return 0;
 }
 
-int spiralDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
     int x, y, i;
 	int cf;
-	unsigned int *src, *dest;
 
-	if(video_syncframe())
-		return -1;
-	src = (unsigned int *)video_getaddress();
-
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-    
 	memcpy(planetable[plane], src, video_width * video_height * PIXEL_SIZE);
-	if(video_grabframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
 
     if (g_animate_focus)
     {
@@ -333,15 +306,7 @@ int spiralDraw()
 			i++;
 		}
 	}
-    
 
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 	plane--;
 	plane &= PLANE_MASK;
 
@@ -349,7 +314,7 @@ int spiralDraw()
 }
 
 
-int spiralEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
@@ -477,7 +442,7 @@ int spiralEvent(SDL_Event *event)
 	return 0;
 }
 
-void spiralCreateMap()
+static void spiralCreateMap()
 {
     int x;
     int y;
@@ -518,7 +483,7 @@ void spiralCreateMap()
     return;
 }
 
-WaveEl* spiralDefineWaves()
+static WaveEl* spiralDefineWaves()
 {
     WaveEl* wave_table;
     int     i;
@@ -584,7 +549,7 @@ WaveEl* spiralDefineWaves()
     return (wave_table);
 }
 
-void spiralMoveFocus()
+static void spiralMoveFocus()
 {
     g_focus_counter++;
 

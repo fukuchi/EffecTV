@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * LifeTV - Play John Horton Conway's `Life' game with video input.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -11,13 +11,13 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int lifeStart();
-int lifeStop();
-int lifeDraw();
-int lifeEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "LifeTV";
 static int stat;
@@ -25,7 +25,7 @@ static unsigned char *field, *field1, *field2;
 
 static void clear_field()
 {
-	bzero(field1, video_area);
+	memset(field1, 0, video_area);
 }
 
 effect *lifeRegister()
@@ -44,43 +44,34 @@ effect *lifeRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = lifeStart;
-	entry->stop = lifeStop;
-	entry->draw = lifeDraw;
-	entry->event = lifeEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int lifeStart()
+static int start()
 {
-	screen_clear(0);
-	image_stretching_buffer_clear(0);
 	image_set_threshold_y(40);
 	field1 = field;
 	field2 = field + video_area;
 	clear_field();
-	if(video_grabstart())
-		return -1;
 
 	stat = 1;
 	return 0;
 }
 
-int lifeStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int lifeDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
-	RGB32 *src, *dest;
 	unsigned char *p, *q, v;
 	unsigned char sum, sum1, sum2, sum3;
 	int width;
@@ -88,23 +79,9 @@ int lifeDraw()
 
 	width = video_width;
 
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
 	p = image_diff_filter(image_bgsubtract_update_y(src));
 	for(x=0; x<video_area; x++) {
 		field1[x] |= p[x];
-	}
-
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
 	}
 
 	p = field1 + 1;
@@ -133,22 +110,14 @@ int lifeDraw()
 		src += 2;
 		dest += 2;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
 	p = field1;
 	field1 = field2;
 	field2 = p;
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }
 
-int lifeEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

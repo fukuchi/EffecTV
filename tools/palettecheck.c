@@ -10,8 +10,6 @@
 
 #include "v4lutils.h"
 
-#define DEFAULT_VIDEO_DEVICE "/dev/video"
-
 char *palette_name[16] = {
 	"VIDEO_PALETTE_GREY",
 	"VIDEO_PALETTE_HI240",

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * SparkTV - spark effect.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -10,13 +10,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int sparkStart();
-int sparkStop();
-int sparkDraw();
-int sparkEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "SparkTV";
 static int stat;
@@ -346,15 +346,15 @@ effect *sparkRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = sparkStart;
-	entry->stop = sparkStop;
-	entry->draw = sparkDraw;
-	entry->event = sparkEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int sparkStart()
+static int start()
 {
 	int i;
 	
@@ -366,8 +366,6 @@ int sparkStart()
 	}
 	sparks_head = 0;
 	image_set_threshold_y(40);
-	if(video_grabstart())
-		return -1;
 	if(setBackground())
 		return -1;
 
@@ -375,41 +373,20 @@ int sparkStart()
 	return 0;
 }
 
-int sparkStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int sparkDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i;
-	RGB32 *src, *dest;
 	unsigned char *diff;
 	struct shortvec sv;
 
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-
 	diff = image_diff_filter(image_bgsubtract_y(src));
-	memcpy(dest, src, video_area*sizeof(RGB32));
-	if(video_grabframe())
-		return -1;
+	memcpy(dest, src, video_area * sizeof(RGB32));
 
 	sv = detectEdgePoints(diff);
 	if((inline_fastrand()&0x10000000) == 0) {
@@ -425,18 +402,11 @@ int sparkDraw()
 			sparks_life[i]--;
 		}
 	}
-	
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 
 	return 0;
 }
 
-int sparkEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

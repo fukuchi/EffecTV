@@ -1,61 +1,33 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * 1DTV - scans line by line and generates amazing still image.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
  *
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include "../effect.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int onedStart();
-int onedStop();
-int onedDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "1DTV";
 static int state = 0;
 static int line;
 static int prevline;
-static int sline;
-static int sheight;
-static int prevsline;
-static int prevsheight;
 static RGB32 *linebuf;
-
-static void setparams()
-{
-	int snext;
-
-	sline = line * screen_width / video_width;
-	snext = (line + 1) * screen_width / video_width;
-	sheight = snext - sline;
-}
 
 effect *onedRegister()
 {
 	effect *entry;
 
 	sharedbuffer_reset();
-	linebuf = (RGB32 *)sharedbuffer_alloc(screen_width * sizeof(RGB32));
+	linebuf = (RGB32 *)sharedbuffer_alloc(video_width * PIXEL_SIZE);
 	if(linebuf == NULL)
 		return NULL;
 
@@ -64,134 +36,69 @@ effect *onedRegister()
 		return NULL;
 	
 	entry->name = effectname;
-	entry->start = onedStart;
-	entry->stop = onedStop;
-	entry->draw = onedDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int onedStart()
+static int start()
 {
-	screen_clear(0);
-	memset(linebuf, 0, screen_width * PIXEL_SIZE);
+	memset(linebuf, 0, video_width * PIXEL_SIZE);
 	line = 0;
-	setparams();
 	prevline = 0;
-	prevsline = 0;
-	prevsheight = 0;
-	if(video_grabstart())
-		return -1;
+
 	state = 1;
-	return 0;
-}
-
-int onedStop()
-{
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
 
 	return 0;
 }
 
-static void blitline()
+static int stop()
 {
-	int i, x, t;
-	RGB32 *src, *dest, *p;
+	state = 0;
 
-	src = (RGB32 *)video_getaddress() + video_width * line;
-	dest = (RGB32 *)screen_getaddress() + screen_width * sline;
-	for(i=0; i<sheight; i++) {
-		p = src;
-		t = screen_width;
-		for(x=0; x<screen_width; x++) {
-			*dest++ = *p;
-			t -= video_width;
-			if(t<=0) {
-				t += screen_width;
-				p++;
-			}
-		}
-	}
+	return 0;
 }
 
-static void blitline_buf()
+static void blitline(RGB32 *src, RGB32 *dest)
 {
-	int i, x, t;
-	RGB32 *src, *dest, *p;
-
-	src = (RGB32 *)video_getaddress() + video_width * line;
-	dest = (RGB32 *)screen_getaddress() + screen_width * sline;
-	p = src;
-	t = screen_width;
-	for(x=0; x<screen_width; x++) {
-		*dest++ = *p;
-		linebuf[x] = *p;
-		t -= video_width;
-		if(t<=0) {
-			t += screen_width;
-			p++;
-		}
-	}
-	for(i=1; i<sheight; i++) {
-		p = src;
-		t = screen_width;
-		for(x=0; x<screen_width; x++) {
-			*dest++ = *p;
-			t -= video_width;
-			if(t<=0) {
-				t += screen_width;
-				p++;
-			}
-		}
-	}
+	src += video_width * line;
+	dest += video_width * line;
+	memcpy(dest, src, PIXEL_SIZE * video_width);
 }
 
-int onedDraw()
+static void blitline_buf(RGB32 *src, RGB32 *dest)
 {
-	RGB32 *dest;
+	memcpy(dest + video_width * prevline, linebuf, video_width * PIXEL_SIZE);
+
+	src += video_width * line;
+	dest += video_width * line;
+	memcpy(dest, src, video_width * PIXEL_SIZE);
+	memcpy(linebuf, src, video_width * PIXEL_SIZE);
+
+	prevline = line;
+}
+
+static int draw(RGB32 *src, RGB32 *dest)
+{
 	int i;
 
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-
 	if(doublebuf) {
-		dest = (RGB32 *)screen_getaddress() + screen_width * prevsline;
-		for(i=0; i<prevsheight; i++) {
-			memcpy(dest, linebuf, screen_width*sizeof(RGB32));
-			dest += screen_width;
-		}
-	}
-	if(doublebuf) {
-		blitline_buf();
-		prevline = line;
-		prevsline = sline;
-		prevsheight = sheight;
+		blitline_buf(src, dest);
 	} else {
-		blitline();
+		blitline(src, dest);
 	}
+
 	line++;
 	if(line >= video_height)
 		line = 0;
-	setparams();
-	dest = (RGB32 *)screen_getaddress() + screen_width * sline;
-	for(i=0; i<screen_width; i++) {
+
+	dest += video_width * line;
+	for(i=0; i<video_width; i++) {
 		dest[i] = 0xff00;
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * ShagadelicTV - makes you shagadelic! Yeah baby yeah!
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -11,13 +11,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int shagadelicStart();
-int shagadelicStop();
-int shagadelicDraw();
-int shagadelicEvent();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
 
 static char *effectname = "ShagadelicTV";
 static int stat;
@@ -47,15 +47,15 @@ effect *shagadelicRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = shagadelicStart;
-	entry->stop = shagadelicStop;
-	entry->draw = shagadelicDraw;
-	entry->event = shagadelicEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int shagadelicStart()
+static int start()
 {
 	int i, x, y;
 #ifdef PS2
@@ -66,8 +66,6 @@ int shagadelicStart()
 
 	mask = 0xffffff;
 
-	if(video_grabstart())
-		return -1;
 	i = 0;
 	for(y=0; y<video_height*2; y++) {
 		yy = y - video_height;
@@ -112,37 +110,18 @@ int shagadelicStart()
 	return 0;
 }
 
-int shagadelicStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int shagadelicDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
-	RGB32 *src, *dest;
 	int x, y;
 	RGB32 v;
 	unsigned char r, g, b;
 	char *pr, *pg, *pb;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return video_grabframe();
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	pr = &ripple[ry*video_width*2 + rx];
 	pg = spiral;
@@ -168,14 +147,6 @@ int shagadelicDraw()
 		pr += video_width;
 		pb += video_width;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	phase -= 8;
 	if((rx+rvx)<0 || (rx+rvx)>=video_width) rvx =-rvx;
@@ -190,7 +161,7 @@ int shagadelicDraw()
 	return 0;
 }
 
-int shagadelicEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {

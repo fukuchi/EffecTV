@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * EdgeTV - detects edge and display it in good old computer way. 
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -12,19 +12,19 @@
  * it adopts the edge detection filter to the image. It also adopts MaxRGB
  * filter to the image. This is not used in EdgeTV.
  * This code is highly optimized and employs many fake algorithms. For example,
- * it devides a value with 16 instead of using sqrt() in line 142-144. It is
+ * it devides a value with 16 instead of using sqrt() in line 132-134. It is
  * too hard for me to write detailed comment in this code in English.
  */
 
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int edgeStart();
-int edgeStop();
-int edgeDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "EdgeTV";
 static int stat;
@@ -44,7 +44,7 @@ effect *edgeRegister()
 	video_width_margin = video_width - map_width * 4;
 
 	sharedbuffer_reset();
-	map = (RGB32 *)sharedbuffer_alloc(map_width*map_height*sizeof(RGB32)*2);
+	map = (RGB32 *)sharedbuffer_alloc(map_width*map_height*PIXEL_SIZE*2);
 	if(map == NULL) {
 		return NULL;
 	}
@@ -55,59 +55,34 @@ effect *edgeRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = edgeStart;
-	entry->stop = edgeStop;
-	entry->draw = edgeDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int edgeStart()
+static int start()
 {
-	screen_clear(0);
-	if(stretch) {
-		image_stretching_buffer_clear(0);
-	}
-	bzero(map, map_width * map_height * sizeof(RGB32) * 2);
-	if(video_grabstart())
-		return -1;
+	memset(map, 0, map_width * map_height * PIXEL_SIZE * 2);
 
 	stat = 1;
 	return 0;
 }
 
-int edgeStop()
+static int stop()
 {
-	if(stat) {
-		video_grabstop();
-		stat = 0;
-	}
-
+	stat = 0;
 	return 0;
 }
 
-int edgeDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 	int r, g, b;
-	RGB32 *src, *dest;
 	RGB32 p, q;
 	RGB32 v0, v1, v2, v3;
-
-	if(video_syncframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	src = (RGB32 *)video_getaddress();
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 
 	src += video_width*4+4;
 	dest += video_width*4+4;
@@ -178,14 +153,6 @@ int edgeDraw()
 		src += video_width*3+8+video_width_margin;
 		dest += video_width*3+8+video_width_margin;
 	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
-	if(video_grabframe())
-		return -1;
 
 	return 0;
 }

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * vloopback.c: vloopback device manager
  *
@@ -23,6 +23,7 @@
 
 #include "EffecTV.h"
 #include "palette.h"
+#include "vloopback.h"
 
 #define MAXIOCTL 1024
 
@@ -91,6 +92,8 @@ static unsigned char *vloopback_mmap(int dev, int memsize)
 	return map;	
 }
 
+#if 0
+/* never used */
 static int vloopback_munmap(unsigned char *map, int memsize)
 {
 	if(munmap(map, memsize) < 0) {
@@ -99,6 +102,7 @@ static int vloopback_munmap(unsigned char *map, int memsize)
 	}
 	return 0;
 }
+#endif
 
 #if VLOOPBACK_VERSION > 83
 static int v4l_ioctlhandler(unsigned long int cmd, void *arg)

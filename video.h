@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * video.h: header for video manager
  *
@@ -25,17 +25,17 @@ extern int video_height;
 extern int video_area;
 
 int video_init(char *file, int channel, int norm, int freq, int w, int h, int palette);
-void video_quit();
+void video_quit(void);
 int video_setformat(int palette);
 int video_grab_check(int palette);
 int video_set_grabformat(int palette);
-int video_grabstart();
-int video_grabstop();
+int video_grabstart(void);
+int video_grabstop(void);
 int video_changesize(int width, int height);
 int video_setfreq(int v);
-int video_syncframe();
-int video_grabframe();
-unsigned char *video_getaddress();
+int video_syncframe(void);
+int video_grabframe(void);
+unsigned char *video_getaddress(void);
 void video_change_brightness(int);
 void video_change_hue(int);
 void video_change_color(int);

@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * revTV based on Rutt-Etra Video Synthesizer 1974?
-
+ *
  * (c)2002 Ed Tannenbaum
  *
  * This effect acts like a waveform monitor on each line.
@@ -19,25 +19,25 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
-int revEvent();
-int revStart();
-int revStop();
-int revDraw();
+static int event();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
-int vgrabtime=1;
-int vgrab=0;
-int linespace=6;
-int vscale=50;
+static int vgrabtime=1;
+static int vgrab=0;
+static int linespace=6;
+static int vscale=50;
 
-int vthecolor=0xffffffff;
+static int vthecolor=0xffffffff;
 
 static char *effectname = "RevTV";
 static int state = 0;
 
-void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h);
+static void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h);
 
 effect *revRegister()
 {
@@ -47,69 +47,41 @@ effect *revRegister()
 	if(entry == NULL) return NULL;
 
 	entry->name = effectname;
-	entry->start = revStart;
-	entry->stop = revStop;
-	entry->draw = revDraw;
-	entry->event = revEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 
 	return entry;
 }
 
-int revStart()
+static int start()
 {
-
-	if(video_grabstart())
-		return -1;
 	state = 1;
 	return 0;
 }
 
-int revStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-		state = 0;
-	}
-
+	state = 0;
 	return 0;
 }
 
 
-int revDraw()
+static int draw(RGB32 *src, RGB32 *dst)
 {
-
-	RGB32 *src,*dst;
-
-
-	src = (RGB32 *)video_getaddress();
-	if (stretch) {
-		dst = stretching_buffer;
-		} else {
-		dst = (RGB32 *)screen_getaddress();
-	}
-
-	if (stretch) image_stretch_to_screen();
-	if(video_syncframe()) return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-		return video_grabframe();
-		}
-	}
 	vgrab++;
 	if (vgrab>=vgrabtime){
 		vgrab=0;
-		bzero(dst, video_area*sizeof(RGB32)); // clear the screen
+		memset(dst, 0, video_area*PIXEL_SIZE); // clear the screen
 
 		vasulka(src, dst, 0, 0, 0, 0, video_width, video_height);
 	}
 
-	if(screen_mustlock()) screen_unlock();
-  	if(video_grabframe())  return -1;
-
   	return 0;
 }
 
-void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h)
+static void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h)
 {
 	RGB32 *cdst=dst+((dsty*video_width)+dstx);
 	RGB32 *nsrc;
@@ -134,7 +106,7 @@ void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int
 }
 
 
-int revEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 
 	if(event->type == SDL_KEYDOWN) {

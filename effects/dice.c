@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * dice.c: a 'dicing' effect
  *  copyright (c) 2001 Sam Mertens.  This code is subject to the provisions of
@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #ifndef max
@@ -39,11 +39,11 @@ typedef enum _dice_dir {
     Left = 3
 } DiceDir;
 
-int diceStart();
-int diceStop();
-int diceDraw();
-int diceEvent();
-void diceCreateMap();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
+static int event();
+static void diceCreateMap();
 
 static char *effectname = "DiceTV";
 static int state = 0;
@@ -72,15 +72,15 @@ effect *diceRegister()
 	}
 
 	entry->name = effectname;
-	entry->start = diceStart;
-	entry->stop = diceStop;
-	entry->draw = diceDraw;
-    entry->event = diceEvent;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
+	entry->event = event;
 	
 	return entry;
 }
 
-int diceStart()
+static int start()
 {
     diceCreateMap();
     
@@ -88,51 +88,23 @@ int diceStart()
     v4lprint(&vd);
 #endif
     
-	if (video_grabstart())
-    {
-		return -1;
-    }
 
     state = 1;
 	return 0;
 }
 
-int diceStop()
+static int stop()
 {
-	if(state) {
-		video_grabstop();
-        state = 0;
-	}
-
+    state = 0;
 	return 0;
 }
 
-int diceDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
     int i;
     int map_x, map_y, map_i;
     int base;
     int dx, dy, di;
-	unsigned int *src, *dest;
-
-    
-	if(video_syncframe())
-		return -1;
-	src = (unsigned int *)video_getaddress();
-
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
-    
-	if(video_grabframe())
-		return -1;
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
 
 	map_i = 0;
 	for(map_y = 0; map_y < g_map_height; map_y++)
@@ -203,20 +175,12 @@ int diceDraw()
 		}
         // fprintf(stderr,"\n");
 	}
-    
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
 
 	return 0;
 }
 
 
-int diceEvent(SDL_Event *event)
+static int event(SDL_Event *event)
 {
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
@@ -246,7 +210,7 @@ int diceEvent(SDL_Event *event)
 	return 0;
 }
 
-void diceCreateMap()
+static void diceCreateMap()
 {
     int x;
     int y;

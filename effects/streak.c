@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
  *
  * StreakTV - afterimage effector.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../EffecTV.h"
+#include "EffecTV.h"
 #include "utils.h"
 
 #define PLANES 32
@@ -17,9 +17,9 @@
 #define STRIDE_MASK 0xf8f8f8f8
 #define STRIDE_SHIFT 3
 
-int streakStart();
-int streakStop();
-int streakDraw();
+static int start(void);
+static int stop(void);
+static int draw(RGB32 *src, RGB32 *dest);
 
 static char *effectname = "StreakTV";
 static int state = 0;
@@ -37,40 +37,34 @@ effect *streakRegister()
 	}
 	
 	entry->name = effectname;
-	entry->start = streakStart;
-	entry->stop = streakStop;
-	entry->draw = streakDraw;
+	entry->start = start;
+	entry->stop = stop;
+	entry->draw = draw;
 	entry->event = NULL;
 
 	return entry;
 }
 
-int streakStart()
+static int start()
 {
 	int i;
 
-	buffer = (RGB32 *)malloc(video_area * sizeof(RGB32) * PLANES);
+	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE * PLANES);
 	if(buffer == NULL)
 		return -1;
-	bzero(buffer, video_area*sizeof(RGB32)*PLANES);
+	memset(buffer, 0, video_area * PIXEL_SIZE * PLANES);
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 
 	plane = 0;
-	if(video_grabstart()) {
-		free(buffer);
-		buffer = NULL;
-		return -1;
-	}
 
 	state = 1;
 	return 0;
 }
 
-int streakStop()
+static int stop()
 {
 	if(state) {
-		video_grabstop();
 		if(buffer) {
 			free(buffer);
 			buffer = NULL;
@@ -80,31 +74,15 @@ int streakStop()
 	return 0;
 }
 
-int streakDraw()
+static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i, cf;
-	RGB32 *src, *dest;
 
-	if(video_syncframe())
-		return -1;
-	src = (RGB32 *)video_getaddress();
 	for(i=0; i<video_area; i++) {
 		planetable[plane][i] = (src[i] & STRIDE_MASK)>>STRIDE_SHIFT;
 	}
-	if(video_grabframe())
-		return -1;
 
 	cf = plane & (STRIDE-1);
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	if(stretch) {
-		dest = stretching_buffer;
-	} else {
-		dest = (RGB32 *)screen_getaddress();
-	}
 	for(i=0; i<video_area; i++) {
 		dest[i] = planetable[cf][i]
 		        + planetable[cf+STRIDE][i]
@@ -114,12 +92,6 @@ int streakDraw()
 		        + planetable[cf+STRIDE*5][i]
 		        + planetable[cf+STRIDE*6][i]
 		        + planetable[cf+STRIDE*7][i];
-	}
-	if(stretch) {
-		image_stretch_to_screen();
-	}
-	if(screen_mustlock()) {
-		screen_unlock();
 	}
 	plane++;
 	plane = plane & (PLANES-1);

@@ -1,4 +1,4 @@
-EffecTV 0.3.8
+EffecTV 0.3.9
 
 GENERAL INFORMATION
 ===================
@@ -12,7 +12,7 @@ Requirements
 ------------
 Currently, EffecTV highly depends upon the Intel architecture. It may not work
 on any other platform.
-EffecTV also works on PlayStation2. Please read 'README.ps2'.
+EffecTV also works on PlayStation2. Please read "README.ps2".
 
 Video capture card or USB device supported by video4linux is required.
 
@@ -25,9 +25,8 @@ Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for the video loopback feature.
+You should use vloopback-0.91 or later.
 http://motion.sourceforge.net/vloopback/index.html
-Patches for vloopback-0.90 and vloopback-0.83 are included in this package.
-Please read README.vloopback and README.vloopback83.
 
 *NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
 distro. Vloopback support does not work on early version of libc-2.2.5. If you
@@ -36,11 +35,11 @@ later.
 
 NASM can be used to assemble some modules. See following URL:
 http://nasm.sourceforge.net/
-If you want not to use NASM, you have to modify 'config.mk'.
+If you want not to use NASM, you have to modify "config.mk".
 
 Compiling & installing
 ----------------------
-Modify 'config.mk' and 'Makefile' (if necessary) and do
+Modify "config.mk" and "Makefile" (if necessary) and do
 
 make
 
@@ -48,10 +47,10 @@ and
 
 make install
 
-Executable binary file 'effectv' will be installed to /usr/local/bin/,
-and man page 'effectv.1' will be installed to /usr/local/man/man1/ by default.
+Executable binary file "effectv" will be installed to /usr/local/bin/,
+and man page "effectv.1" will be installed to /usr/local/man/man1/ by default.
 
-The input device file (typically '/dev/video0') must be readable and writable
+The input device file (typically "/dev/video0") must be readable and writable
 for you.
 
 USING
@@ -98,7 +97,7 @@ Options
 
 -doublebuffer
 	Enable double buffering mode (if possible). Sometime it makes EffecTV
-	faster and gets consistent images.
+	faster.
 
 -fps
 	Show frames/sec on its title bar (X11 only).
@@ -197,7 +196,7 @@ cycleTV
 RippleTV
 	Ripple mark effect.
 DiceTV
-	A 'dicing' effect.
+	A "dicing" effect.
 VertigoTV
 	Alpha blending with zoomed and rotated images.
 DeinterlaceTV
@@ -222,10 +221,7 @@ WarholTV
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------
 EffecTV has supported the use of a video loopback device since version 0.2.0.
-First, install the vloopback module. If you want to install vloopback from
-source package, please read 'README.vloopback' and 'README.vloopback90',
-then apply the patch included. If you use vloopback-0.90, please modify
-'config.mk' and recompile EffecTV.
+First, install the vloopback module. See "REAME.vloopback" for the details.
 
 Then, load the vloopback device driver module and verify the input/output
 device files for the video pipe (typically /dev/video1 and /dev/video2).
@@ -233,7 +229,7 @@ Then, run EffecTV.
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be read from /dev/video2. If you want to 'chain'
+The effected images can be read from /dev/video2. If you want to "chain"
 a second instance of EffecTV, type as following.
 
 $ effectv -device /dev/video2
@@ -322,7 +318,7 @@ A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 AUTHORS
 =======
-See the file 'CREWS'.
+See the file "CREWS".
 
 ---
 EffecTV crews
