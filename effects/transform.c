@@ -120,7 +120,7 @@ int TransFormStop()
 		video_grabstop();
 		state = 0;
 	}
-	for (i=0; i < 4 ; i++) {
+	for (i=0; i < TableMax ; i++) {
 	  free(TableList[i]);
 	}
 
@@ -192,4 +192,3 @@ int TransFormEvent(SDL_Event *event) {
   }
   return 0;
 }
-    
