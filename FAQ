@@ -1,10 +1,10 @@
 FAQ
 ===
-Last updated 2001/9/4 for release 0.3.2
+Last updated 2001/10/9 for release 0.3.3
 
 Contents
 --------
-Q1: I get a distorted/still/gray scale/shrunken image.
+Q1: I got a distorted/still/gray scale/shrunken image.
 Q2: TV seems to work fine, but how can I change to Composite1 or any other
     video source?
 Q3: Some effects do not work.
@@ -103,6 +103,9 @@ depth mode.
 
 If your video capturing device does not support 32bit pixel format, EffecTV
 converts captured images to 32bit format. This also makes EffecTV slow.
+
+Some USB devices become very slow when using RGB32 mode. Try to change the
+palette to YUV series by using "-palette" option.
 ----------
 Q9: I upgraded the Video4Linux driver(or the kernel) and I got error...
 

@@ -24,7 +24,18 @@ struct palette_converter_fromRGB32_map
 };
 
 int palette_init();
+int palette_check_supported_converter_toRGB32(int, palette_converter_toRGB32 **, palette_converter_toRGB32 **);
 void palette_get_supported_converter_toRGB32(palette_converter_toRGB32 **, palette_converter_toRGB32 **);
 palette_converter_fromRGB32 *palette_get_supported_converter_fromRGB32(int);
+
+
+struct palettelist
+{
+	char *tag;
+	int palette;
+	char *name;
+};
+
+int palettex_getpalette(const char *);
 
 #endif /* __PALETTE_H__ */

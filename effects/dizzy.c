@@ -21,39 +21,52 @@ static char *effectname = "DizzyTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *current_buffer, *alt_buffer;
-static int dizz = 0;
+static double dizz = 0;
 static int dx, dy;
 static int sx, sy;
 static double phase = 0.0;
+static double zoomrate = 1.05;
 
 static void setParams()
 {
 	double vx, vy;
 	double t;
-	int x, y;
+	double x, y;
 
-	x = -video_width / 2 + 2; /* add 2 for safety. */
-	y = -video_height / 2 + 2;
-	t = x*x + y*y;
-	if(dizz >= 0) {
-		vx = (double)(x*x + y*(y+dizz)) / t;
+	x = video_width / 2;
+	y = video_height / 2;
+	t = (x*x + y*y) * zoomrate;
+	if(video_width > video_height) {
+		if(dizz >= 0) {
+			if(dizz > x) dizz = x;
+			vx = (x*(x-dizz) + y*y) / t;
+		} else {
+			if(dizz < -x) dizz = -x;
+			vx = (x*(x+dizz) + y*y) / t;
+		}
+		vy = (dizz*y) / t;
 	} else {
-		vx = (double)(x*x + y*(y-dizz)) / t;
+		if(dizz >= 0) {
+			if(dizz > y) dizz = y;
+			vx = (x*x + y*(y-dizz)) / t;
+		} else {
+			if(dizz < -y) dizz = -y;
+			vx = (x*x + y*(y+dizz)) / t;
+		}
+		vy = (dizz*x) / t;
 	}
-	vy = (double)(x * dizz) / t;
 	dx = vx * 65536;
 	dy = vy * 65536;
-//	x = -video_width / 2;
-//	y = -video_height / 2;
+	x = -x;
+	y = -y;
 	sx = (vx * x - vy * y - x) * 65536;
 	sy = (vx * y + vy * x - y) * 65536;
-	printf("%d %d %d %d\n",dx,dy,sx,sy);
 }
 
 static void rotateDizz()
 {
-	dizz = sin(phase)*10 + cos(phase*1.2+5)*2;
-	phase += 1;
+	dizz = sin(phase)*10 + sin(phase*1.9+5)*5;
+	phase += .1;
 }
 
 effect *dizzyRegister()
@@ -126,14 +139,12 @@ int dizzyDraw()
 		for(x=video_width; x>0; x--) {
 			cx = ox>>16;
 			cy = oy>>16;
-			if(cx<0) {printf("X: %d %d\n",cx,cy);exit(1);}
-			if(cy<0) {printf("Y: %d %d\n",cx,cy);exit(2);}
-//			if(cx>=video_width) exit(3);
-//			if(cy>=video_height) exit(4);
-//			if(cx<0) cx = 0;
-//			if(cy<0) cy = 0;
-//			if(cx>=video_width) cx = video_width-1;
-//			if(cy>=video_height) cy = video_height-1;
+#if 0
+			if(cx<0) cx = 0;
+			if(cy<0) cy = 0;
+			if(cx>=video_width) cx = video_width-1;
+			if(cy>=video_height) cy = video_height-1;
+#endif
 			v = current_buffer[cy*video_width + cx] & 0xfcfcff;
 			v = (v * 3) + ((*src++) & 0xfcfcff);
 			*p++ = (v>>2);

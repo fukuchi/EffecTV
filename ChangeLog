@@ -1,3 +1,12 @@
+2001/10/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* effects/dizzy.c: Bugfixes.
+	* palette.[ch]: Added new function 'palettex_getpalette()'.
+	* main.c: Added new option "-palette".
+	* video.c: Now video_init() requires a palette number. If 0, it uses RGB32.
+	* README, effectv.1 : Added more description of options.
+	* Changed version to 0.3.3.
+
+
 2001/10/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/dizzy.c: Added an new effect DizzyTV.
 	* config.mk: Changed the default to use NASM.
@@ -13,6 +22,8 @@
 2001/09/27	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* README, effectv.1: Typo fixes.
 	* docs.japanese/*: Added some Japanese documents.
+
+	* EffecTV-0.3.2 is released.
 
 2001/09/25	Sam Mertens		<smertens@users.sf.net>
 	* tools/Makefile given 'all-recursive', 'all-am' targets

@@ -1,4 +1,4 @@
-EffecTV 0.3.2
+EffecTV 0.3.3
 
 GENERAL INFORMATION
 ===================
@@ -63,24 +63,62 @@ Synopsis
 --------
 effectv [options...]
 
-Options:
-	-device FILE     use device FILE for video4linux (default is /dev/video)
-	-channel NUMBER  channel number of video source (default is 0)
-	-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
-	                 set video norm (default is ntsc)
-	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
-	          europe-west, europe-east,italy,newzealand,australia,ireland,
-	          france,china-bcast,southafrica,argentina}
-	                 set frequency table
-	-fullscreen      set fullscreen mode
-	-hardware        use direct video memory (if possible)
-	-doublebuffer    enable double buffering mode (if possible)
-	-fps             show frames/sec
-	-size WxH        set the size of capturing image
-	-geometry WxH    set the size of screen
-	-scale NUMBER    scaling the screen
-	-autoplay NUMBER changes effects automatically every NUMBER frames
-	-vloopback FILE  use device FILE for output of vloopback device
+Options
+-------
+-device FILE
+	Use device FILE for video4linux (default is /dev/video).
+
+-channel NUMBER
+	Set channel number of video source (default is 0).
+	If your video capturing device has multiple video source(TV,Video1,...),
+	you may want to change this number to get correct images.
+
+-norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
+	Set video norm(signal format) of your video source (default is ntsc).
+
+-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
+          europe-east,italy,newzealand,australia,ireland,france,china-bcast,
+		  southafrica,argentina}
+	Set frequency table of TV tuner. Choose one of them if you want to watch
+	TV on EffecTV.
+
+-fullscreen
+	Launch EffecTV in fullscreen mode.
+
+-hardware
+	Use direct video memory (if possible). Sometimes it makes EffecTV faster.
+
+-doublebuffer
+	Enable double buffering mode (if possible). Sometime it makes EffecTV
+	faster and gets consistent images.
+
+-fps
+	Show frames/sec on its title bar (X11 only).
+
+-size WxH
+	Set the size of capturing image. EffecTV can be slower when the size is
+	larger. If you just want to get big (and not so fine) screen, please set
+	"-scale".
+
+-geometry WxH
+	Set the size of screen. Usually "-scale" is a better way to change the
+	size of screen. This option is for special purpose to stretch the screen.
+
+-scale NUMBER
+	Scaling the screen. "-scale 2" results 2x2 screen.
+
+-autoplay NUMBER
+	Changes effects automatically every NUMBER frames.
+
+-palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
+	Set the palette of capturing device. By default, it is detected
+	automatically, so you need not to set this value. Some USB devices are very
+	slow when it is used in RGB mode. Try YUV series if you feel your USB
+	deivce is too slow.
+
+-vloopback FILE
+	Use device FILE for output of vloopback device. See "Recording/broadcasting
+	EffecTV" section.
 
 Key
 ---
@@ -147,6 +185,8 @@ RippleTV
 	Ripple mark effect.
 DiceTV
 	A 'dicing' effect.
+DizzyTV
+	Alpha blending with zoomed and rotated images.
 
 Recording/broadcasting EffecTV
 ------------------------------

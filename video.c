@@ -58,7 +58,7 @@ static RGB32 *framebuffer;
 #define MINHEIGHT (vd.capability.minheight)
 
 /* Channel and norm is determined at initialization time. */
-int video_init(char *file, int channel, int norm, int freq, int w, int h)
+int video_init(char *file, int channel, int norm, int freq, int w, int h, int palette)
 {
 	if(file == NULL){
 		file = DEFAULT_VIDEO_DEVICE;
@@ -118,7 +118,7 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h)
 	/* detecting a pixel format supported by the v4l driver.
 	 * video_set_grabformat() overwrites both 'converter' and 'converter_hflip'.
 	 * If 'converter' is non-NULL, palette converter must be initialized. */
-	if(video_set_grabformat()) {
+	if(video_set_grabformat(palette)) {
 		fprintf(stderr, "video_init: Can't find a supported pixel format.\n");
 		return -1;
 	}
@@ -164,16 +164,23 @@ EXIT:
 	return ret;
 }
 
-int video_set_grabformat()
+int video_set_grabformat(int palette)
 {
-	if(video_grab_check(DEFAULT_PALETTE) == 0) {
-		converter = NULL;
-		return 0;
+	if(palette == 0) {
+		if(video_grab_check(DEFAULT_PALETTE) == 0) {
+			converter = NULL;
+			return 0;
+		}
+		palette_get_supported_converter_toRGB32(&converter, &converter_hflip);
+		if(converter == NULL)
+			return -1;
+	} else {
+		if(palette_check_supported_converter_toRGB32(palette, &converter, &converter_hflip)) {
+			return 0;
+		} else {
+			return -1;
+		}
 	}
-
-	palette_get_supported_converter_toRGB32(&converter, &converter_hflip);
-	if(converter == NULL)
-		return -1;
 
 	return 0;
 }
@@ -269,7 +276,7 @@ int video_setfreq(int v)
  */
 
 /* returns the norm number described in video4linux drivers. */
-int videox_getnorm(char *name)
+int videox_getnorm(const char *name)
 {
 	int i;
 
@@ -283,7 +290,7 @@ int videox_getnorm(char *name)
 }
 
 /* returns the frequency table number. */
-int videox_getfreq(char *name)
+int videox_getfreq(const char *name)
 {
 	int i;
 

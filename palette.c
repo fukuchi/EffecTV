@@ -613,6 +613,29 @@ static const struct palette_converter_toRGB32_map converter_toRGB32_list[] = {
 	{-1, NULL, NULL}
 };
 
+int palette_check_supported_converter_toRGB32
+(int palette,
+ palette_converter_toRGB32 **conv, palette_converter_toRGB32 **conv_hflip)
+{
+	int i;
+
+	for(i=0; converter_toRGB32_list[i].palette>=0; i++) {
+		if(palette != converter_toRGB32_list[i].palette) continue;
+		if(video_grab_check(converter_toRGB32_list[i].palette)) {
+			*conv = NULL;
+			*conv_hflip = NULL;
+			return 0;
+		}
+		*conv = converter_toRGB32_list[i].converter;
+		*conv_hflip = converter_toRGB32_list[i].converter_hflip;
+		if(debug) {
+			printf("format: %d\n",converter_toRGB32_list[i].palette);
+		}
+		return 1;
+	}
+	return 0;
+}
+
 void palette_get_supported_converter_toRGB32
 (palette_converter_toRGB32 **conv, palette_converter_toRGB32 **conv_hflip)
 {
@@ -744,4 +767,31 @@ palette_converter_fromRGB32 *palette_get_supported_converter_fromRGB32
 			return converter_fromRGB32_list[i].converter;
 	}
 	return NULL;
+}
+
+static struct palettelist palettelists[] =
+{
+	{"rgb24", VIDEO_PALETTE_RGB24, "VIDEO_PALETTE_RGB24"},
+	{"rgb565", VIDEO_PALETTE_RGB565, "VIDEO_PALETTE_RGB565"},
+	{"rgb555", VIDEO_PALETTE_RGB555, "VIDEO_PALETTE_RGB555"},
+	{"yuv422", VIDEO_PALETTE_YUV422, "VIDEO_PALETTE_YUV422"},
+	{"yuv422p", VIDEO_PALETTE_YUV422P, "VIDEO_PALETTE_YUV422P"},
+	{"yuv420p", VIDEO_PALETTE_YUV420P, "VIDEO_PALETTE_YUV420P"},
+	{"yuv411p", VIDEO_PALETTE_YUV411P, "VIDEO_PALETTE_YUV411P"},
+	{"yuv410p", VIDEO_PALETTE_YUV410P, "VIDEO_PALETTE_YUV410P"},
+	{"grey", VIDEO_PALETTE_GREY, "VIDEO_PALETTE_GREY"},
+	{"", -1, ""}
+};
+
+int palettex_getpalette(const char *name)
+{
+	int i;
+
+	for(i=0; palettelists[i].palette != -1; i++) {
+		if(strcasecmp(name, palettelists[i].tag) == 0) {
+			return palettelists[i].palette;
+		}
+	}
+
+	return -1;
 }

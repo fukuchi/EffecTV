@@ -32,8 +32,9 @@
 #include "effects/effects.h"
 #include "utils.h"
 #include "syserr.xbm"
+#include "palette.h"
 
-int debug = 0;
+int debug = 1; /* 0 = off, 1 = less debug messages, 2 = more debug messages. */
 int autoplay = 0;
 int autoplay_counter;
 
@@ -96,6 +97,9 @@ static void usage()
 	printf("  -geometry WxH    set the size of screen\n");
 	printf("  -scale NUMBER    scaling the screen\n");
 	printf("  -autoplay NUMBER changes effects automatically every NUMBER frames\n");
+	printf("  -palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
+                   set the palette of capturing device. It is detected
+                   automatically by default.\n");
 #ifdef USE_VLOOPBACK
 	printf("  -vloopback FILE  use device FILE for output of vloopback device\n");
 #endif
@@ -362,6 +366,7 @@ int main(int argc, char **argv)
 #endif
 	int vw, vh; /* video width,height */
 	int sw, sh, ss; /* screen width,height,scale */
+	int palette = 0;
 
 	vw = vh = sw = sh = 0;
 	ss = 1;
@@ -471,6 +476,17 @@ int main(int argc, char **argv)
 				fprintf(stderr, "missing a scale value.\n");
 				exit(1);
 			}
+		} else if(strncmp(option, "palette", 3) == 0) {
+			i++;
+			if(i<argc) {
+				if((palette = palettex_getpalette(argv[i])) < 0) {
+					fprintf(stderr, "palette %s is not supported.\n",argv[i]);
+					exit(1);
+				}
+			} else {
+				fprintf(stderr, "missing palette name.\n");
+				exit(1);
+			}
 		} else if(strncmp(option, "help", 1) == 0) {
 			usage();
 			exit(0);
@@ -489,10 +505,12 @@ int main(int argc, char **argv)
 		vw = sw / ss;
 		vh = sh / ss;
 	}
-//	if(debug) {
-//		v4ldebug(1);
-//	}
-	if(video_init(devfile, channel, norm, freqtab, vw, vh)) {
+
+	if(debug > 1) {
+		v4ldebug(1);
+	}
+
+	if(video_init(devfile, channel, norm, freqtab, vw, vh, palette)) {
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
 	}

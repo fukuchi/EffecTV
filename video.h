@@ -24,11 +24,11 @@ extern int video_width;
 extern int video_height;
 extern int video_area;
 
-int video_init(char *file, int channel, int norm, int freq, int w, int h);
+int video_init(char *file, int channel, int norm, int freq, int w, int h, int palette);
 void video_quit();
 int video_setformat(int palette);
 int video_grab_check(int palette);
-int video_set_grabformat();
+int video_set_grabformat(int palette);
 int video_grabstart();
 int video_grabstop();
 int video_changesize(int width, int height);
@@ -39,7 +39,7 @@ unsigned char *video_getaddress();
 
 #define video_getformat() (vd.mmap.format)
 
-int videox_getnorm(char *name);
-int videox_getfreq(char *name);
+int videox_getnorm(const char *name);
+int videox_getfreq(const char *name);
 
 #endif /* __VIDEO_H__ */

@@ -10,12 +10,14 @@ effectv \- real-time video effector
 [-freqtab FREQTAB]
 [-fullscreen]
 [-hardware]
+[-doublebuffer]
 [-fps]
-[-vloopback FILE]
 [-size WxH]
 [-geometry WxH]
 [-scale NUMBER]
 [-autoplay NUMBER]
+[-palette PALETTE]
+[-vloopback FILE]
 
 .SH DESCRIPTION
 EffecTV is a real-time video effector. You can enjoy movies, TV programs
@@ -54,9 +56,6 @@ Enable double buffering mode (if possible).
 .I \-fps
 Show frames/sec.
 .TP
-.I \-vloopback FILE
-Use device FILE for output of vloopback device.
-.TP
 .I \-size WxH
 Set the size of capturing image to WxH pixels. (default 320x240)
 .TP
@@ -69,6 +68,12 @@ NUMBER.
 .TP
 .I \-autoplay FRAMES
 Changes effects automatically every FRAMES.
+.TP
+.I \-palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
+Set the palette of capturing device. It is detected automatically by default.
+.TP
+.I \-vloopback FILE
+Use device FILE for output of vloopback device.
 
 .SH KEYS
 .TP
@@ -170,6 +175,9 @@ Ripple mark effect.
 .TP
 .I DiceTV
 A 'dicing' effect.
+.TP
+.I DizzyTV
+Alpha blending with zoomed and rotated images.
 
 .SH AUTHOR
 The core of EffecTV was developed by FUKUCHI Kentarou <fukuchi@users.sourceforge.net>.
