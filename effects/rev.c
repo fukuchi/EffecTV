@@ -27,7 +27,7 @@ int revStart();
 int revStop();
 int revDraw();
 
-int vgrabtime=2;
+int vgrabtime=1;
 int vgrab=0;
 int linespace=6;
 int vscale=50;

@@ -17,7 +17,7 @@ int rndmStart();
 int rndmStop();
 int rndmDraw();
 
-int rgrabtime=2;
+int rgrabtime=1;
 int rgrab=0;
 int rthecolor=0xffffffff;
 int rmode=1;
