@@ -8,7 +8,7 @@ LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
-          $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL)
+          $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR)
 UTILS = utils.o buffer.o yuv.o
 SUBDIRS =
 
@@ -37,7 +37,6 @@ DOT = dot.o
 MOSAIC = mosaic.o
 PUZZLE = puzzle.o
 PREDATOR = predator.o
-SPIRAL = spiral.o
 
 $(LIBEFFECTS): $(EFFECTS) $(UTILS)
 	ar rc $(LIBEFFECTS) $(EFFECTS) $(UTILS)

@@ -28,11 +28,17 @@ int sharedbuffer_init(int scale)
 		return 0;
 }
 
+/* The effects uses shared buffer must call this function at first in
+ * *Register()
+ */
 void sharedbuffer_reset()
 {
 	tail = 0;
 }
 
+/* Allocates size bytes memory in shared buffer and returns a pointer to the
+ * memory. NULL is returned when the rest memory is not enough for the request.
+ */
 unsigned char *sharedbuffer_alloc(int size)
 {
 	unsigned char *head;

@@ -20,4 +20,3 @@ extern effectRegistFunc dotRegister;
 extern effectRegistFunc mosaicRegister;
 extern effectRegistFunc puzzleRegister;
 extern effectRegistFunc predatorRegister;
-extern effectRegistFunc spiralRegister;
