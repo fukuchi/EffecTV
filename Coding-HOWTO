@@ -1,6 +1,8 @@
 How to Write New Effect
 =======================
 
+!!! EffecTV API has been improved and this HOWTO is now obsolete. !!!
+
 This documents describes how to program a new effect for EffecTV.
 
 Introduction
