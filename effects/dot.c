@@ -87,7 +87,7 @@ effect *dotRegister()
 
 int dotStart()
 {
-	SDL_FillRect(screen, NULL, 0);
+	screen_clear(0);
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_GREY))
 		return -1;

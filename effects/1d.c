@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../EffecTV.h"
+#include "utils.h"
 
 int onedStart();
 int onedStop();
@@ -19,33 +20,40 @@ static int format;
 static int linelength;
 static int lines;
 static int line;
+static int prevline;
+static unsigned char *linebuf;
 
 effect *onedRegister()
 {
 	effect *entry;
 
+	linelength = SCREEN_WIDTH*4*scale;
+	lines = SCREEN_HEIGHT*scale;
+
+	sharedbuffer_reset();
+	linebuf = (unsigned char *)sharedbuffer_alloc(linelength);
+	if(linebuf == NULL)
+		return NULL;
+
 	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) return NULL;
+	if(entry == NULL)
+		return NULL;
 	
 	entry->name = effectname;
 	entry->start = onedStart;
 	entry->stop = onedStop;
 	entry->draw = onedDraw;
 	entry->event = NULL;
-	if(scale == 2) {
-		linelength = SCREEN_WIDTH*2*4;
-		lines = SCREEN_HEIGHT*2;
-	} else {
-		linelength = SCREEN_WIDTH*4;
-		lines = SCREEN_HEIGHT;
-	}
 
 	return entry;
 }
 
 int onedStart()
 {
+	screen_clear(0);
+	bzero(linebuf, linelength);
 	line = 0;
+	prevline = 0;
 	format = video_getformat();
 	video_setformat(VIDEO_PALETTE_RGB32);
 	if(scale == 2){
@@ -81,8 +89,16 @@ int onedDraw()
 		}
 	}
 	src = (unsigned int *)(video_getaddress()+line*linelength);
+	if(doublebuf) {
+		dest = (unsigned int *)(screen_getaddress()+prevline*linelength);
+		bcopy(linebuf, dest, linelength);
+	}
 	dest = (unsigned int *)(screen_getaddress()+line*linelength);
 	bcopy(src, dest, linelength);
+	if(doublebuf) {
+		bcopy(src, linebuf, linelength);
+		prevline = line;
+	}
 	line++;
 	if(line >= lines)
 		line = 0;

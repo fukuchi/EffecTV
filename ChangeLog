@@ -1,3 +1,18 @@
+2001/02/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* REAME is renamed to README. (ashamed)
+	* New flags is added: fullscreen, doublebuf, hwsurface.
+	  Especially, doublebuf is important for effects coders.
+	* New function screen_clear() is added.
+	* effects/1d.c, dot.c, fire.c, predator.c;
+	  Bugs on doublebuffering mode have been fixed.
+	* Changed version to 0.1.4
+	* Fixed the bug that wrong message "Fullscreen mode is not supported."
+	  had been shown even when fullscreen option was not set.
+
+2001/02/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
+	* array phasetable[] is eliminated from quark.c. That was completely
+	  meaningless.
+
 2001/02/18	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* New function videox_getnorm() in video.c
 	* New options "-norm" is added.

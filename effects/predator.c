@@ -34,17 +34,11 @@ static unsigned int trunc(int v)
 
 static int setBackground()
 {
-	int i, x, y;
+	int i, v, x, y;
 	unsigned int *src;
 	unsigned int *dest;
-	SDL_Rect rect;
 
-	rect.w = SCREEN_WIDTH*scale;
-	rect.h = SCREEN_HEIGHT*scale;
-	rect.x = 0;
-	rect.y = 0;
-	SDL_FillRect(screen, &rect, 0);
-	screen_update();
+	screen_clear(0);
 	dest = (unsigned int *)bgvalue;
 
 	video_grabstop();
@@ -60,7 +54,7 @@ static int setBackground()
 	src = (unsigned int *)video_getaddress();
 	bcopy(src, bgimage, SCREEN_WIDTH*SCREEN_HEIGHT*4);
 	video_grabframe();
-/* step 2: add frame-2 to frame-1 */
+/* step 2: add frame-2 to buffer-1 */
 	video_syncframe();
 	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
 		bgimage[i] = (src[i]&bgimage[i])+(((src[i]^bgimage[i])&0xfefefe)>>1);
@@ -71,13 +65,13 @@ static int setBackground()
 	src = (unsigned int *)video_getaddress();
 	bcopy(src, dest, SCREEN_WIDTH*SCREEN_HEIGHT*4);
 	video_grabframe();
-/* step 4: add frame-4 to frame-3 */
+/* step 4: add frame-4 to buffer-2 */
 	video_syncframe();
 	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
 		dest[i] = (src[i]&dest[i])+(((src[i]^dest[i])&0xfefefe)>>1);
 	}
 	video_grabframe();
-/* step 5: add frame-3 to frame-1 */
+/* step 5: add buffer-3 to buffer-1 */
 	for(i=0; i<SCREEN_WIDTH*SCREEN_HEIGHT; i++) {
 		bgimage[i] = (bgimage[i]&dest[i])+(((bgimage[i]^dest[i])&0xfefefe)>>1);
 		bgvalue[i] = RGBtoY(bgimage[i]);
@@ -89,24 +83,32 @@ static int setBackground()
 	if(video_grabstart())
 		return -1;
 
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
-	}
-	dest = (unsigned int *)screen_getaddress();
-	if(scale == 2) {
-		for(y=0; y<SCREEN_HEIGHT; y++) {
-			for(x=0; x<SCREEN_WIDTH; x++) {
-				i = bgimage[y*SCREEN_WIDTH+x];
-				dest[y*2*SCREEN_WIDTH*2+x*2] = i;
-				dest[y*2*SCREEN_WIDTH*2+x*2+1] = i;
-				dest[(y*2+1)*SCREEN_WIDTH*2+x*2] = i;
-				dest[(y*2+1)*SCREEN_WIDTH*2+x*2+1] = i;
+	for(i=0; i<2; i++) {
+		if(screen_mustlock()) {
+			if(screen_lock() < 0) {
+				return 0;
 			}
 		}
-	} else {
-		bcopy(bgimage, dest, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+		dest = (unsigned int *)screen_getaddress();
+		if(scale == 2) {
+			for(y=0; y<SCREEN_HEIGHT; y++) {
+				for(x=0; x<SCREEN_WIDTH; x++) {
+					v = bgimage[y*SCREEN_WIDTH+x];
+					dest[y*2*SCREEN_WIDTH*2+x*2] = v;
+					dest[y*2*SCREEN_WIDTH*2+x*2+1] = v;
+					dest[(y*2+1)*SCREEN_WIDTH*2+x*2] = v;
+					dest[(y*2+1)*SCREEN_WIDTH*2+x*2+1] = v;
+				}
+			}
+		} else {
+			bcopy(bgimage, dest, SCREEN_WIDTH*SCREEN_HEIGHT*4);
+		}
+		if(screen_mustlock()) {
+			screen_unlock();
+		}
+		screen_update();
+		if(doublebuf == 0)
+			break;
 	}
 
 	return 0;

@@ -4,6 +4,8 @@
  *
  * puzzle.c: separates into blocks and scrambles them. The user can move blocks.
  *
+ * The origin of PuzzleTV is ``Video Puzzle'' by Suutarou in 1993.
+ * It runs on Fujitsu FM-TOWNS.
  */
 
 #include <stdlib.h>

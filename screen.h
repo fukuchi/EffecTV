@@ -17,6 +17,7 @@ int screen_init(int flags, int scale);
 void screen_quit();
 int screen_bpp();
 void screen_setcaption(const char *str);
+void screen_clear(int color);
 
 #define screen_getaddress() (screen->pixels)
 #define screen_update() (SDL_Flip(screen))

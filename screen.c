@@ -40,13 +40,16 @@ int screen_init(int flags, int scale)
 		return -1;
 	}
 	if(screen->flags != flags) {
-		if((flags ^ screen->flags) & SDL_HWSURFACE) {
+		if(hwsurface && !(screen->flags & SDL_HWSURFACE)) {
+			hwsurface = 0;
 			fprintf(stderr, "Hardware surface is not supported.\n");
 		}
-		if((flags ^ screen->flags) & SDL_FULLSCREEN) {
+		if(fullscreen && !(screen->flags & SDL_FULLSCREEN)) {
+			fullscreen = 0;
 			fprintf(stderr, "Fullscreen mode is not supported.\n");
 		}
-		if((flags ^ screen->flags) & SDL_DOUBLEBUF) {
+		if(doublebuf && !(screen->flags & SDL_DOUBLEBUF)) {
+			doublebuf = 0;
 			fprintf(stderr, "Double buffer mode is not supported.\n");
 		}
 	}
@@ -75,5 +78,15 @@ void screen_setcaption(const char *str)
 {
 	if(videoinfo->wm_available) {
 		SDL_WM_SetCaption(str, NULL);
+	}
+}
+
+void screen_clear(int color)
+{
+	SDL_FillRect(screen, NULL, color);
+	screen_update();
+	if(doublebuf) {
+		SDL_FillRect(screen, NULL, color);
+		screen_update();
 	}
 }

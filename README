@@ -1,4 +1,4 @@
-EffecTV 0.1.3
+EffecTV 0.1.4
 
 GENERAL INFORMATION
 ===================
@@ -9,13 +9,19 @@ INSTALL
 
 Requirements
 ------------
+Currently, EffecTV highly depends on Intel architecture. It may not
+work on any other platform.
+
 Video capture card supported by video4linux is required.
 
 EffecTV requires SDL library, available from http://www.libsdl.org/.
+
 EffecTV uses video4linux. Your kernel should be configured with 
 CONFIG_VIDEO_DEV and enable drivers for your video capture card.
+
 Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.strusel007.de/linux/bttv/.
+
 NASM is required to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
 ftp://ftp.kernel.org/pub/software/devel/nasm/
@@ -55,28 +61,28 @@ Escape		Quit
 
 Summary of effects
 ------------------
-1DTV
-	Grabs a horizontal line from video every 1/30 sec.
-BaltanTV
-	Makes 8 afterimages.
-RadioacTV
-	Brightens moving objects and blurs it.
-BurningTV
-	Burns incoming objects.
-DotTV
-	Converts the picture into a set of dots.
-FireTV
-	Clips incoming obects and burns it.
-MosaicTV
-	Censors incoming objects.
-PredatorTV
-	Makes incoming objects invisible.
-PuzzleTV
-	Scrambles the picture.
 QuarkTV
 	Disolves movin objects.
+FireTV
+	Clips incoming obects and burns it.
+BurningTV
+	Burns incoming objects.
+RadioacTV
+	Brightens moving objects and blurs it.
+BaltanTV
+	Makes 8 afterimages.
 StreakTV
 	Makes afterimages longer.
+1DTV
+	Grabs a horizontal line from video every 1/30 sec.
+DotTV
+	Converts the picture into a set of dots.
+MosaicTV
+	Censors incoming objects.
+PuzzleTV
+	Scrambles the picture.
+PredatorTV
+	Makes incoming objects invisible.
 
 CONTACT
 =======
@@ -104,8 +110,7 @@ The message send to this address is delivered to EffecTV crews.
 
 LICENSING INFORMATION
 =====================
-EffecTV is a free software. Currently, we release this product under the terms
-of the GPL.
+EffecTV is a free software. We release this product under the terms of the GPL.
 
 ---
 FUKUCHI kentarou

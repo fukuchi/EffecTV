@@ -104,7 +104,7 @@ effect *fireRegister()
 int fireStart()
 {
 	bzero(buffer, SCREEN_WIDTH*SCREEN_HEIGHT);
-	SDL_FillRect(screen, NULL, 0);
+	screen_clear(0);
 	format = video_getformat();
 	if(video_setformat(VIDEO_PALETTE_GREY) < 0)
 		return -1;

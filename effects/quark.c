@@ -24,16 +24,13 @@ static unsigned int *buffer;
 static unsigned int *planetable[PLANES];
 static int plane;
 static int format;
-static int phasetable[256];
 
 effect *quarkRegister()
 {
 	effect *entry;
-	int i;
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
-		free(buffer);
 		return NULL;
 	}
 	
@@ -45,10 +42,6 @@ effect *quarkRegister()
 	else
 		entry->draw = quarkDraw;
 	entry->event = NULL;
-
-	for(i=0;i<256;i++) {
-		phasetable[i] = i%PLANES;
-	}
 
 	return entry;
 }
@@ -109,11 +102,8 @@ int quarkDraw()
 /* The reason why I use high order 8 bits is written in utils.c
    (or, do 'man rand') */
 
-		cf = (plane + phasetable[fastrand()>>24])&(PLANES-1);
+		cf = (plane + (fastrand()>>24))&(PLANES-1);
 
-/* Try to uncomment the following line and see the effect.
-   Tuning phasetable is very interesting. */
-/*		cf = (plane + phasetable[i&255])&(PLANES-1);*/
 		dest[i] = (planetable[cf])[i];
 	}
 	if(screen_mustlock()) {
@@ -148,7 +138,7 @@ int quarkDrawDouble()
 	i=0;
 	for(y=0; y<SCREEN_HEIGHT; y++) {
 		for(x=0; x<SCREEN_WIDTH*2; x+=2) {
-			cf = (plane + phasetable[fastrand()>>24])&(PLANES-1);
+			cf = (plane + (fastrand()>>24))&(PLANES-1);
 			dest[x] = (planetable[cf])[i];
 			dest[x+1] = (planetable[cf])[i];
 			dest[x+SCREEN_WIDTH*2] = (planetable[cf])[i];

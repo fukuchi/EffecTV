@@ -15,8 +15,8 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 1
-#define VERSION_PATCH 3
-#define VERSION_STRING "0.1.3"
+#define VERSION_PATCH 4
+#define VERSION_STRING "0.1.4"
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -37,6 +37,9 @@ typedef struct _effect
 
 typedef effect *effectRegistFunc(void);
 
-extern int scale;
+extern int scale;		/* screen scale */
+extern int doublebuf;	/* flag for doublebuffering */
+extern int fullscreen;	/* flag for fullscreen mode */
+extern int hwsurface;	/* flag for hardware surface */
 
 #endif /* __EFFECTV_H__ */

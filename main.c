@@ -20,6 +20,9 @@
 
 int debug = 0;
 int scale = 1;
+int doublebuf = 0;
+int hwsurface = 0;
+int fullscreen = 0;
 
 static effectRegistFunc *effects_register_list[] =
 {
@@ -55,19 +58,13 @@ static void usage()
 	printf("\tfullscreen\tenable fullscreen mode\n");
 	printf("\tdouble\t\tdoubling screen size\n");
 	printf("\thardware\tuse direct video memory(if possible)\n");
+	printf("\tdoublebuffer\tenable double buffering mode(if possible)\n");
 	printf("\tfps\t\tshow frames/sec\n");
 }
 
 static void drawErrorPattern()
 {
-	SDL_Rect rect;
-
-	rect.w = SCREEN_WIDTH*scale;
-	rect.h = SCREEN_HEIGHT*scale;
-	rect.x = 0;
-	rect.y = 0;
-	SDL_FillRect(screen, &rect, 0xff0000);
-	screen_update();
+	screen_clear(0xff0000);
 }
 
 static int registEffects()
@@ -216,10 +213,13 @@ int main(int argc, char **argv)
 				exit(1);
 			}
 		} else if(strncmp(option, "hardware", 8) == 0) {
+			hwsurface = 1;
 			screen_flags |= SDL_HWSURFACE;
 		} else if(strncmp(option, "fullscreen", 4) == 0) {
+			fullscreen = 1;
 			screen_flags |= SDL_FULLSCREEN;
 		} else if(strncmp(option, "doublebuffer", 9) == 0) {
+			doublebuf = 1;
 			screen_flags |= SDL_DOUBLEBUF;
 		} else if(strncmp(option, "double", 6) == 0) {
 			scale = 2;
