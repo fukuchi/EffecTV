@@ -37,6 +37,10 @@ static int px[POINT_MAX];
 static int py[POINT_MAX];
 static int pp[POINT_MAX];
 
+#define SPARK_BLUE 0x80
+#define SPARK_CYAN 0x6080
+#define SPARK_WHITE 0x808080
+
 static int shortvec_length2(struct shortvec sv)
 {
 	int dx, dy;
@@ -51,18 +55,33 @@ static void draw_sparkline_dx
 (int x, int y, int dx, int dy, RGB32 *dest, int width, int height)
 {
 	int t, i, ady;
+	RGB32 a, b;
 	RGB32 *p;
 
 	p = &dest[y*width+x];
 	t = dx;
 	ady = abs(dy);
-	for(i=0; i<=dx; i++) {
+	for(i=0; i<dx; i++) {
 		if(y>2 && y<height-2) {
-			*(p-width*2) = 0xff;
-			*(p-width) = 0x8fff;
-			*p = 0xffffff;
-			*(p+width) = 0x8fff;
-			*(p+width*2) = 0xff;
+			a = (*(p-width*2) & 0xfffeff) + SPARK_BLUE;
+			b = a & 0x100;
+			*(p-width*2) = a | (b - (b >> 8));
+
+			a = (*(p-width) & 0xfefeff) + SPARK_CYAN;
+			b = a & 0x10100;
+			*(p-width) = a | (b - (b >> 8));
+
+			a = (*p & 0xfefeff) + SPARK_WHITE;
+			b = a & 0x1010100;
+			*p = a | (b - (b >> 8));
+
+			a = (*(p+width) & 0xfefeff) + SPARK_CYAN;
+			b = a & 0x10100;
+			*(p+width) = a | (b - (b >> 8));
+
+			a = (*(p+width*2) & 0xfffeff) + SPARK_BLUE;
+			b = a & 0x100;
+			*(p+width*2) = a | (b - (b >> 8));
 		}
 		p++;
 		t -= ady;
@@ -83,18 +102,33 @@ static void draw_sparkline_dy
 (int x, int y, int dx, int dy, RGB32 *dest, int width, int height)
 {
 	int t, i, adx;
+	RGB32 a, b;
 	RGB32 *p;
 
 	p = &dest[y*width+x];
 	t = dy;
 	adx = abs(dx);
-	for(i=0; i<=dy; i++) {
+	for(i=0; i<dy; i++) {
 		if(x>2 && x<width-2) {
-			*(p-2) = 0xff;
-			*(p-1) = 0x8fff;
-			*p = 0xffffff;
-			*(p+1) = 0x8fff;
-			*(p+2) = 0xff;
+			a = (*(p-2) & 0xfffeff) + SPARK_BLUE;
+			b = a & 0x100;
+			*(p-2) = a | (b - (b >> 8));
+
+			a = (*(p-1) & 0xfefeff) + SPARK_CYAN;
+			b = a & 0x10100;
+			*(p-1) = a | (b - (b >> 8));
+
+			a = (*p & 0xfefeff) + SPARK_WHITE;
+			b = a & 0x1010100;
+			*p = a | (b - (b >> 8));
+
+			a = (*(p+1) & 0xfefeff) + SPARK_CYAN;
+			b = a & 0x10100;
+			*(p+1) = a | (b - (b >> 8));
+
+			a = (*(p+2) & 0xfffeff) + SPARK_BLUE;
+			b = a & 0x100;
+			*(p+2) = a | (b - (b >> 8));
 		}
 		p += width;
 		t -= adx;

@@ -215,12 +215,11 @@ static void convert_YUV422toRGB32
 		p[0] = clip[CLIP + gray + UtoB[u]];
 		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
 		p[2] = clip[CLIP + gray + VtoR[v]];
-		p += 4;
 		gray = YtoRGB[src[2]];
-		p[0] = clip[CLIP + gray + UtoB[u]];
-		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
-		p[2] = clip[CLIP + gray + VtoR[v]];
-		p += 4;
+		p[4] = clip[CLIP + gray + UtoB[u]];
+		p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[6] = clip[CLIP + gray + VtoR[v]];
+		p += 8;
 		src += 4;
 	}
 }
@@ -236,24 +235,177 @@ static void convert_YUV422toRGB32_hflip
 	/* Images will be cluttered when 'width' is odd number. It is not so
 	 * difficult to adjust it, but it makes conversion little slow.. */
 	width &= 0xfffffffe;
-	p = (unsigned char *)dest + (width - 1) * 4;
+	p = (unsigned char *)(dest + width - 2);
 	for(y=0; y<height; y++) {
 		for(x=0; x<width; x++) {
 			u = src[1];
 			v = src[3];
 			gray = YtoRGB[src[0]];
-			p[0] = clip[CLIP + gray + UtoB[u]];
-			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
-			p[2] = clip[CLIP + gray + VtoR[v]];
-			p -= 4;
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
 			gray = YtoRGB[src[2]];
 			p[0] = clip[CLIP + gray + UtoB[u]];
 			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
 			p[2] = clip[CLIP + gray + VtoR[v]];
-			p -= 4;
+			p -= 8;
 			src += 4;
 		}
 		p += width * 4;
+	}
+}
+
+static void convert_YUV422PtoRGB32
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int i;
+	int length;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	length = height * (width / 2);
+	cu = src + width * height;
+	cv = cu + length;
+	p = (unsigned char *)dest;
+
+	for(i=0; i<length; i++) {
+		gray = YtoRGB[src[0]];
+		u = *cu;
+		v = *cv;
+		p[0] = clip[CLIP + gray + UtoB[u]];
+		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[2] = clip[CLIP + gray + VtoR[v]];
+		gray = YtoRGB[src[1]];
+		p[4] = clip[CLIP + gray + UtoB[u]];
+		p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[6] = clip[CLIP + gray + VtoR[v]];
+		p += 8;
+		src += 2;
+		cu++;
+		cv++;
+	}
+}
+
+static void convert_YUV422PtoRGB32_hflip
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+	int hwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	hwidth = width / 2;
+	cu = src + width * height;
+	cv = cu + width * height / 2;
+	p = (unsigned char *)(dest + hwidth * 2 - 2);
+
+	for(y=0; y<height; y++) {
+		for(x=0; x<hwidth; x++) {
+			gray = YtoRGB[src[0]];
+			u = *cu;
+			v = *cv;
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 8;
+			src += 2;
+			cu++;
+			cv++;
+		}
+		p += (width + hwidth * 2) * PIXEL_SIZE;
+	}
+}
+
+static void convert_YUV411PtoRGB32
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int i;
+	int length;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	length = height * (width / 4);
+	cu = src + width * height;
+	cv = cu + length;
+	p = (unsigned char *)dest;
+
+	for(i=0; i<length; i++) {
+		u = *cu;
+		v = *cv;
+		gray = YtoRGB[src[0]];
+		p[0] = clip[CLIP + gray + UtoB[u]];
+		p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[2] = clip[CLIP + gray + VtoR[v]];
+		gray = YtoRGB[src[1]];
+		p[4] = clip[CLIP + gray + UtoB[u]];
+		p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[6] = clip[CLIP + gray + VtoR[v]];
+		gray = YtoRGB[src[2]];
+		p[8] = clip[CLIP + gray + UtoB[u]];
+		p[9] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[10] = clip[CLIP + gray + VtoR[v]];
+		gray = YtoRGB[src[3]];
+		p[12] = clip[CLIP + gray + UtoB[u]];
+		p[13] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+		p[14] = clip[CLIP + gray + VtoR[v]];
+		p += 16;
+		src += 4;
+		cu++;
+		cv++;
+	}
+}
+
+static void convert_YUV411PtoRGB32_hflip
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+	int qwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	qwidth = width / 4;
+	cu = src + width * height;
+	cv = cu + width * height / 4;
+	p = (unsigned char *)(dest + qwidth * 4 - 4);
+
+	for(y=0; y<height; y++) {
+		for(x=0; x<qwidth; x++) {
+			u = *cu;
+			v = *cv;
+			gray = YtoRGB[src[0]];
+			p[12] = clip[CLIP + gray + UtoB[u]];
+			p[13] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[14] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[1]];
+			p[8] = clip[CLIP + gray + UtoB[u]];
+			p[9] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[10] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[2]];
+			p[4] = clip[CLIP + gray + UtoB[u]];
+			p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[6] = clip[CLIP + gray + VtoR[v]];
+			gray = YtoRGB[src[3]];
+			p[0] = clip[CLIP + gray + UtoB[u]];
+			p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+			p[2] = clip[CLIP + gray + VtoR[v]];
+			p -= 16;
+			src += 4;
+			cu++;
+			cv++;
+		}
+		p += (width + qwidth * 4) * PIXEL_SIZE;
 	}
 }
 
@@ -357,12 +509,106 @@ static void convert_YUV420PtoRGB32_hflip
 	}
 }
 
+static void convert_YUV410PtoRGB32
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y, i;
+	int qwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	qwidth = width / 4;
+	cu = src + width * height;
+	cv = cu + width * height / 16;
+	p = (unsigned char *)dest;
+
+	for(y=0; y<height/4; y++) {
+		for(i=0; i<4; i++) {
+			for(x=0; x<qwidth; x++) {
+				u = cu[x];
+				v = cv[x];
+				gray = YtoRGB[src[0]];
+				p[0] = clip[CLIP + gray + UtoB[u]];
+				p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[2] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[1]];
+				p[4] = clip[CLIP + gray + UtoB[u]];
+				p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[6] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[2]];
+				p[8] = clip[CLIP + gray + UtoB[u]];
+				p[9] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[10] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[3]];
+				p[12] = clip[CLIP + gray + UtoB[u]];
+				p[13] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[14] = clip[CLIP + gray + VtoR[v]];
+				p += 16;
+				src += 4;
+			}
+		}
+		cu += qwidth;
+		cv += qwidth;
+	}
+}
+
+static void convert_YUV410PtoRGB32_hflip
+(unsigned char *src, RGB32 *dest, int width, int height)
+{
+	int x, y, i;
+	int qwidth;
+	unsigned int gray;
+	unsigned char *cu, *cv;
+	unsigned int u, v;
+	unsigned char *p;
+
+	qwidth = width / 4;
+	cu = src + width * height;
+	cv = cu + width * height / 16;
+	p = (unsigned char *)(dest + qwidth * 4 - 4);
+
+	for(y=0; y<height/4; y++) {
+		for(i=0; i<4; i++) {
+			for(x=0; x<qwidth; x++) {
+				u = cu[x];
+				v = cv[x];
+				gray = YtoRGB[src[0]];
+				p[12] = clip[CLIP + gray + UtoB[u]];
+				p[13] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[14] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[1]];
+				p[8] = clip[CLIP + gray + UtoB[u]];
+				p[9] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[10] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[2]];
+				p[4] = clip[CLIP + gray + UtoB[u]];
+				p[5] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[6] = clip[CLIP + gray + VtoR[v]];
+				gray = YtoRGB[src[3]];
+				p[0] = clip[CLIP + gray + UtoB[u]];
+				p[1] = clip[CLIP + gray + UtoG[u] + VtoG[v]];
+				p[2] = clip[CLIP + gray + VtoR[v]];
+				p -= 16;
+				src += 4;
+			}
+			p += (width + qwidth * 4) * PIXEL_SIZE;
+		}
+		cu += qwidth;
+		cv += qwidth;
+	}
+}
+
 static const struct palette_converter_toRGB32_map converter_toRGB32_list[] = {
 	{VIDEO_PALETTE_RGB24,   convert_RGB24toRGB32,   convert_RGB24toRGB32_hflip},
 	{VIDEO_PALETTE_RGB565,  convert_RGB565toRGB32,  convert_RGB565toRGB32_hflip},
 	{VIDEO_PALETTE_RGB555,  convert_RGB555toRGB32,  convert_RGB555toRGB32_hflip},
 	{VIDEO_PALETTE_YUV422,  convert_YUV422toRGB32,  convert_YUV422toRGB32_hflip},
+	{VIDEO_PALETTE_YUV422P, convert_YUV422PtoRGB32, convert_YUV422PtoRGB32_hflip},
 	{VIDEO_PALETTE_YUV420P, convert_YUV420PtoRGB32, convert_YUV420PtoRGB32_hflip},
+	{VIDEO_PALETTE_YUV411P, convert_YUV411PtoRGB32, convert_YUV411PtoRGB32_hflip},
+	{VIDEO_PALETTE_YUV410P, convert_YUV410PtoRGB32, convert_YUV410PtoRGB32_hflip},
 	{VIDEO_PALETTE_GREY  , convert_GREYtoRGB32, convert_GREYtoRGB32_hflip},
 	{-1, NULL, NULL}
 };

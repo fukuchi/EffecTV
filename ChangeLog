@@ -1,5 +1,9 @@
+2001/09/09	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* palette.c: YUV422P,YUV411P,YUV410P format support were added.
+	* effects/spark.c: Visual of sparks was enhanced.
+
 2001/09/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* tools/palettecheck.c: bug fixes.
+	* tools/palettecheck.c: bug fixes. Thanks to Frederic Logier.
 
 2001/09/04	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* tools/{Makefile,README,palettecheck.c}: Added a capability checking tool.
