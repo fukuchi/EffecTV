@@ -73,7 +73,7 @@ effectv [options...]
 Options
 -------
 -device FILE
-	Use device FILE for video4linux (default is /dev/video).
+	Use device FILE for video4linux (default is /dev/video0).
 
 -channel NUMBER
 	Set channel number of video source (default is 0).
