@@ -1,5 +1,14 @@
 # Makefile for EffecTV
 
+prefix = /usr/local
+exec_prefix = ${prefix}
+
+bindir = ${exec_prefix}/bin
+mandir = ${prefix}/man
+man1dir = ${mandir}/man1
+
+INSTALL = /usr/bin/install -c
+
 CONFIG = -DVLOOPBACK
 
 CC = gcc
@@ -32,6 +41,10 @@ $(PROGRAM): $(OBJS) $(LIBEFFECTS) v4lutils/libv4lutils.a
 	$(CC) -o $@ $(OBJS) $(LIBEFFECTS) $(LIBS)
 
 $(OBJS): EffecTV.h screen.h video.h palette.h frequencies.h vloopback.h
+
+install: all-am
+	$(INSTALL) -s $(PROGRAM) $(bindir)
+	$(INSTALL) effectv.1 $(man1dir)
 
 clean:
 	rm -f *.o $(PROGRAM)
