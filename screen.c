@@ -215,10 +215,8 @@ int screen_update()
 	int j;
 	unsigned char *src, *dest;
 	
-	if(screen_mustlock()) {
-		if(screen_lock() < 0) {
-			return 0;
-		}
+	if(screen_lock() < 0) {
+		return 0;
 	}
 	src = bgr_buf;
 	dest = (unsigned char *)screen->pixels;
@@ -228,10 +226,9 @@ int screen_update()
 		dest[i*4+1] = src[i*4+1];
 		dest[i*4+2] = src[i*4];
 	}
-	if(screen_mustlock()) {
-		screen_unlock();
-	}
+	screen_unlock();
 	SDL_Flip(screen);
+
 	return 0;
 }
 

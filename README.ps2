@@ -10,21 +10,31 @@ works but is little buggy.
 
 Install
 =======
+Requirements
+------------
+SDL(1.2.1 or later) is required to install EffecTV package. RPM package of SDL
+for PS2 can be found at:
+
+http://www.libsdl.org/download-1.2.php
+
 ov511 device driver
 -------------------
+Before compiling external device drivers, you must install the kernel source to
+your PS2. The RPM package of kernel source is included in PS2 Linux DVD.
+
 If you want to use ov511 based USB camera, you need to download a new driver
 from:
 
-http://alpha.dyndns.org/ov511/download/ov511-1.63.tar.gz
+http://alpha.dyndns.org/ov511/download.html
 
-Extract it and apply a patch attached to the end of this document. You can
-apply the patch by following command.
+Download version 1.65 or later, then extract it and apply a patch attached to
+the end of this document. You can apply the patch by following command.
 
 $ patch -p1 < README.ps2
 
 Then make a module. Please note that CONFIG_VIDEO_DEV must be enabled. You need
 make decompression module(ov511_decomp.o) if you want compression support.
-Please read README of ov511 driver.
+Please read README file of ov511 driver.
 
 If you have another USB devices and does not work on PS2 Linux even if it is
 supported by 2.2.1, you may want to try the latest driver. It may not work
@@ -41,10 +51,8 @@ Edit line 15 to 17 of 'config.mk' and set "ARCH = ps2-linux" like following.
 ## Linux for PlayStation2
 ARCH = ps2-linux
 
-Then make it. You need SDL(1.2.1 or later). Please read documents of EffecTV.
-The RPM package of SDL for PS2 can be found at:
-
-http://playstation2-linux.com/projects/libsdl
+Then make it. Note that you need to install devel package of SDL to compile
+EffecTV. 
 
 Launch
 ======
@@ -62,9 +70,9 @@ EmotionEngine.
 Patch
 =====
 ----------from here----------
-diff -ru ov511-1.63.orig/Makefile ov511-1.63/Makefile
---- ov511-1.63.orig/Makefile	Tue Jul 30 19:19:15 2002
-+++ ov511-1.63/Makefile	Sun Sep 29 23:36:59 2002
+diff -ru ov511-1.65.orig/Makefile ov511-1.65/Makefile
+--- ov511-1.65.orig/Makefile	2003-02-25 17:03:29.000000000 +0900
++++ ov511-1.65/Makefile	2003-12-31 02:45:47.000000000 +0900
 @@ -1,9 +1,10 @@
  #################################### OPTIONS ##################################
  # Change this to /usr/include if you get header file errors
@@ -72,16 +80,16 @@ diff -ru ov511-1.63.orig/Makefile ov511-1.63/Makefile
 +INCLUDEDIR = /usr/src/linux/include
  
  CFLAGS = -D__KERNEL__ -DMODULE -DOUTSIDE_KERNEL -O2 -Wall -Wstrict-prototypes \
--	-fomit-frame-pointer -I$(INCLUDEDIR) 
+-	-fomit-frame-pointer -I$(INCLUDEDIR)
 +	-fomit-frame-pointer -I$(INCLUDEDIR) -G 0 -mno-abicalls -fno-pic \
 +	-mcpu=r5900 -mips1 -pipe -mlong-calls -DEXPORT_SYMTAB
  
  CC = gcc
  
-diff -ru ov511-1.63.orig/ov511.c ov511-1.63/ov511.c
---- ov511-1.63.orig/ov511.c	Sat Aug 24 18:59:26 2002
-+++ ov511-1.63/ov511.c	Sun Sep 29 23:36:59 2002
-@@ -143,6 +143,20 @@
+diff -ru ov511-1.65.orig/ov511.c ov511-1.65/ov511.c
+--- ov511-1.65.orig/ov511.c	2003-03-09 18:48:20.000000000 +0900
++++ ov511-1.65/ov511.c	2003-12-31 02:46:06.000000000 +0900
+@@ -142,6 +142,20 @@
  
  #define FATAL_ERROR(rc) ((rc) < 0 && (rc) != -EPERM)
  
@@ -102,7 +110,7 @@ diff -ru ov511-1.63.orig/ov511.c ov511-1.63/ov511.c
  /**********************************************************************
   * Module Parameters
   * (See ov511.txt for detailed descriptions of these)
-@@ -491,6 +505,11 @@
+@@ -471,6 +485,11 @@
  }
  
  #else	/* if LINUX_VERSION_CODE <= KERNEL_VERSION(2, 4, 18) */
@@ -114,9 +122,9 @@ diff -ru ov511-1.63.orig/ov511.c ov511-1.63/ov511.c
  
  /* Given PGD from the address space's page table, return the kernel
   * virtual mapping of the physical memory mapped at ADR.
-diff -ru ov511-1.63.orig/ov511.h ov511-1.63/ov511.h
---- ov511-1.63.orig/ov511.h	Sat Aug 24 18:45:45 2002
-+++ ov511-1.63/ov511.h	Sun Sep 29 23:36:59 2002
+diff -ru ov511-1.65.orig/ov511.h ov511-1.65/ov511.h
+--- ov511-1.65.orig/ov511.h	2003-03-06 17:14:00.000000000 +0900
++++ ov511-1.65/ov511.h	2003-12-31 02:46:06.000000000 +0900
 @@ -6,6 +6,8 @@
  #include <linux/smp_lock.h>
  #include <linux/usb.h>
