@@ -1,3 +1,5 @@
+2001/09/21	Buddy Smith	<nullset@users.sf.net>
+	* tools/ directory added to $SUBDIRS in Makefile
 2001/09/21	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/ripple.c: Rain drop function was enhanced. Some debug code was
 	  eliminated.

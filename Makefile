@@ -29,7 +29,7 @@ UTILS = utils.o yuv.o buffer.o image.o
 PROGRAM = effectv
 OBJS = main.o screen.o video.o frequencies.o palette.o $(UTILS) $(VLOOPBACKOBJS)
 LIBEFFECTS = effects/libeffects.a
-SUBDIRS = effects v4lutils
+SUBDIRS = effects v4lutils tools
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<
