@@ -12,7 +12,7 @@ Requirements
 ------------
 Currently, EffecTV highly depends upon the Intel architecture. It may not work
 on any other platform.
-EffecTV also works on Playstation2. Please read 'README.ps2'.
+EffecTV also works on PlayStation2. Please read 'README.ps2'.
 
 Video capture card or USB device supported by video4linux is required.
 
