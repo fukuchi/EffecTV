@@ -1,4 +1,4 @@
-This document describes how to use EffecTV on Playstation2 Linux (PS2 Linux)
+This document describes how to use EffecTV on PlayStation2 Linux (PS2 Linux)
 environment.
 
 Before Install
@@ -34,7 +34,7 @@ EffecTV
 Edit line 15 to 17 of 'config.mk' and set "ARCH = ps2-linux" like following.
 
 # ARCH = i686-linux
-## Linux for Playstation2
+## Linux for PlayStation2
 ARCH = ps2-linux
 
 Then make it. You need SDL(1.2.1 or later). Please read documents of EffecTV.

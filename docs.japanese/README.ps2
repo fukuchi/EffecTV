@@ -1,4 +1,4 @@
-この文書は、EffecTVをPlaystation2用Linuxで動かす方法をまとめたものです。
+この文書は、EffecTVをPlayStation2用Linuxで動かす方法をまとめたものです。
 
 インストールの前に
 ==================
@@ -35,7 +35,7 @@ EffecTV
 "config.mk"の15〜17行を編集し、
 
 # ARCH = i686-linux
-## Linux for Playstation2
+## Linux for PlayStation2
 ARCH = ps2-linux
 
 というように、"ARCH = ps2-linux"を有効にしてください。あとはmakeするだけです。

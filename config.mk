@@ -13,7 +13,7 @@ mandir = $(DESTDIR)${prefix}/man
 ## choose your architecture (only one)
 ## Linux for intel architecture
 ARCH = i686-linux
-## Linux for Playstation2
+## Linux for PlayStation2
 # ARCH = ps2-linux
 
 ### Multimedia extension code set
@@ -46,7 +46,7 @@ CONFIG.arch = -DI686
 CFLAGS.opt = -mpentiumpro -O3 -fomit-frame-pointer -funroll-loops
 endif
 
-## Playstaion2
+## PlayStaion2
 ifeq ($(ARCH), ps2-linux)
 CONFIG.arch = -DPS2
 CFLAGS.opt = -O3 -fomit-frame-pointer -funroll-loops
