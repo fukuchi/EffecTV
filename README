@@ -1,4 +1,4 @@
-EffecTV 0.1.5
+EffecTV 0.1.6
 
 GENERAL INFORMATION
 ===================
@@ -56,6 +56,9 @@ Options:
 	-device FILE     use device FILE for video4linux (default is /dev/video)
 	-channel NUMBER  channel number of video source (default is 0)
 	-norm {ntsc,pal,secam,ntsc-jp}	set video norm (default is ntsc)
+	-freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,
+			  europe-west,europe-east,italy,newzealand,australia,ireland,
+			  france,china-bcast}	set frequency table
 	-fullscreen      enable fullscreen mode
 	-double          doubling screen size
 	-hardware        use direct video memory(if possible)
@@ -64,6 +67,7 @@ Options:
 Key
 ---
 Up/Down		change effect.
+Right/Left	change TV channel.
 Space		capture a background image(for FireTV, BurningTV and PredatorTV).
 Escape		Quit
 
@@ -80,9 +84,9 @@ BurningTV
 	Burns incoming objects.
 RadioacTV
 	Brightens moving objects and blurs it.
-BaltanTV
-	Makes 8 afterimages.
 StreakTV
+	Makes 8 afterimages.
+BaltanTV
 	Makes afterimages longer.
 1DTV
 	Grabs a horizontal line from video every 1/30 sec.

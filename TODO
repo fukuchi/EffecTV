@@ -3,8 +3,8 @@ TODO list for EffecTV 0.1.x
 
 Bug
 ---
-* I only tested EffecTV on bttv(bt848 and bt878) and XFree86 3.3.6.
-  Please send a report when EffecTV runs or not at your environment.
+* I only tested EffecTV on bttv(bt848 and bt878) on Intel architecture. Please
+  send a report when EffecTV runs or not at your environment.
 * There may be many bugs in documents. I am not good at writing in English,
   so please revise them and tell me what is wrong. Your mail is great help
   for me who is learning English.

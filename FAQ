@@ -1,0 +1,87 @@
+FAQ
+===
+Last updated 2001/3/12 for release 0.1.5
+
+Contents
+--------
+Q1: I got a distorted/still/shrinked/gray scale image.
+Q2: TV seems to work fine, but how can I change to Composite1 or any other video
+    source?
+Q3: Some effects do not work.
+Q4: EffecTV is freezed.
+Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
+Q6: Why don't you port EffecTV to ANY-GREAT-OS?
+Q7: How can I capture the video output from EffecTV to harddisk?
+Q8: EffecTV is slow.
+
+----------
+Q1: I got a distorted/still/shrinked/gray scale image.
+
+A: Check the norm of the video source. The option "-norm" changes the norm
+setting of EffecTV. For example, when you have a video camera which employs
+PAL system, Try
+
+$ effectv -norm pal
+
+ntsc, pal, secam are supported by video4linux. pal-m, pal-n, pal-nc, ntsc-jp
+are supported by latest bttv driver.
+----------
+Q2: TV seems to work fine, but how can I change to Composite1 or any other video
+source?
+
+A: Try
+$ effectv -channel 1
+
+Typically, meaning of number is; 0=TV/1=Composite1/2=S-Video/3=Composite2.
+This depends on the implementation of the video capturing driver. Try several
+numbers to detect the right one.
+----------
+Q3: Some effects do not work.
+
+A: The driver for your video capturing device doesn't support some capturing
+mode used by them. Support for those system is underway.
+----------
+Q4: EffecTV is freezed.
+
+A: Bttv driver comes with linux-2.2.18 is broken. Try the latest bttv driver
+available at http://www.strusel007.de/linux/bttv/. You also need to apply i2c
+patch to linux kernel available at there.
+----------
+Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
+
+A: Malk Zumstrull reported as following;
+
+>I tested EffecTV with XFree86 4.0.2, Kernel 2.4.2 and bttv 0.7.57 (works 
+>well), but when I changed to bttv 0.8.10 it stopped working. I _did_ 
+>recompile it, so that can't be the problem - I think the problem is the 
+>changed videodev.h with bttv 0.8.10.
+
+>I have been playing around with the insmod options, and if you use "sloppy=1" 
+>(as recommended on the bttv homepage), which makes option checking less 
+>nitpicking, effectv 0.1.4 works just fine again.
+
+Thank you, Malk.
+----------
+Q6: Why don't you port EffecTV to ANY-GREAT-OS?
+
+A: I want to do that if I could. But,
+a) I have only linux machine and MS-Windows machine.
+b) I dislike programming on MS-Windows.
+
+I would like to encourage people who want to port EffecTV to any other
+environment; The whole CVS tree is now served at SourceFourge. If you have
+interests, see http://sourceforge.net/projects/effectv/. Please let me know
+when you start you porting project, then I will make a new branch. If you
+want to maintain the CVS tree directly, get an account at SourceForge and
+tell me your ID. I will add your ID to EffecTV developers group.
+----------
+Q7: How can I capture the video output from EffecTV to harddisk?
+
+A: Currently capturing to movie file is not supported.
+Porting effects to GStreamer(http://gstreamer.net/) is underway.
+----------
+Q8: EffecTV is slow.
+
+A: EffecTV uses 32 bits-per-pixel depth screen. When you launch EffecTV
+on any other depth screen, images are converted to that depth by SDL, and it
+makes little slow. If you use X11, try to run it in 32 bpp depth mode.
