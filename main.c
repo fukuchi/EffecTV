@@ -34,7 +34,7 @@
 #include "syserr.xbm"
 #include "palette.h"
 
-int debug = 1; /* 0 = off, 1 = less debug messages, 2 = more debug messages. */
+int debug = 0; /* 0 = off, 1 = less debug messages, 2 = more debug messages. */
 int autoplay = 0;
 int autoplay_counter;
 

@@ -1,3 +1,10 @@
+2001/10/14	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README, doc.japanese/README: Added a description of vloopback.
+
+2001/10/13	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* image.c: Changed the scale of increments from 8bit to 16bit in
+	  image_stretch().
+
 2001/10/12	FUKUCHI	Kentarou	<fukuchi@users.sf.net>
 	* effects/dizzy.c: DizzyTV is renamed to VertigoTV, after the masterpiece
 	  of Hitchcock.

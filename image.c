@@ -46,53 +46,23 @@ void image_stretching_buffer_clear(RGB32 color)
 void image_stretch(RGB32 *src, int src_width, int src_height,
                     RGB32 *dest, int dest_width, int dest_height)
 {
-#ifdef BRESENHAM
-/* This stretching function employs Bresenham's line scanning algorithm.
- * This algorithm is beautiful and results correct image, but little slow
- * because the inner loop has a conditional branch. */
-	int x, y;
-	int tx, ty;
-	RGB32 *p;
-
-	ty = dest_height;
-	for(y=0; y<dest_height; y++) {
-		tx = dest_width;
-		p = src;
-		for(x=0; x<dest_width; x++) {
-			*dest++ = *p;
-			tx -= src_width;
-			if(tx <= 0) {
-				tx += dest_width;
-				p++;
-			}
-		}
-		ty -= src_height;
-		if(ty <= 0) {
-			ty += dest_height;
-			src += src_width;
-		}
-	}
-#else
-/* Instead of above one, here is another algorithm that uses fixed decimal
- * point. */
 	int x, y;
 	int sx, sy;
 	int tx, ty;
 	RGB32 *p;
 
-	tx = src_width * 256 / dest_width;
-	ty = src_height * 256 / dest_height;
+	tx = src_width * 65536 / dest_width;
+	ty = src_height * 65536 / dest_height;
 	sy = 0;
 	for(y=0; y<dest_height; y++) {
-		p = src + (sy>>8) * src_width;
+		p = src + (sy>>16) * src_width;
 		sx = 0;
 		for(x=0; x<dest_width; x++) {
-			*dest++ = p[(sx>>8)];
+			*dest++ = p[(sx>>16)];
 			sx += tx;
 		}
 		sy += ty;
 	}
-#endif
 }
 
 static void image_stretch_to_screen_double()

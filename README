@@ -12,6 +12,7 @@ Requirements
 ------------
 Currently, EffecTV highly depends upon the Intel architecture. It may not work
 on any other platform.
+EffecTV also works on Playstation2. Please read 'README.ps2'.
 
 Video capture card or USB device supported by video4linux is required.
 
@@ -103,7 +104,8 @@ Options
 
 -geometry WxH
 	Set the size of screen. Usually "-scale" is a better way to change the
-	size of screen. This option is for special purpose to stretch the screen.
+	size of screen. This option is for special purpose to stretch the
+	screen.
 
 -scale NUMBER
 	Scaling the screen. "-scale 2" results 2x2 screen.
@@ -113,13 +115,13 @@ Options
 
 -palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
 	Set the palette of capturing device. By default, it is detected
-	automatically, so you need not to set this value. Some USB devices are very
-	slow when it is used in RGB mode. Try YUV series if you feel your USB
-	deivce is too slow.
+	automatically, so you need not to set this value. Some USB devices are
+	very slow when it is used in RGB mode. Try YUV series if you feel your
+	USB deivce is too slow.
 
 -vloopback FILE
-	Use device FILE for output of vloopback device. See "Recording/broadcasting
-	EffecTV" section.
+	Use device FILE for output of vloopback device.
+	See "Recording/broadcasting EffecTV" section.
 
 Key
 ---
@@ -189,10 +191,12 @@ DiceTV
 VertigoTV
 	Alpha blending with zoomed and rotated images.
 
-Recording/broadcasting EffecTV
-------------------------------
+Vloopback support - chaining/recording/broadcasting EffecTV
+-----------------------------------------------------------
 EffecTV has supported the use of a video loopback device since version 0.2.0.
-First, load the vloopback device driver module and verify the input/output
+First, install the vloopback module. If you want to install vloopback from
+source package, please read 'README.vloopback' and apply the patche included.
+Then, load the vloopback device driver module and verify the input/output
 device files for the video pipe (typically /dev/video1 and /dev/video2).
 Then, run EffecTV.
 
@@ -206,6 +210,11 @@ $ effectv -device /dev/video2
 For XawTv,
 
 $ xawtv -c /dev/video2
+
+You can use any recording tools or broadcasting tools that supports v4l device.
+Maximum size of the output images is same as size of the screen. When required
+size is smaller than the screen size, the output images are resized. Supported
+palettes (pixel format) of output images are RGB series and YUV422.
 
 CONTACT
 =======
