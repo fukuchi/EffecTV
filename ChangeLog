@@ -2,6 +2,7 @@
 	* Removed NemoTV.
 	* main.c, effects/rds.c: Added RandomDotStereoTV.
 	* changed version to 0.3.6.
+	* effects/{rndm.c,rev.c}: Changed the default value of grabtime to 1.
 
 	* EffecTV-0.3.6 has been released.
 
