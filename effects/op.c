@@ -5,7 +5,6 @@
  * OpTV - Optical art meets real-time video effect.
  * Copyright (C) 2004 FUKUCHI Kentaro
  *
- * TODO: How to anti-alias?
  */
 
 #include <stdlib.h>
@@ -24,6 +23,7 @@ static int stat;
 static unsigned char phase;
 static int mode = 0;
 static int speed = 16;
+static int speedInc = 0;
 #define OPMAP_MAX 4
 static char *opmap[OPMAP_MAX];
 #define OP_SPIRAL1  0
@@ -31,33 +31,68 @@ static char *opmap[OPMAP_MAX];
 #define OP_PARABOLA 2
 #define OP_HSTRIPE  3
 
+static RGB32 palette[256];
+
+static void initPalette()
+{
+	int i;
+	unsigned char v;
+
+	for(i=0; i<112; i++) {
+		palette[i] = 0;
+		palette[i+128] = 0xffffff;
+	}
+	for(i=0; i<16; i++) {
+		v = 16 * (i + 1) - 1;
+		palette[i+112] = (v<<16) | (v<<8) | v;
+		v = 255 - v;
+		palette[i+240] = (v<<16) | (v<<8) | v;
+	}
+}
+
 static void setOpmap()
 {
-	int i, j, k, x, y;
-	double xx, yy, r, at;
-	int sc; /* scale factor */
+	int i, j, x, y;
+#ifndef PS2
+	double xx, yy, r, at, rr;
+	double sc; /* scale factor */
+#else
+	float xx, yy, r, at, rr;
+	float sc; /* scale factor */
+#endif
+	int sci;
 
-	sc = video_width / 5; /* sc = 64 normally */
+#ifndef PS2
+	sc = 320.0 / (double)video_width; /* sc = 1.0 normally */
+#else
+	sc = 320.0 / (float)video_width;
+#endif
+	sci = sc * 2;
 	i = 0;
 	for(y=0; y<video_height; y++) {
 		yy = y - video_height/2;
 		for(x=0; x<video_width; x++) {
 			xx = x - video_width/2;
+#ifndef PS2
 			r = sqrt(xx * xx + yy * yy);
 			at = atan2(xx, yy);
+#else
+			r = sqrtf(xx * xx + yy * yy);
+			at = atan2f(xx, yy);
+#endif
 
 			opmap[OP_SPIRAL1][i] = ((unsigned int)
-				((at/M_PI*256) + (r*1024/sc)))&255;
+				((at / M_PI * 256) + (r* sc * 16))) & 255;
 
-			j = r;
-			k = j %32;
-			j = (j/32) * 48;
-			j += (k>28)?(k-28)*12:0;
+			j = r / 32;
+			rr = r - j * 32;
+			j *= 64;
+			j += (rr > 28) ? (rr - 28) * 16 : 0;
 			opmap[OP_SPIRAL2][i] = ((unsigned int)
-				((at/M_PI*4096) + (r*8) + j ))&255;
+				((at / M_PI * 4096) + (r * 8 * sc) - j )) & 255;
 
-			opmap[OP_PARABOLA][i] = ((unsigned int)(yy/(xx*xx*0.000004+0.1)*128/sc))&255;
-			opmap[OP_HSTRIPE][i] = (x%16)*16;
+			opmap[OP_PARABOLA][i] = ((unsigned int)(yy/(xx*xx*sc*0.000004+0.1)*1.5*sc))&255;
+			opmap[OP_HSTRIPE][i] = x*8*sci;
 			/* opmap[OP_RIPPLE][i] = ((unsigned int)-(sqrt(xx*xx+yy*yy)*16+sin(x*0.7+yy*0.3)*17)&255); */
 			i++;
 		}
@@ -76,6 +111,7 @@ effect *opRegister()
 		}
 	}
 
+	initPalette();
 	setOpmap();
 
 	entry = (effect *)malloc(sizeof(effect));
@@ -112,7 +148,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
 	char *p;
-	unsigned char *diff, v;
+	unsigned char *diff;
 
 	switch(mode) {
 		default:
@@ -130,16 +166,16 @@ static int draw(RGB32 *src, RGB32 *dest)
 			break;
 	}
 
+	speed += speedInc;
+	phase -= speed;
+
 	diff = image_y_over(src);
 	for(y=0; y<video_height; y++) {
 		for(x=0; x<video_width; x++) {
-			v = ((char)(*p+phase)>>7) ^ *diff++;
-			*dest++ = (v<<16) | (v<<8) | v;
+			*dest++ = palette[(((char)(*p+phase))^*diff++)&255];
 			p++;
 		}
 	}
-
-	phase -= speed;
 
 	return 0;
 }
@@ -159,6 +195,15 @@ static int event(SDL_Event *event)
 			break;
 		case SDLK_4:
 			mode = 3;
+			break;
+		case SDLK_INSERT:
+			speedInc = 1;
+			break;
+		case SDLK_DELETE:
+			speedInc = -1;
+			break;
+		case SDLK_SPACE:
+			speed = -speed;
 			break;
 		case SDLK_q:
 			speed = 4;
@@ -189,6 +234,17 @@ static int event(SDL_Event *event)
 			break;
 		case SDLK_p:
 			speed = -4;
+			break;
+		default:
+			break;
+		}
+	} else if(event->type == SDL_KEYUP) {
+		switch(event->key.keysym.sym) {
+		case SDLK_INSERT:
+			speedInc = 0;
+			break;
+		case SDLK_DELETE:
+			speedInc = 0;
 			break;
 		default:
 			break;

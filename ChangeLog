@@ -1,3 +1,10 @@
+2004/07/29	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/op.c:
+	  - Anti aliased.
+	  - Changed various parapmeters of b/w patterns.
+	* README.vloopback:
+	  - Added a URL of an article includes a patch for vloopback-0.91.
+
 2004/07/26	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/op.c:
 	  - New effect OpTV has been added.
