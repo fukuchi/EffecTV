@@ -25,8 +25,7 @@ from http://www.bytesex.org/bttv/.
 
 Vloopback device driver is required for the video loopback feature.
 http://motion.technolust.cx/vloopback/index.html
-vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback
-and apply the patch.
+vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback.
 
 NASM is required to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
@@ -38,9 +37,15 @@ Currently there is no configure script. Modify Makefile and do
 
 make
 
-and copy "effectv" to anywhere.
+and
 
-The input device file (typically "/dev/video") must be readable and writable for you.
+make install
+
+Executable binary file 'effectv' will be installed to /usr/local/bin/,
+and man page 'effectv.1' will be installed to /usr/local/man/man1/ by default.
+
+The input device file (typically "/dev/video") must be readable and writable
+for you.
 
 USING
 =====
@@ -49,7 +54,8 @@ Before using
 ------------
 Before starting up EffecTV, you have to know about your hardware's settings.
 * Video norm(NTSC, PAL, etc.) of your video camera or player
-* Channel number of the Video source (this is different from the TV station/channel)
+* Channel number of the Video source (this is different from the TV
+  station/channel)
 * Video4linux device file name
 You can adjust these settings with command line options. See the next section.
 
@@ -157,13 +163,13 @@ CONTACT
 
 Web
 ---
-See http://matsu-www.is.titech.ac.jp/~fukuchi/rooms/EffecTV/index.html
+See http://effectv.sourceforge.net/index.html
 
 Bug-reporting & Suggestions
 ---------------------------
 Bug reports and suggestions are welcome! Send an e-mail to:
 
-fukuchi-effectv@is.titech.ac.jp
+effectv-developers@lists.sourceforge.net
 
 or, post a message to EffecTV open discussion forums at EffecTV project
 page at SourceForge (see below for the URL).
@@ -190,6 +196,8 @@ Effects coders forum
 	Discussion space for effects coders.
 Open Discussion
 	Free discussion space.
+Japanese
+	For discussion in Japnese.
 
 BackStage Branch
 ----------------
@@ -214,6 +222,10 @@ COPYING.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+AUTHORS
+=======
+See the file 'CREWS'.
 
 ---
 FUKUCHI, kentarou
