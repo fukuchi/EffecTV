@@ -47,10 +47,11 @@ int baltanStart()
 {
 	int i;
 
-	buffer = (RGB32 *)malloc(video_area*sizeof(RGB32)*PLANES);
+	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE * PLANES);
 	if(buffer == NULL)
 		return -1;
-	bzero(buffer, video_area*sizeof(RGB32)*PLANES);
+
+	memset(buffer, 0, video_area * PIXEL_SIZE * PLANES);
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 
