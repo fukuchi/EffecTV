@@ -1,3 +1,9 @@
+2002/03/08	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* screen.h: Fixed wrong function declaration.
+
+2002/03/06	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* Playstation2 -> PlayStation2
+
 2002/02/28	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* effects/{rev.c,rndm.c}: Added rndmTV and revTV.
 

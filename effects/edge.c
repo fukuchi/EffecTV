@@ -89,7 +89,7 @@ int edgeStop()
 
 int edgeDraw()
 {
-	int  x, y;
+	int x, y;
 	int r, g, b;
 	RGB32 *src, *dest;
 	RGB32 p, q;
