@@ -146,6 +146,7 @@ F1/F2       increase/decrease brightness of video input.
 F3/F4       increase/decrease hue.
 F5/F6       increase/decrease color balance.
 F7/F8       increase/decrease contrast.
+F12         show this key usage.
 
 Individual effects are described in further detail in the documents package.
 You should download effectv-docs.tar.gz found at EffecTV web page.

@@ -136,7 +136,8 @@ static void keyUsage()
 			"F1/F2       increase/decrease brightness of video input.\n"
 			"F3/F4       increase/decrease hue.\n"
 			"F5/F6       increase/decrease color balance.\n"
-			"F7/F8       increase/decrease contrast.\n");
+			"F7/F8       increase/decrease contrast.\n"
+			"F12         show this usage.\n");
 }
 
 static int parse_geometry(const char *str, int *w, int *h)
@@ -453,6 +454,9 @@ static int startTV(char *startEffect)
 					break;
 				case SDLK_F8:
 					video_change_contrast(-4096);
+					break;
+				case SDLK_F12:
+					keyUsage();
 					break;
 				case SDLK_RETURN:
 					if(event.key.keysym.mod & KMOD_ALT) {

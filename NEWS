@@ -4,6 +4,8 @@ Overview of Changes in EffecTV-0.3.10 (2004/11/27)
 
 * Light flickering effect has been added to AgingTV.
 
+* Key usage is shown on starndard out. (Thanks to Forrest Cook)
+
 Overview of Changes in EffecTV-0.3.9 (2004/1/13)
 ================================================
 * New effects "MatrixTV", "PupTV" and "ChameleonTV" have been added.

@@ -3,6 +3,8 @@
 	  - New effect NervousHalf has been added.
 	* effects/op.c:
 	  - Ins/Del key hadnling has been fixed.
+	* README.vloopback:
+	  - Changed the URL of the latest vloopback source.
 
 2004/07/29	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/op.c:
