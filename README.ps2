@@ -38,6 +38,9 @@ Edit line 15 to 17 of 'config.mk' and set "ARCH = ps2-linux" like following.
 ARCH = ps2-linux
 
 Then make it. You need SDL(1.2.1 or later). Please read documents of EffecTV.
+The RPM package of SDL for PS2 can be found at:
+
+http://playstation2-linux.com/projects/libsdl
 
 Launch
 ======

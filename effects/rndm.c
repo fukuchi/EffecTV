@@ -22,7 +22,7 @@ int rgrab=0;
 int rthecolor=0xffffffff;
 int rmode=1;
 
-static char *effectname = "rndmTV";
+static char *effectname = "RndmTV";
 static int state = 0;
 
 effect *rndmRegister()

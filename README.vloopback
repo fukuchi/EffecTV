@@ -7,8 +7,8 @@ send email about this problem to him.
 The following patch to vloopback-0.83 seems to solve the problem quite
 effectively. Be aware that it is a very unofficial patch.
 
-The following patch is *not* for vloopback-0.90 or later. EffecTV does not work
-with vloopback-0.90 or later (because it does not work on my linux box...).
+The following patch is *not* for vloopback-0.90 or later.
+If you want to use vloopback-0.90, please see 'README.vloopback90'.
 
 written by Sam Martens, June 9, 2001
 modified by Kentarou Fukuchi, Jul 27, 2001

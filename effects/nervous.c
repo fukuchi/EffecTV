@@ -24,7 +24,7 @@ int nervousStop();
 int nervousDraw();
 static int firstflag=1;
 
-static char *effectname = "nervousTV";
+static char *effectname = "NervousTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *planetable[PLANES];

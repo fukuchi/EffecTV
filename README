@@ -1,4 +1,4 @@
-EffecTV 0.3.4
+EffecTV 0.3.5
 
 GENERAL INFORMATION
 ===================
@@ -29,8 +29,9 @@ http://motion.technolust.cx/vloopback/index.html
 vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback.
 
 *NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
-distro. Vloopback support does not work on raw libc-2.2.5. If you are Debian
-GNU/Linux user and installed "woody", install libc-6_2.2.5-4 or later.
+distro. Vloopback support does not work on early version of libc-2.2.5. If you
+are Debian GNU/Linux user and installed "woody", install libc-6_2.2.5-4 or
+later.
 
 NASM can be used to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
@@ -196,8 +197,14 @@ VertigoTV
 	Alpha blending with zoomed and rotated images.
 DeinterlaceTV
 	Deinterlacing video images.
-nervousTV
+NervousTV
 	Realtime frame shuffling effect.
+RndmTV
+	Gives you a noisy picture in color or B/W.
+RevTV
+	Waveform monitor effect.
+NemoTV
+	Delaying scanline effect.
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

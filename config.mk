@@ -30,7 +30,7 @@ USE_NASM = yes
 USE_VLOOPBACK = yes
 
 ## choose vloopback version (only one).
-## version 0.90 or later (not supported yet)
+## version 0.90 or later
 # VLOOPBACK_VERSION = 90
 ## version 0.83 or former
 VLOOPBACK_VERSION = 83
