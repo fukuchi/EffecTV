@@ -1,6 +1,6 @@
 /*
  * palettecheck: checks all supported pixel formats by the v4l driver.
- * Copyright (C) 2001 FUKUCHI, Kentarou
+ * Copyright (C) 2001 FUKUCHI Kentaro
  *
  */
 
