@@ -7,9 +7,8 @@ include ./config.mk
 prefix = /usr/local
 exec_prefix = ${prefix}
 
-bindir = ${exec_prefix}/bin
-mandir = ${prefix}/man
-man1dir = ${mandir}/man1
+bindir = $(DESTDIR)${exec_prefix}/bin
+mandir = $(DESTDIR)${prefix}/man
 
 INSTALL = /usr/bin/install -c
 
@@ -52,7 +51,7 @@ $(OBJS): EffecTV.h screen.h video.h palette.h frequencies.h vloopback.h
 
 install: all-am
 	$(INSTALL) -s $(PROGRAM) $(bindir)
-	$(INSTALL) effectv.1 $(man1dir)
+	$(INSTALL) effectv.1 $(mandir)/man1
 
 clean:
 	rm -f *.o $(PROGRAM)

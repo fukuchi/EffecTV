@@ -1,0 +1,9 @@
+effectv (0.3.3-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- FUKUCHI Kentarou <fukuchi@users.sourceforge.net>  Tue,  2 Oct 2001 20:06:02 +0900
+
+Local variables:
+mode: debian-changelog
+End:
