@@ -6,8 +6,8 @@ The following patch to vloopback-0.83 seems to solve the problem quite
 effectively. Be aware that it is a very unofficial patch.
 
 Please note that the recommended version of vloopback is changed to 0.90
-since EffecTV-0.3.8. You also need to modify 'config.mk' for vloopback-0.83 or
-later. Please read the comment in it.
+since EffecTV-0.3.8. You also need to modify 'config.mk' for vloopback-0.83.
+Please read comments in it.
 
 written by Sam Martens, June 9, 2001
 modified by Kentarou Fukuchi, August 18, 2002

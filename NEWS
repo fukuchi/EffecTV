@@ -2,7 +2,7 @@ Overview of Changes in EffecTV-0.3.8
 ====================================
 * New effects BrokenTV and WarholTV developed by Jun IIO was added.
 
-* The default device file was changed from "/dev/video" to "/dev/video0".
+* The default v4l device file was changed from "/dev/video" to "/dev/video0".
 
 * The supported version of vloopback was changed from 0.83 to 0.90.
   Version 0.83 is still supported, but it is not recommended.
@@ -11,9 +11,9 @@ Overview of Changes in EffecTV-0.3.8
   "README.vloopback" and a patch for vloopback-0.83 is attached to
   "README.vloopback83"
 
+* YUV422P and YUV420P format converter has been added to vloopback support.
+
 * vloopback support has been approved. FFmpeg has been supported. It requires
   vloopback-0.90 with the new patch.
-
-* YUV422P and YUV420P format converter has been added to vloopback support.
 
 * The base version of ov511 patch for PlayStation2 has been changed to 1.63.
