@@ -1,3 +1,6 @@
+2002/05/05	FUKUCHI Kentarou	<fukuchi@users.sf.net>
+	* README.ps2, docs.japanese/README.ps2 : New patch for ov511-1.60.
+
 2002/04/18	FUKUCHI Kentarou	<fukuchi@users.sf.net>
 	* Removed NemoTV.
 	* main.c, effects/rds.c: Added RandomDotStereoTV.
@@ -10,8 +13,8 @@
 	* README.ps2, docs.japanese/README.ps2 : New patch for ov511-1.59.
 
 2002/04/01	FUKUCHI Kentarou	<fukuchi@users.sf.net>
-	* effects/nemo.c: Fixed the title. Added contional macro to disable this
-	  effect if the target architecture is set to ps2-linux.
+	* effects/nemo.c: Fixed the title. Added conditional macro to disable
+	  this effect if the target architecture is set to ps2-linux.
 	* docs.japanese/README.ps2: Added URL of SDL package.
 
 	* EffecTV-0.3.5 has been released.
