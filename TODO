@@ -6,7 +6,7 @@ Bug
 * Please send us a report when EffecTV does not work on your machine.
   The name of video capturing device, device driver version, kernel version
   must be included at least.
-* Vloopback support is not tested hardly. Your report is welcome.
+* Vloopback does not work with libc-2.2.5. Bug report was sent to glibc team.
 * There may be many bugs in documents. I am not good at writing in English,
   so please revise them and tell me what is wrong. Your mail is great help
   for me who is learning English.

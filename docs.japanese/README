@@ -35,6 +35,8 @@ http://motion.technolust.cx/vloopback/index.html
 vloopback-0.83はlinux-2.4.3以降の内部仕様変更に対応していないので、
 README.vloopbackを読んで、中に含まれているパッチを当ててからインストールしてく
 ださい。
+*注意* ビデオループバック機能はlibc-2.2.5上では正常に動作しません。この問題に
+ついては追って詳細をwebページに掲載します。
 
 一部のイフェクトの作成に、NASMというアセンブラを使います。NASMについては
 http://www.web-sites.co.uk/nasm

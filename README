@@ -28,6 +28,10 @@ Vloopback device driver is required for the video loopback feature.
 http://motion.technolust.cx/vloopback/index.html
 vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback.
 
+*NOTICE* Vloopback support does not work on libc-2.2.5! We recommend you not to
+use vloopback feature if you usually use libc-2.2.5. We will report the details
+on EffecTV web page.
+
 NASM can be used to assemble some modules. See following URL:
 http://www.web-sites.co.uk/nasm
 ftp://ftp.kernel.org/pub/software/devel/nasm/
