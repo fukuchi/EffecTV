@@ -34,7 +34,6 @@ static void coloraging(RGB32 *src, RGB32 *dest)
 	for(i=0; i<video_area; i++) {
 		a = *src++;
 		b = (a & 0xfcfcfc)>>2;
-		//*dest++ = a - b + 0x181818 + ((fastrand()>>8)&0x101010);
 		*dest++ = a - b + (c|(c<<8)|(c<<16)) + ((inline_fastrand()>>8)&0x101010);
 	}
 }
