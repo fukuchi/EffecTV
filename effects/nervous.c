@@ -5,6 +5,10 @@
  * nervousTV - The name says it all...
  * Copyright (C) 2002 TANNENBAUM Edo
  *
+ * 2002/2/9 
+ *   Original code copied same frame twice, and did not use memcpy().
+ *   I modifed those point.
+ *   -Kentarou Fukuchi
  */
 
 #include <stdlib.h>
@@ -18,7 +22,7 @@
 int nervousStart();
 int nervousStop();
 int nervousDraw();
-int firstflag=1;
+static int firstflag=1;
 
 static char *effectname = "nervousTV";
 static int state = 0;
@@ -79,30 +83,25 @@ int nervousStop()
 
 int nervousDraw()
 {
-	int i, j, readplane;
+	int i, readplane;
 	RGB32 *src, *dest;
 
 	if(video_syncframe())
 		return -1;
 	src = (RGB32 *)video_getaddress();
-	for(i=0; i<video_area; i++) {
-		planetable[plane][i] = src[i];
-	}
+	memcpy(planetable[plane], src, video_area * PIXEL_SIZE);
 	if(video_grabframe())
 		return -1;
 
 	if (firstflag==1){
-		for(j=0; j<PLANES ; j++){
-			for(i=0; i<video_area; i++) {
-			 planetable[j][i]=src[i];
+		for(i=0; i<PLANES ; i++){
+			if(i != plane) {
+				memcpy(planetable[i], planetable[plane], video_area * PIXEL_SIZE);
 			}
 		}
 		firstflag=0;
 	}
 
-	for(i=0; i<video_area; i++) {
-		planetable[plane][i] = src[i];
-	}
 	readplane = inline_fastrand()%PLANES;
         //if (readplane==PLANES) readplane=0;
 	if(screen_mustlock()) {
@@ -115,10 +114,7 @@ int nervousDraw()
 	} else {
 		dest = (RGB32 *)screen_getaddress();
 	}
-	for(i=0; i<video_area; i++) {
-		dest[i] = planetable[readplane][i];
-
-	}
+	memcpy(dest, planetable[readplane], video_area * PIXEL_SIZE);
 	if(stretch) {
 		image_stretch_to_screen();
 	}
