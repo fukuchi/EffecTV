@@ -70,8 +70,7 @@ static effectRegistFunc *effects_register_list[] =
 	DeinterlaceRegister,
 	nervousRegister,
 	rndmRegister,
-	revRegister,
-	nemoRegister
+	revRegister
 };
 
 static effect **effectsList;

@@ -12,7 +12,7 @@ EFFECTS = $(QUARK) $(DUMB) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) $(DIZ
           $(ONED) $(DOT) $(MOSAIC) $(PUZZLE) $(PREDATOR) $(SPIRAL) $(SIMURA) \
           $(EDGE) $(SHAGADELIC) $(NOISE) $(AGING) \
           $(TRANSFORM) $(LIFE) $(SPARK) $(WARP) $(HOLO) $(CYCLE) $(RIPPLE) \
-          $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(NEMO)
+          $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV)
 SUBDIRS =
 
 %.o: %.c
@@ -69,7 +69,6 @@ DEINTERLACE = Deinterlace.o
 NERVOUS = nervous.o
 RNDM = rndm.o
 REV = rev.o
-NEMO = nemo.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)
