@@ -257,7 +257,7 @@ int v4lsetfreq(v4ldevice *vd, int freq)
 {
 	unsigned long longfreq=(freq*16)/1000;
 	if(ioctl(vd->fd, VIDIOCSFREQ, &longfreq) < 0) {
-		v4lperror("v4lsetchannel:VIDIOCSFREQ");
+		v4lperror("v4lsetfreq:VIDIOCSFREQ");
 		return -1;
 	}
 	return 0;
