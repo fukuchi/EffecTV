@@ -125,7 +125,7 @@ void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int
 			G = ((*nsrc)&0xff00)>>(8-2);
 			B = (*nsrc)&0xff;
 			yval = y-((short)(R + G + B) / vscale) ;
-			offset = x + (yval * video_width);
+			offset = x + yval * video_width;
 			if(offset >= 0 && offset < video_area) {
 				cdst[offset]=vthecolor;
 			}
