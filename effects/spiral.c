@@ -3,7 +3,7 @@
  * Copyright (C) 2001 FUKUCHI Kentarou
  *
  * spiral.c: a 'spiraling' effect (even though it isn't really a spiral)
- *  code derived from quark.c; additions and changes are
+ *  code originally derived from quark.c; additions and changes are
  *  copyright (c) 2001 Sam Mertens.  This code is subject to the provisions of
  *  the GNU Public License.
  *
@@ -41,11 +41,6 @@
  *      PAGE UP/PAGE DOWN increment and decrement the amount that wave table
  *      entries are bitshifted by, respectively.
  *
- *
- * ----------
- *
- *  This remains a work in progress.
- *
  *  Recent changes in the user interface:
  *  1. Hitting space will now cycle among 8 different wave shapes.
  *      The active waveshape's name is displayed in the titlebar.
@@ -58,23 +53,6 @@
  *      '1' through '4' move the center midway between the middle of the
  *      image and each of the four corners, respectively. '0' returns
  *      the center to its default position.
- *
- *
- *  Possible future features:
- *      1. Provide control of wave definition   [just begun]
- *          A. form                             [mostly complete]
- *          B. period                           [not yet started]
- *              - constant (scalar int)
- *              - relative (dependent upon distance from image border)
- *          C. offset                           [not yet started]
- *          D. amplitude / decay                [not yet started]
- *              - constant
- *              - relative
- *      2. Alternate means of depthmap generation [net yet started]
- *      3. Improve user interface               [ongoing]
- *
- *  I can't guarantee that any of the above will actually be implemented.
- *  I have some ideas for other effects instead, once I'm done with this one.
  *
  *	-Sam Mertens
  */
@@ -396,6 +374,7 @@ int spiralEvent(SDL_Event *event)
             g_focus_x = (video_width/2);
             g_focus_increment = FOCUS_INCREMENT_PRESET;
             spiralCreateMap();
+            spiralSetName();
             break;
 
         case SDLK_INSERT:

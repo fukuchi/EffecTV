@@ -1,10 +1,10 @@
 FAQ
 ===
-Last updated 2001/4/16 for release 0.2.9
+Last updated 2001/5/24 for release 0.2.99
 
 Contents
 --------
-Q1: I got a distorted/still/gray scale/shrank image.
+Q1: I get a distorted/still/gray scale/shrunken image.
 Q2: TV seems to work fine, but how can I change to Composite1 or any other
     video source?
 Q3: Some effects do not work.
@@ -15,11 +15,13 @@ Q7: How can I capture the video output from EffecTV to harddisk?
 Q8: EffecTV is slow.
 
 ----------
-Q1: I got a distorted/still/gray scale/shrank image.
+Q1: I got a distorted/still/gray scale/shrunken image.
 
-A: Check the norm of the video source. The option "-norm" changes the norm
-setting of EffecTV. For example, when you have a video camera which employs
-PAL system, Try
+A: Check the signal format (the 'norm') of the video source; it will
+most likely be either NTSC, PAL, SECAM, or one of their variants.  You
+can then specify which format EffecTV should use with the "-norm"
+option on the command line.  For example, when you have a video camera
+which employs the PAL system, Try
 
 $ effectv -norm pal
 
@@ -38,16 +40,17 @@ numbers to detect the right one.
 ----------
 Q3: Some effects do not work.
 
-A: Old EffecTV employs gray scaled capturing mode that some drivers do not
-support. Since version 0.2.0, all of effects uses only 320x240xRGB32 capturing
-mode, supported by most part of driver. Please update your EffecTV to latest
-version.
+A: Older versions EffecTV employed gray scaled capturing mode that
+some drivers do not support. Since version 0.2.0, all of the effects
+use a 320x240xRGB32 capturing mode, supported by most drivers.
+Please update your EffecTV to latest version.
 ----------
 Q4: EffecTV is frozen.
 
-A: Bttv driver comes with linux-2.2.18 is broken. Try the latest bttv driver
-available at http://www.strusel007.de/linux/bttv/. You also need to apply i2c
-patch to linux kernel available at there.
+A: The bttv driver that comes with linux-2.2.18 is broken. Try the
+latest bttv driver available at http://www.strusel007.de/linux/bttv/.
+You also will need to apply the i2c patch for the linux kernel,
+available at the same location.
 ----------
 Q5: I tried the latest bttv driver(0.8.x) and EffecTV does not work.
 
@@ -70,32 +73,32 @@ A: I want to do that if I could. But,
 a) I have only linux machine and MS-Windows machine.
 b) I dislike programming on MS-Windows.
 
-I would like to encourage people who want to port EffecTV to any other
-environment; The whole CVS tree is now served at SourceForge. If you have
-interests, see http://sourceforge.net/projects/effectv/. Please let me know
-when you start you porting project, then I will make a new branch. If you
+I would like to encourage people who want to port EffecTV to another
+environment; The whole CVS tree is now served at SourceForge. If you are
+interested, see http://sourceforge.net/projects/effectv/. Please let me know
+when you start you porting project, so that I can make a new CVS branch. If you
 want to maintain the CVS tree directly, get an account at SourceForge and
-tell me your ID. I will add your ID to EffecTV developers group.
+tell me your ID. I will add your ID to the EffecTV developers group.
 ----------
 Q7: How can I capture the video output from EffecTV to harddisk?
 
-A: EffecTV can output the effected images to loop back device since version
+A: EffecTV can output the effected images to a video loopback device since version
 0.2.0. First, you should download Jeroen Vreeken's vloopback driver from
 http://motion.technolust.cx/vloopback/index.html, and install the module.
-Then, load the module and check the input and output device file of the video
+Then, load the module and check the input and output device files of the video
 pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be get from /dev/video2. At the moment, EffecTV does
+The effected images can be retrieved from /dev/video2. At the moment, EffecTV does
 not handle ioctl messages, so some applications do not work; indeed, EffecTV
 does not work with video pipe.
 ----------
 Q8: EffecTV is slow.
 
-A: EffecTV uses 32 bits-per-pixel depth screen. When you launch EffecTV
-on any other depth screen, images are converted to that depth by SDL, and it
-makes little slow. If you use X11, try to run it in 32 bpp depth mode.
+A: EffecTV uses a screen depth of 32 bits per pixel. When you launch EffecTV
+on a screen with another depth, images are converted to that depth by SDL, and it
+makes EffecTV a little slow. If you are using X11, try to run it in 32 bpp depth mode.
 
 If your video capturing device does not support 32bit pixel format, EffecTV
-converts captured image to 32bit format. This also makes EffecTV slow.
+converts captured images to 32bit format. This also makes EffecTV slow.

@@ -1,3 +1,9 @@
+2001/05/24	Sam Mertens		<smertens@effectv.sourceforge.net>
+	* Edited text files FAQ, README, and README.vloopback for syntax
+	* Carried over a minor spiral.c fix from EffecTV-BSB.  Also,
+	removed some (not all) of the more extraneous portions of the
+	header comments.
+	
 2001/05/20	FUKUCHI Kentarou	<fukuchi@is.titech.ac.jp>
 	* Imported from BackStage Branch;
 	  * New internal architecture - free capturing size and scaling.

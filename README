@@ -2,20 +2,20 @@ EffecTV 0.2.99
 
 GENERAL INFORMATION
 ===================
-EffecTV is a real-time video effector. You can enjoy movies, TV programs and
-any other video stream through the many amazing effects. 
+EffecTV is a real-time video effect processor. You can enjoy movies,
+TV programs and any other video stream through the many amazing effects. 
 
 INSTALL
 =======
 
 Requirements
 ------------
-Currently, EffecTV highly depends on Intel architecture. It may not work on any
+Currently, EffecTV highly depends upon the Intel architecture. It may not work on any
 other platform.
 
 Video capture card or USB device supported by video4linux is required.
 
-EffecTV requires SDL library, available from http://www.libsdl.org/.
+EffecTV requires the SDL library, available from http://www.libsdl.org/.
 
 EffecTV uses video4linux. Your kernel should be configured with 
 CONFIG_VIDEO_DEV and enable drivers for your video capture card.
@@ -23,7 +23,7 @@ CONFIG_VIDEO_DEV and enable drivers for your video capture card.
 Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
 from http://www.bytesex.org/bttv/.
 
-Vloopback device driver is required for video loop back feature.
+Vloopback device driver is required for the video loopback feature.
 http://motion.technolust.cx/vloopback/index.html
 vloopback-0.83 fails to compile on linux-2.4.3 or later. Read README.vloopback
 and apply the patch.
@@ -40,16 +40,16 @@ make
 
 and copy "effectv" to anywhere.
 
-The device file (typically "/dev/video") must be readable and writable for you.
+The input device file (typically "/dev/video") must be readable and writable for you.
 
 USING
 =====
 
 Before using
 ------------
-Before starting up EffecTV, you have to know about your setting.
+Before starting up EffecTV, you have to know about your hardware's settings.
 * Video norm(NTSC, PAL, etc.) of your video camera or player
-* Channel number of the Video source
+* Channel number of the Video source (this is different from the TV station/channel)
 * Video4linux device file name
 You can adjust these settings with command line options. See the next section.
 
@@ -84,7 +84,7 @@ Space       capture a background image(for FireTV, BurningTV, etc.).
 ALT+ENTER   fullscreen mode(toggle).
 Escape      Quit
 
-More details for each effects are described in documents package.
+Individual effects are described in further detail in the documents package.
 You should download effectv-docs.tar.gz found at EffecTV web page.
 
 Summary of effects
@@ -112,7 +112,7 @@ PuzzleTV
 PredatorTV
 	Makes incoming objects invisible.
 SpiralTV
-	Spiraling effect.
+	Spiraling motion-distortion effect.
 SimuraTV
 	Color distortion and image mirroring.
 EdgeTV
@@ -135,15 +135,16 @@ HolographicTV
 
 Recording/broadcasting EffecTV
 ------------------------------
-EffecTV supports video loop back device since version 0.2.0. First, load the
-vloopback device driver module and check the input/output device file of the
-video pipe (typically it may be /dev/video1 and /dev/video2).
+EffecTV has supported the use of a  video loopback device since
+version 0.2.0.  First, load the vloopback device driver module and
+verify the input/output device files for the video pipe (typically
+/dev/video1 and /dev/video2).
 Then, run EffecTV.
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be get from /dev/video2. If you want to chain EffecTV,
-type as following.
+The effected images can be read from /dev/video2. If you want to
+'chain' a second instance of EffecTV, type as following.
 
 $ effectv -device /dev/video2
 
@@ -160,27 +161,27 @@ See http://matsu-www.is.titech.ac.jp/~fukuchi/rooms/EffecTV/index.html
 
 Bug-reporting & Suggestions
 ---------------------------
-Welcome! Send a mail to:
+Bug reports and suggestions are welcome! Send an e-mail to:
 
 fukuchi-effectv@is.titech.ac.jp
 
 or, post a message to EffecTV open discussion forums at EffecTV project
-page at SourceForge (URL is in next section).
+page at SourceForge (see below for the URL).
 
 SourceForge
 ===========
-EffecTV project page is opened at SourceForge(http://sourceforge.net/).
+EffecTV project page has been opened at SourceForge(http://sourceforge.net/).
 
 http://sourceforge.net/projects/effectv/
 
 Mailing list
 ------------
-If you want to subscribe EffecTV crews mailing list, read the description
-at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
+If you want to subscribe to the EffecTV crews mailing list, info can
+be found at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
 
 Discussion forum
 ----------------
-There are three open discussion forum, "Help", "Effects coders forum" and
+There are three open discussion forums: "Help", "Effects coders forum" and
 "Open discussion".
 
 Help
@@ -197,16 +198,16 @@ effects and new features come here at first.
 
 CVS
 ---
-CVS repository of EffecTV can be checked out from project page. Both main trunc
-and BackStage Branch are stored at there. A short description for CVS access
-can be found at there.
+CVS repository of EffecTV can be checked out from project page. Both
+the main trunc and BackStage Branch are stored at there. Quick CVS usage
+instructions can be found there.
 
-If you want to access as a developer, you should be the member of EffecTV
-developers group. Please ask me to join to developers group.
+If you want access as a developer, you should be the member of the EffecTV
+developers group.  Please ask me to join the developers group.
 
 LICENSING INFORMATION
 =====================
-EffecTV is a free software. We release this product under the terms of the GPL.
+EffecTV is free software. We release this product under the terms of the GPL.
 
 ---
 FUKUCHI kentarou

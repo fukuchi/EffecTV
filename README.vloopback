@@ -1,4 +1,4 @@
-vloopback-0.83 fail to compile on linux-2.4.3 or later. Apply the following
+vloopback-0.83 fails to compile on linux-2.4.3 or later. Apply the following
 patch.
 
 --- vloopback.c.orig	Thu May 17 15:59:46 2001
