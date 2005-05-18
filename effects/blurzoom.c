@@ -21,9 +21,9 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
-extern void blurzoomcore();
+extern void blurzoomcore(void);
 
 unsigned char *blurzoombuf;
 int *blurzoomx;
@@ -48,7 +48,7 @@ static RGB32 *snapframe;
 #define VIDEO_HHEIGHT (buf_height/2)
 
 /* this table assumes that video_width is times of 32 */
-static void setTable()
+static void setTable(void)
 {
 	unsigned int bits;
 	int x, y, tx, ty, xx;
@@ -87,7 +87,7 @@ static void setTable()
 
 #ifndef USE_NASM
 /* following code is a replacement of blurzoomcore.nas. */
-static void blur()
+static void blur(void)
 {
 	int x, y;
 	int width;
@@ -111,7 +111,7 @@ static void blur()
 	}
 }
 
-static void zoom()
+static void zoom(void)
 {
 	int b, x, y;
 	unsigned char *p, *q;
@@ -136,14 +136,14 @@ static void zoom()
 	}
 }
 
-void blurzoomcore()
+void blurzoomcore(void)
 {
 	blur();
 	zoom();
 }
 #endif /* USE_NASM */
 
-static void makePalette()
+static void makePalette(void)
 {
 	int i;
 
@@ -167,7 +167,7 @@ static void makePalette()
 	}
 }
 
-effect *blurzoomRegister()
+effect *blurzoomRegister(void)
 {
 	effect *entry;
 	
@@ -211,7 +211,7 @@ effect *blurzoomRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(blurzoombuf, 0, buf_area * 2);
 	image_set_threshold_y(MAGIC_THRESHOLD);
@@ -223,7 +223,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(stat) {
 		free(snapframe);
@@ -346,7 +346,7 @@ static int event(SDL_Event *event)
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
 			if(mode == 3)
-			snapTime = 1;
+				snapTime = 1;
 			break;
 		default:
 			break;

@@ -20,7 +20,7 @@ static char *effectname = "cycleTV";
 static int state = 0;
 static int roff,goff,boff; /* Offset values */
 
-effect *cycleRegister()
+effect *cycleRegister(void)
 {
 	effect *entry;
 
@@ -36,14 +36,14 @@ effect *cycleRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	roff = goff = boff = 0;
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

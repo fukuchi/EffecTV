@@ -20,7 +20,7 @@ static int draw(RGB32 *src, RGB32 *dst);
 static char *effectname = "DeinterlaceTV";
 static int state = 0;
 
-effect *DeinterlaceRegister()
+effect *DeinterlaceRegister(void)
 {
 	effect *entry;
 
@@ -36,13 +36,13 @@ effect *DeinterlaceRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

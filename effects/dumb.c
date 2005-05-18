@@ -19,7 +19,7 @@ static int draw(RGB32 *src, RGB32 *dest);
 static char *effectname = "DumbTV";
 static int state = 0;
 
-effect *dumbRegister()
+effect *dumbRegister(void)
 {
 	effect *entry;
 
@@ -35,14 +35,14 @@ effect *dumbRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	state = 1;
 
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 

@@ -16,7 +16,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
 #define DOTDEPTH 5
 #define DOTMAX (1<<DOTDEPTH)
@@ -42,7 +42,7 @@ inline static unsigned char inline_RGBtoY(int rgb)
 	return i;
 }
 
-static void init_sampxy_table()
+static void init_sampxy_table(void)
 {
 	int i, j;
 
@@ -58,7 +58,7 @@ static void init_sampxy_table()
 	}
 }
 
-static void makePattern()
+static void makePattern(void)
 {
 	int i, x, y, c;
 	int u, v;
@@ -160,7 +160,7 @@ static void makeOneHeart(int val, unsigned char *bigheart)
 	}
 }
 
-static void makeHeartPattern()
+static void makeHeartPattern(void)
 {
 	int i, x, y;
 	unsigned char *bigheart;
@@ -180,7 +180,7 @@ static void makeHeartPattern()
 	free(bigheart);
 }
 
-effect *dotRegister()
+effect *dotRegister(void)
 {
 	effect *entry;
 	double scale;
@@ -233,7 +233,7 @@ effect *dotRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	init_sampxy_table();
 
@@ -241,7 +241,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

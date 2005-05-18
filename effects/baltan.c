@@ -25,7 +25,7 @@ static RGB32 *buffer = NULL;
 static RGB32 *planetable[PLANES];
 static int plane;
 
-effect *baltanRegister()
+effect *baltanRegister(void)
 {
 	effect *entry;
 	
@@ -43,7 +43,7 @@ effect *baltanRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -62,7 +62,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer) {

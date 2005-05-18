@@ -17,7 +17,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
 static char *effectname = "ShagadelicTV";
 static int stat;
@@ -68,31 +68,31 @@ static int start()
 
 	i = 0;
 	for(y=0; y<video_height*2; y++) {
-		yy = y - video_height;
+		yy = (double)y / video_width - 1.0;
 		yy *= yy;
 		for(x=0; x<video_width*2; x++) {
-			xx = x - video_width;
+			xx = (double)x / video_width - 1.0;
 #ifdef PS2
-			ripple[i++] = ((unsigned int)(sqrtf(xx*xx+yy)*8))&255;
+			ripple[i++] = ((unsigned int)(sqrtf(xx*xx+yy)*3000))&255;
 #else
-			ripple[i++] = ((unsigned int)(sqrt(xx*xx+yy)*8))&255;
+			ripple[i++] = ((unsigned int)(sqrt(xx*xx+yy)*3000))&255;
 #endif
 		}
 	}
 	i = 0;
 	for(y=0; y<video_height; y++) {
-		yy = y - video_height/2;
+		yy = (double)(y - video_height / 2) / video_width;
 		for(x=0; x<video_width; x++) {
-			xx = x - video_width/2;
+			xx = (double)x / video_width - 0.5;
 #ifdef PS2
 			spiral[i++] = ((unsigned int)
-				((atan2f(xx, yy)/((float)M_PI)*256*9) + (sqrtf(xx*xx+yy*yy)*5)))&255;
+				((atan2f(xx, yy)/((float)M_PI)*256*9) + (sqrtf(xx*xx+yy*yy)*1800)))&255;
 #else
 			spiral[i++] = ((unsigned int)
-				((atan2(xx, yy)/M_PI*256*9) + (sqrt(xx*xx+yy*yy)*5)))&255;
+				((atan2(xx, yy)/M_PI*256*9) + (sqrt(xx*xx+yy*yy)*1800)))&255;
 #endif
 /* Here is another Swinger!
- * ((atan2(xx, yy)/M_PI*256) + (sqrt(xx*xx+yy*yy)*10))&255;
+ * ((atan2(xx, yy)/M_PI*256) + (sqrt(xx*xx+yy*yy)*3000))&255;
  */
 		}
 	}

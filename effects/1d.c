@@ -22,7 +22,7 @@ static int line;
 static int prevline;
 static RGB32 *linebuf;
 
-effect *onedRegister()
+effect *onedRegister(void)
 {
 	effect *entry;
 
@@ -44,7 +44,7 @@ effect *onedRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(linebuf, 0, video_width * PIXEL_SIZE);
 	line = 0;
@@ -55,7 +55,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 

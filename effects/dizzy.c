@@ -16,7 +16,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
 static char *effectname = "VertigoTV";
 static int state = 0;
@@ -28,7 +28,7 @@ static double phase = 0.0;
 static double phase_increment = 0.02;
 static double zoomrate = 1.01;
 
-static void setParams()
+static void setParams(void)
 {
 	double vx, vy;
 	double t;
@@ -68,7 +68,7 @@ static void setParams()
 	if(phase > 5700000) phase = 0;
 }
 
-effect *dizzyRegister()
+effect *dizzyRegister(void)
 {
 	effect *entry;
 	
@@ -92,7 +92,7 @@ effect *dizzyRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(buffer, 0, video_area * 2 * PIXEL_SIZE);
 	current_buffer = buffer;
@@ -103,7 +103,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

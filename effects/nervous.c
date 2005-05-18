@@ -22,7 +22,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
 static char *effectname = "NervousTV";
 static int state = 0;

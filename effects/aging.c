@@ -167,7 +167,7 @@ static void pits(RGB32 *dest)
 	}
 }
 
-effect *agingRegister()
+effect *agingRegister(void)
 {
 	effect *entry;
 
@@ -183,7 +183,7 @@ effect *agingRegister()
 	return entry;
 }
 
-static void aging_mode_switch()
+static void aging_mode_switch(void)
 {
 	switch(aging_mode) {
 		default:
@@ -197,7 +197,7 @@ static void aging_mode_switch()
 		area_scale = 1;
 }
 
-static int start()
+static int start(void)
 {
 	aging_mode = 0;
 	aging_mode_switch();
@@ -206,7 +206,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 

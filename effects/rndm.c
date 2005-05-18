@@ -12,10 +12,10 @@
 #include "EffecTV.h"
 #include "utils.h"
 
-static int event();
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *event);
 
 static int rgrabtime=1;
 static int rgrab=0;

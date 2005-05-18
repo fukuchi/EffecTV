@@ -35,7 +35,7 @@ static int map_height;
 
 static int video_width_margin;
 
-effect *edgeRegister()
+effect *edgeRegister(void)
 {
 	effect *entry;
 	
@@ -63,7 +63,7 @@ effect *edgeRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(map, 0, map_width * map_height * PIXEL_SIZE * 2);
 
@@ -71,7 +71,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

@@ -85,6 +85,8 @@ static effectRegisterFunc *effects_register_list[] =
 	opRegister,
 	nervousHalfRegister,
 	slofastRegister,
+	displayWallRegister,
+	bluescreenRegister,
 };
 
 static effect **effectsList;
@@ -463,12 +465,6 @@ static int startTV(char *startEffect)
 					if(event.key.keysym.mod & KMOD_ALT) {
 						screen_fullscreen();
 					}
-					break;
-				case SDLK_SLASH:
-					puts("/");
-					break;
-				case SDLK_QUESTION:
-					puts("?");
 					break;
 				case SDLK_ESCAPE:
 					flag = 0;

@@ -27,7 +27,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 //static void diffUpdate();
 //static void diffSave();
 static char *effectname = "DiffTV";
@@ -37,7 +37,7 @@ static RGB32* prevbuf;
 
 static int g_tolerance[3] = {10, 10, 10};
 
-effect *diffRegister()
+effect *diffRegister(void)
 {
 	effect *entry;
 
@@ -61,7 +61,7 @@ effect *diffRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
     
 #ifdef DEBUG 
@@ -73,7 +73,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

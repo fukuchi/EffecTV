@@ -32,7 +32,7 @@ static void setBackground(RGB32 *src);
 static void drawDisappearing(RGB32 *src, RGB32 *dest);
 static void drawAppearing(RGB32 *src, RGB32 *dest);
 
-effect *chameleonRegister()
+effect *chameleonRegister(void)
 {
 	effect *entry;
 	
@@ -57,7 +57,7 @@ effect *chameleonRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	timebuffer = (unsigned char *)malloc(video_area * PLANES);
 	if(timebuffer == NULL)
@@ -72,7 +72,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(timebuffer) {

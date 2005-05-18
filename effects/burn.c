@@ -29,7 +29,7 @@ static RGB32 palette[256];
 static int bgIsSet = 0;
 static int mode = 1;
 
-static void makePalette()
+static void makePalette(void)
 {
 	int i, r, g, b;
 
@@ -55,7 +55,7 @@ static int setBackground(RGB32 *src)
 	return 0;
 }
 
-effect *burnRegister()
+effect *burnRegister(void)
 {
 	effect *entry;
 	
@@ -81,7 +81,7 @@ effect *burnRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	memset(buffer, 0, video_area);
@@ -91,7 +91,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

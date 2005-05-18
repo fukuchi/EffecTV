@@ -42,8 +42,8 @@ typedef enum _dice_dir {
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
-static void diceCreateMap();
+static int event(SDL_Event *event);
+static void diceCreateMap(void);
 
 static char *effectname = "DiceTV";
 static int state = 0;
@@ -55,7 +55,7 @@ static int g_cube_size = 0;
 static int g_map_height = 0;
 static int g_map_width = 0;
 
-effect *diceRegister()
+effect *diceRegister(void)
 {
 	effect *entry;
 
@@ -80,7 +80,7 @@ effect *diceRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
     diceCreateMap();
     
@@ -93,7 +93,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
     state = 0;
 	return 0;
@@ -210,7 +210,7 @@ static int event(SDL_Event *event)
 	return 0;
 }
 
-static void diceCreateMap()
+static void diceCreateMap(void)
 {
     int x;
     int y;

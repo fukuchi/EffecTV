@@ -16,7 +16,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
-static int event();
+static int event(SDL_Event *event);
 
 static char *effectname = "OpTV";
 static int stat;
@@ -50,6 +50,7 @@ static void initPalette()
 	}
 }
 
+#if 0
 static void setOpmap()
 {
 	int i, j, x, y;
@@ -98,6 +99,48 @@ static void setOpmap()
 		}
 	}
 }
+#else
+static void setOpmap()
+{
+	int i, j, x, y;
+#ifndef PS2
+	double xx, yy, r, at, rr;
+#else
+	float xx, yy, r, at, rr;
+#endif
+	int sci;
+
+	sci = 640 / video_width;
+	i = 0;
+	for(y=0; y<video_height; y++) {
+		yy = (double)(y - video_height/2) / video_width;
+		for(x=0; x<video_width; x++) {
+			xx = (double)x / video_width - 0.5;
+#ifndef PS2
+			r = sqrt(xx * xx + yy * yy);
+			at = atan2(xx, yy);
+#else
+			r = sqrtf(xx * xx + yy * yy);
+			at = atan2f(xx, yy);
+#endif
+
+			opmap[OP_SPIRAL1][i] = ((unsigned int)
+				((at / M_PI * 256) + (r * 4000))) & 255;
+
+			j = r * 300 / 32;
+			rr = r * 300 - j * 32;
+			j *= 64;
+			j += (rr > 28) ? (rr - 28) * 16 : 0;
+			opmap[OP_SPIRAL2][i] = ((unsigned int)
+				((at / M_PI * 4096) + (r * 1600) - j )) & 255;
+
+			opmap[OP_PARABOLA][i] = ((unsigned int)(yy/(xx*xx*0.3+0.1)*400))&255;
+			opmap[OP_HSTRIPE][i] = x*8*sci;
+			i++;
+		}
+	}
+}
+#endif
 
 effect *opRegister()
 {

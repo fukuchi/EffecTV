@@ -123,8 +123,8 @@ typedef char WaveEl;
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *event);
 
-static int event();
 static void spiralCreateMap();
 static WaveEl* spiralDefineWaves();
 static void spiralMoveFocus();

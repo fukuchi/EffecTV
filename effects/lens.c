@@ -31,8 +31,8 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dst);
-static int event();
-static void init();
+static int event(SDL_Event *event);
+static void init(void);
 static int x=16,y=16;
 static int xd=5,yd=5;
 static int lens_width=150;
