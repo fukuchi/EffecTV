@@ -1,3 +1,11 @@
+2005/05/18	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/{shagadelic,op}.c:
+	  - Now their visuals are kept consistent against screen size.
+	* effects/{bluescreen,displaywall}.c:
+	  - New effects BlueScreenTV and DisplayWall.
+	* effects/*.c:
+	  - Various code cleaning.
+
 2005/02/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* iidc1394.patch: An experimental IIDC1394 support patch has been added.
 	* EffecTV-0.3.10 has been released.
