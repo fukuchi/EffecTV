@@ -32,7 +32,7 @@ static int setBackground(RGB32 *src)
 	return 0;
 }
 
-effect *mosaicRegister()
+effect *mosaicRegister(void)
 {
 	effect *entry;
 	
@@ -50,7 +50,7 @@ effect *mosaicRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	bgIsSet = 0;
@@ -59,7 +59,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

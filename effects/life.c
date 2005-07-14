@@ -23,12 +23,12 @@ static char *effectname = "LifeTV";
 static int stat;
 static unsigned char *field, *field1, *field2;
 
-static void clear_field()
+static void clear_field(void)
 {
 	memset(field1, 0, video_area);
 }
 
-effect *lifeRegister()
+effect *lifeRegister(void)
 {
 	effect *entry;
 	
@@ -52,7 +52,7 @@ effect *lifeRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(40);
 	field1 = field;
@@ -63,7 +63,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

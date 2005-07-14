@@ -24,7 +24,7 @@ static int state = 0;
 static RGB32 *bgimage;
 static unsigned int noisepattern[256];
 
-static int setBackground()
+static int setBackground(void)
 {
 	int i;
 	RGB32 *src, *tmp;
@@ -88,7 +88,7 @@ static int setBackground()
 	return 0;
 }
 
-static void holoInit()
+static void holoInit(void)
 {
 	int i;
 
@@ -97,7 +97,7 @@ static void holoInit()
 	}
 }
 
-effect *holoRegister()
+effect *holoRegister(void)
 {
 	effect *entry;
 	
@@ -122,7 +122,7 @@ effect *holoRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	if(setBackground())
@@ -132,7 +132,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

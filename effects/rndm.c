@@ -25,7 +25,7 @@ static int rmode=1;
 static char *effectname = "RndmTV";
 static int state = 0;
 
-effect *rndmRegister()
+effect *rndmRegister(void)
 {
 	effect *entry;
 
@@ -41,13 +41,13 @@ effect *rndmRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

@@ -39,7 +39,7 @@ static int state = 0;
 
 static void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h);
 
-effect *revRegister()
+effect *revRegister(void)
 {
 	effect *entry;
 
@@ -55,13 +55,13 @@ effect *revRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

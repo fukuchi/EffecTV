@@ -335,7 +335,7 @@ static int setBackground(RGB32 *src)
 	return 0;
 }
 
-effect *sparkRegister()
+effect *sparkRegister(void)
 {
 	effect *entry;
 
@@ -353,7 +353,7 @@ effect *sparkRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 	
@@ -371,7 +371,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

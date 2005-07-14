@@ -35,7 +35,7 @@ static int timer;
 static int stride;
 static int readplane;
 
-effect *nervousRegister()
+effect *nervousRegister(void)
 {
 	effect *entry;
 
@@ -53,7 +53,7 @@ effect *nervousRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -73,7 +73,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer)

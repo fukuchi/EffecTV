@@ -28,7 +28,7 @@ static int setBackground(RGB32 *src)
 	return 0;
 }
 
-effect *noiseRegister()
+effect *noiseRegister(void)
 {
 	effect *entry;
 	
@@ -46,7 +46,7 @@ effect *noiseRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(40);
 	bgIsSet = 0;
@@ -55,7 +55,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

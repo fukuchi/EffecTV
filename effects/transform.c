@@ -46,7 +46,7 @@ static int mapFromT(int x,int y, int t) {
   return xd + yd*video_width;
 }
 
-effect *TransFormRegister()
+effect *TransFormRegister(void)
 {
 	effect *entry;
 
@@ -64,7 +64,7 @@ effect *TransFormRegister()
 	return entry;
 }
 
-static void SquareTableInit()
+static void SquareTableInit(void)
 {
 	const int size = 16;
 	int x, y, tx, ty;
@@ -90,7 +90,7 @@ static void SquareTableInit()
 	}
 }
 
-static int start()
+static int start(void)
 {
   int x,y,i;
 //   int xdest,ydest;
@@ -117,7 +117,7 @@ static int start()
   return 0;
 }
 
-static int stop()
+static int stop(void)
 {
   int i;
 

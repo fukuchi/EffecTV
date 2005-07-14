@@ -23,7 +23,7 @@ static char *effectname = "PredatorTV";
 static int state = 0;
 static RGB32 *bgimage;
 
-static int setBackground()
+static int setBackground(void)
 {
 	int i;
 	RGB32 *src, *tmp;
@@ -87,7 +87,7 @@ static int setBackground()
 	return 0;
 }
 
-effect *predatorRegister()
+effect *predatorRegister(void)
 {
 	effect *entry;
 	
@@ -111,7 +111,7 @@ effect *predatorRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
 	if(setBackground())
@@ -121,7 +121,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

@@ -62,7 +62,7 @@ static void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 }
 
 
-effect *lensRegister()
+effect *lensRegister(void)
 {
 	effect *entry;
 	mode=1;
@@ -78,14 +78,14 @@ effect *lensRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	init();
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;
@@ -242,7 +242,7 @@ static void init() {
     }
 }
 
-static void clipmag()
+static void clipmag(void)
 {
 	if (y<0-(lens_width/2)+1)y=0-(lens_width/2)+1;
 	if (y>=video_height-lens_width/2-1)y=video_height-lens_width/2-1;

@@ -55,7 +55,7 @@ static void mirror_ur(RGB32 *, RGB32 *);
 static void mirror_dl(RGB32 *, RGB32 *);
 static void mirror_dr(RGB32 *, RGB32 *);
 
-effect *simuraRegister()
+effect *simuraRegister(void)
 {
 	effect *entry;
 	int i;
@@ -87,13 +87,13 @@ effect *simuraRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	stat = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

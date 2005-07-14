@@ -34,7 +34,7 @@ static int count;
 #define STATE_FILL  1
 #define STATE_FLUSH 2
 
-effect *slofastRegister()
+effect *slofastRegister(void)
 {
 	effect *entry;
 
@@ -53,7 +53,7 @@ effect *slofastRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -72,7 +72,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer)

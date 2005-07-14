@@ -20,8 +20,8 @@
 #define M_PI	3.14159265358979323846
 #endif
 
-static void initWarp();
-static void disposeWarp ();
+static void initWarp(void);
+static void disposeWarp (void);
 static void doWarp (int xw, int yw, int cw,RGB32 *src,RGB32 *dst);
 
 static int *offstable;
@@ -36,7 +36,7 @@ static int draw(RGB32 *src, RGB32 *dest);
 static char *effectname = "warpTV";
 static int state = 0;
 
-effect *warpRegister()
+effect *warpRegister(void)
 {
 	effect *entry;
 
@@ -51,14 +51,14 @@ effect *warpRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
     initWarp();
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		state = 0;
@@ -67,7 +67,7 @@ static int stop()
 	return 0;
 }
 
-static void initSinTable () {
+static void initSinTable (void) {
 	Sint32	*tptr, *tsinptr;
 	double	i;
 
@@ -80,7 +80,7 @@ static void initSinTable () {
 		*tptr++ = *tsinptr++;
 }
 
-static void initOffsTable () {
+static void initOffsTable (void) {
 	int y;
 	
 	for (y = 0; y < video_height; y++) {
@@ -88,7 +88,7 @@ static void initOffsTable () {
 	}
 }
       
-static void initDistTable () {
+static void initDistTable (void) {
 	Sint32	halfw, halfh, *distptr;
 #ifdef PS2
 	float	x,y,m;
@@ -114,7 +114,7 @@ static void initDistTable () {
 #endif
 }
 
-static void initWarp () {
+static void initWarp (void) {
 
   offstable = (int *)malloc (video_height * sizeof (int));      
   disttable = malloc (video_width * video_height * sizeof (int));
@@ -124,7 +124,7 @@ static void initWarp () {
 
 }
 
-static void disposeWarp () {
+static void disposeWarp (void) {
   free (disttable);
   free (offstable);
   

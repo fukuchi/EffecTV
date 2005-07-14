@@ -69,7 +69,7 @@ static RGB32 *bluescreen_max;
 static unsigned char tolerance=MAGIC_THRESHOLD;
 static unsigned char tolerance2=MAGIC_THRESHOLD*2; /* pre-computation */
 
-static int setBackground()
+static int setBackground(void)
 {
 	int i;
 	RGB32 *src, *tmp;
@@ -169,7 +169,7 @@ static int setBlueScreen(int frames)
 	return 0;
 }
 
-effect *bluescreenRegister()
+effect *bluescreenRegister(void)
 {
 	effect *entry;
 	
@@ -193,7 +193,7 @@ effect *bluescreenRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	if(setBackground())
 		return -1;
@@ -215,7 +215,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	free(bluescreen_min); /* from the bitbucket you came ... */
 	free(bluescreen_max); /* ... to the bit bucket you shall return */

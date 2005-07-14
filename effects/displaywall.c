@@ -19,7 +19,6 @@ static int event(SDL_Event *event);
 
 static char *effectname = "DisplayWall";
 static int state = 0;
-static int mode = 0;
 
 static int *vecx;
 static int *vecy;
@@ -32,7 +31,7 @@ static int cx, cy;
 
 static void initVec(void);
 
-effect *displayWallRegister()
+effect *displayWallRegister(void)
 {
 	effect *entry;
 
@@ -96,7 +95,7 @@ static int start(void)
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 

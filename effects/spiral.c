@@ -172,7 +172,7 @@ static int g_focus_radius = 100;
 static double g_focus_degree = 1.0;
 static double g_focus_increment = FOCUS_INCREMENT_PRESET;
 
-static void spiralSetName()
+static void spiralSetName(void)
 {
             sprintf(effectname, "%s:%s (%0.2fi/%df/%dd)", effectname_base,
                     g_wave_names[mode],
@@ -181,7 +181,7 @@ static void spiralSetName()
             screen_setcaption(effectname);
 }
     
-effect *spiralRegister()
+effect *spiralRegister(void)
 {
 	effect *entry;
     
@@ -209,7 +209,7 @@ effect *spiralRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -262,7 +262,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer)
@@ -442,7 +442,7 @@ static int event(SDL_Event *event)
 	return 0;
 }
 
-static void spiralCreateMap()
+static void spiralCreateMap(void)
 {
     int x;
     int y;
@@ -483,7 +483,7 @@ static void spiralCreateMap()
     return;
 }
 
-static WaveEl* spiralDefineWaves()
+static WaveEl* spiralDefineWaves(void)
 {
     WaveEl* wave_table;
     int     i;
@@ -549,7 +549,7 @@ static WaveEl* spiralDefineWaves()
     return (wave_table);
 }
 
-static void spiralMoveFocus()
+static void spiralMoveFocus(void)
 {
     g_focus_counter++;
 

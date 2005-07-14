@@ -35,7 +35,7 @@ static const int decay = 8;
 static const int loopnum = 2;
 static int bgIsSet = 0;
 
-static void setTable()
+static void setTable(void)
 {
 	int i;
 
@@ -55,7 +55,7 @@ static int setBackground(RGB32 *src)
 	return 0;
 }
 
-effect *rippleRegister()
+effect *rippleRegister(void)
 {
 	effect *entry;
 	
@@ -86,7 +86,7 @@ effect *rippleRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(map, 0, map_h*map_w*3*sizeof(int));
 	memset(vtable, 0, map_h*map_w*2*sizeof(signed char));
@@ -99,7 +99,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;
@@ -156,7 +156,7 @@ static inline void drop(int power)
 	*(q-map_w-1) = *(q-map_w+1) = *(q+map_w-1) = *(p+map_w+1) = power/4;
 }
 
-static void raindrop()
+static void raindrop(void)
 {
 	static int period = 0;
 	static int rain_stat = 0;

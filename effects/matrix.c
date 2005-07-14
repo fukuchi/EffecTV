@@ -63,7 +63,7 @@ static void drawChar(RGB32 *dest, unsigned char c, unsigned char v);
 static void createImg(RGB32 *src);
 static void updateCharMap(void);
 
-effect *matrixRegister()
+effect *matrixRegister(void)
 {
 	effect *entry;
 	
@@ -98,7 +98,7 @@ effect *matrixRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	memset(cmap, CHARNUM - 1, mapW * mapH * sizeof(unsigned char));
 	memset(vmap, 0, mapW * mapH * sizeof(unsigned char));
@@ -109,7 +109,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

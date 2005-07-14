@@ -24,7 +24,7 @@ static RGB32 colortable[26] = {
 	0x808080, 0x008080, 0xe0e000, 
 };
 
-effect *warholRegister()
+effect *warholRegister(void)
 {
 	effect *entry;
 
@@ -40,13 +40,13 @@ effect *warholRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	state = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

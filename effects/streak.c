@@ -27,7 +27,7 @@ static RGB32 *buffer;
 static RGB32 *planetable[PLANES];
 static int plane;
 
-effect *streakRegister()
+effect *streakRegister(void)
 {
 	effect *entry;
 
@@ -45,7 +45,7 @@ effect *streakRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -62,7 +62,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer) {

@@ -51,7 +51,7 @@ static void blockSetSrcOffset(int i);
 static void moveBlock(RGB32 *src, RGB32 *dest);
 static void autoSolve(void);
 
-effect *puzzleRegister()
+effect *puzzleRegister(void)
 {
 	effect *entry;
 	int x, y;
@@ -98,7 +98,7 @@ effect *puzzleRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i, a, b, c;
 
@@ -130,7 +130,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;

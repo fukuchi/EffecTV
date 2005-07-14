@@ -24,7 +24,7 @@ static void add_noise (RGB32 *dest);
 #define SCROLL_STEPS	30
 static int offset = 0;
 
-effect *scrollRegister()
+effect *scrollRegister(void)
 {
 	effect *entry;
 
@@ -40,7 +40,7 @@ effect *scrollRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	offset = 0;
 	state = 1;
@@ -48,7 +48,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 	return 0;

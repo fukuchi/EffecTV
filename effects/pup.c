@@ -43,7 +43,7 @@ static int resetBuffer(RGB32 *src)
 	return 0;
 }
 
-effect *pupRegister()
+effect *pupRegister(void)
 {
 	effect *entry;
 
@@ -65,7 +65,7 @@ effect *pupRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	bgIsSet = 0;
 	state = 1;
@@ -73,7 +73,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	state = 0;
 

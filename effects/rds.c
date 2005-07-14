@@ -23,7 +23,7 @@ static int stat;
 static int stride = 40;
 static int method = 0;
 
-effect *rdsRegister()
+effect *rdsRegister(void)
 {
 	effect *entry;
 	
@@ -41,13 +41,13 @@ effect *rdsRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	stat = 1;
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;
