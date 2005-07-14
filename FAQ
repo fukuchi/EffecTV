@@ -1,6 +1,6 @@
 FAQ
 ===
-Last updated 2001/10/9 for release 0.3.3
+Last updated 2005/6/3 for release 0.3.11
 
 Contents
 --------
@@ -81,15 +81,16 @@ tell me your ID. I will add your ID to the EffecTV developers group.
 ----------
 Q7: How can I capture the video output from EffecTV to harddisk?
 
-A: EffecTV can output the effected images to a video loopback device since
+A: EffecTV can output the processed images to a video loopback device since
 version 0.2.0. First, you should download Jeroen Vreeken's vloopback driver
-from http://motion.sourceforge.net/vloopback/index.html and install the module.
-Then, load the module and check the input and output device files of the video
-pipe (typically it will be /dev/video1 and /dev/video2). Then, run EffecTV
+from http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
+and install the module. Then, load the module and check the input and output
+device files of the video pipe (typically /dev/video1 and /dev/video2). Finally,
+run EffecTV.
 
 $ effectv -vloopback /dev/video1
 
-The effected images can be retrieved from /dev/video2. At the moment, EffecTV
+The processed images can be retrieved from /dev/video2. At the moment, EffecTV
 does not support some pixel format, so some applications do not work.
 ----------
 Q8: EffecTV is slow.
@@ -113,11 +114,11 @@ EffecTV. When I try to start EffecTV, I get the following Error:
 video_init: Can't find a supported pixel format.
 Video initialization failed.
 
-A: Since kernel 2.4.6, the most of Video4Linux driver output only a native
-pixel format. Before 2.4.6, some drivers converted its native format to a
-popular format supported by EffecTV, so it worked.
+A: Since kernel 2.4.6, the most of Video4Linux driver output only its native
+pixel format. Before 2.4.6, because drivers converted its native format to a
+popular format supported by EffecTV, it had worked.
 Since EffecTV-0.3.1, some pixel format converters were added, but it is not
-completed.
+completed yet.
 
-If you got that error, Try 'palettecheck' utility in 'tools' directory and
-please attach an output to a bug report mail and send us it.
+If you got that error, try 'palettecheck' utility in 'tools' directory and
+please send us the output with a bug report.

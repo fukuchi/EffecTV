@@ -1,4 +1,4 @@
-EffecTV 0.3.10
+EffecTV 0.3.11
 
 GENERAL INFORMATION
 ===================
@@ -142,6 +142,7 @@ Space       capture a background image(for FireTV, BurningTV, etc.).
 ALT+Enter   fullscreen mode(toggle).
 TAB         Horizontal flipping(toggle).
 Escape      Quit
+ALT+0-9     change video input channel.
 F1/F2       increase/decrease brightness of video input.
 F3/F4       increase/decrease hue.
 F5/F6       increase/decrease color balance.
@@ -275,6 +276,13 @@ NervousHalf
 
 SloFastTV
     Non-linear time TV.
+
+DisplayWall
+	Full of small displays with a distorted perspective view.
+
+BlueScreenTV
+	Blue sceen effect: changes scene background.
+
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

@@ -1,3 +1,29 @@
+2005/07/12	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* palette.c:
+	  - Code cleaning.
+	* effects/displaywall.c:
+	  - Code cleaning.
+	* v4lutils/v4utils.c:
+	  - Fixed a comment bug.
+	* effectv.1, README:
+	  - Added descriptions of BlueScreenTV and DisplayWall.
+	* video.{c,h}:
+	  - Code cleaning, includes variables renaming.
+	  - Now video_init does not call 'atexit(video_quit)'. main.c calles
+	    it instead.
+	  - video_quit() frees framebuffer.
+	  - New functions video_change_channel() and video_retry().
+	* main.c:
+	  - Code cleaning.
+	  - Retrying video grabbing after a system error was added.
+	  - Changing video input channel is now enabled.
+	* FAQ:
+	  - URL to vloopback module is updated.
+	* ChangeLog:
+	  - Typo fix. (log of 2005/02/13)
+	* effects/{op.c, shagadelic.c}:
+	  - Now its appearance are resolution independent. 
+
 2005/05/18	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{shagadelic,op}.c:
 	  - Now their visuals are kept consistent against screen size.
@@ -11,7 +37,7 @@
 	* EffecTV-0.3.10 has been released.
 
 2005/02/13	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
-	* Changed version to 0.3.9.
+	* Changed version to 0.3.10.
 
 2005/01/28	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* main.c:
