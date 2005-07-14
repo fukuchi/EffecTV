@@ -44,8 +44,6 @@ static int v4lperror_level = V4L_PERROR_ALL;
 /*
  * v4lperror - inhouse perror.
  *
- * name: device file
- * vd: v4l device object
  */
 static void v4lperror(const char *str)
 {
