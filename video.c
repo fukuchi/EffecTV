@@ -20,16 +20,27 @@
 /* Currently there is only one v4l device obeject. */
 v4ldevice vd;
 
-/* Is TV tuner enabled? */
-int hastuner = 0;
-
 /* Flag for horizontal flipping mode */
-int horizontal_flip = 0;
+int video_horizontalFlip = 0;
 
 /* Width and height of captured image */
 int video_width;
 int video_height;
 int video_area; // = video_width * video_height
+
+/* Video input parameters */
+static int video_channel;
+static int video_norm;
+static int video_palette;
+
+/* Tuner parameters */
+int video_hasTuner = 0;
+static int video_frequencyTable = 0;
+static int video_TVchannel = 0;
+
+
+/* Initial parameters */
+static char *video_file;
 
 /* Picture parameters */
 static int picture_brightness;
@@ -54,8 +65,6 @@ static normlist normlists[] =
 	{"", -1}
 };
 
-static int frequency_table = 0;
-static int TVchannel = 0;
 static RGB32 *framebuffer;
 
 #define MAXWIDTH (vd.capability.maxwidth)
@@ -70,6 +79,12 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h, int pa
 		file = DEFAULT_VIDEO_DEVICE;
 	}
 	if(v4lopen(file, &vd)) return -1;
+
+	video_file    = strdup(file);
+	video_channel = channel;
+	video_norm    = norm;
+	video_palette = palette;
+
 	v4lsetdefaultnorm(&vd, norm);
 	v4lgetcapability(&vd);
 
@@ -78,9 +93,9 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h, int pa
 		return -1;
 	}
 	if((vd.capability.type & VID_TYPE_TUNER)) {
-		hastuner = 1;
-		frequency_table = freq;
-		TVchannel = 0;
+		video_hasTuner = 1;
+		video_frequencyTable = freq;
+		video_TVchannel = 0;
 		video_setfreq(0);
 	}
 	if(w == 0 && h == 0) {
@@ -135,16 +150,15 @@ int video_init(char *file, int channel, int norm, int freq, int w, int h, int pa
 	picture_colour = vd.picture.colour;
 	picture_contrast = vd.picture.contrast;
 
-	atexit(video_quit);
 	return 0;
 }
 
-/* video_quit() is called automatically when the process terminates.
- * This function is registerd in video_init() by callint atexit(). */
-void video_quit()
+/* close v4l device. */
+void video_quit(void)
 {
 	v4lmunmap(&vd);
 	v4lclose(&vd);
+	free(framebuffer);
 }
 
 /* Set the format of captured data. */
@@ -195,7 +209,7 @@ int video_set_grabformat(int palette)
 }
 
 /* Start the continuous grabbing */
-int video_grabstart()
+int video_grabstart(void)
 {
 	vd.frame = 0;
 	if(v4lgrabstart(&vd, 0) < 0)
@@ -206,7 +220,7 @@ int video_grabstart()
 }
 
 /* Stop the continuous grabbing */
-int video_grabstop()
+int video_grabstop(void)
 {
 	if(vd.framestat[vd.frame]) {
 		if(v4lsync(&vd, vd.frame) < 0)
@@ -220,7 +234,7 @@ int video_grabstop()
 }
 
 /* Wait on the capturing image */
-int video_syncframe()
+int video_syncframe(void)
 {
 	return v4lsyncf(&vd);
 }
@@ -231,16 +245,16 @@ int video_grabframe(){
 }
 
 /* Returns a pointer to captured image */
-unsigned char *video_getaddress()
+unsigned char *video_getaddress(void)
 {
 	if(converter) {
-		if(horizontal_flip) {
+		if(video_horizontalFlip) {
 			(*converter_hflip)(v4lgetaddress(&vd), framebuffer, video_width, video_height);
 		} else {
 			(*converter)(v4lgetaddress(&vd), framebuffer, video_width, video_height);
 		}
 		return (unsigned char *)framebuffer;
-	} else if(horizontal_flip) {
+	} else if(video_horizontalFlip) {
 		image_hflip((RGB32 *)v4lgetaddress(&vd), framebuffer,
 			video_width, video_height);
 		return (unsigned char *)framebuffer;
@@ -263,17 +277,17 @@ int video_changesize(int width, int height)
 	return v4lgrabinit(&vd, width, height);
 }
 
-/* change TVchannel to TVchannel+v */
+/* change video_TVchannel to video_TVchannel+v */
 int video_setfreq(int v)
 {
-	if(hastuner && (frequency_table >= 0)) {
-		TVchannel += v;
-		while(TVchannel<0) {
-			TVchannel += chanlists[frequency_table].count;
+	if(video_hasTuner && (video_frequencyTable >= 0)) {
+		video_TVchannel += v;
+		while(video_TVchannel<0) {
+			video_TVchannel += chanlists[video_frequencyTable].count;
 		}
-		TVchannel %= chanlists[frequency_table].count;
+		video_TVchannel %= chanlists[video_frequencyTable].count;
 
-		return v4lsetfreq(&vd, chanlists[frequency_table].list[TVchannel].freq);
+		return v4lsetfreq(&vd, chanlists[video_frequencyTable].list[video_TVchannel].freq);
 	} else {
 		return 0;
 	}
@@ -313,6 +327,39 @@ void video_change_contrast(int v)
 	if(picture_contrast < 0) picture_contrast = 0;
 	if(picture_contrast > 65535) picture_contrast = 65535;
 	v4lsetpicture(&vd, -1, -1, -1, picture_contrast, -1);
+}
+
+/* change channel: stops video grabbing at first, then recreate v4ldevice
+ * object. */
+int video_change_channel(int channel)
+{
+	int ret = 0;
+	int maxch;
+
+	maxch = v4lmaxchannel(&vd);
+	if(channel < 0) channel = 0;
+	if(channel > maxch) channel = maxch;
+
+	video_grabstop();
+	if(v4lsetchannel(&vd, channel)) ret = -1;
+	video_channel = channel;
+	video_grabstart();
+
+	return ret;
+}
+
+/* retry grabbing */
+int video_retry(void)
+{
+	video_quit();
+	return video_init(
+			video_file,
+			video_channel,
+			video_norm,
+			video_frequencyTable,
+			video_width,
+			video_height,
+			video_palette);
 }
 
 /*

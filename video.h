@@ -18,8 +18,8 @@ typedef struct _normlist
 } normlist;
 
 extern v4ldevice vd;
-extern int hastuner;
-extern int horizontal_flip;
+extern int video_hasTuner;
+extern int video_horizontalFlip;
 extern int video_width;
 extern int video_height;
 extern int video_area;
@@ -41,6 +41,8 @@ void video_change_hue(int);
 void video_change_color(int);
 void video_change_contrast(int);
 void video_change_whiteness(int);
+int video_change_channel(int channel);
+int video_retry(void);
 
 #define video_getformat() (vd.mmap.format)
 

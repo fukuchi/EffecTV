@@ -37,6 +37,10 @@
 #include "vloopback.h"
 #endif
 
+/* The number of loops for retry of video grabbing. In the default setting,
+ * EffecTV will try to restart grabbing process every 1 second. */
+#define RETRY_LOOP 30
+
 int debug = 0; /* 0 = off, 1 = less debug messages, 2 = more debug messages. */
 int autoplay = 0;
 int autoplay_counter;
@@ -95,7 +99,12 @@ static int currentEffectNum;
 static effect *currentEffect;
 static int fps = 0;
 
-static void usage()
+static void fpsInit(void);
+static void fpsCount(void);
+static void drawErrorPattern(void);
+static int parseGeometry(const char *str, int *w, int *h);
+
+static void usage(void)
 {
 	printf("EffecTV - Realtime Video Effector\n");
 	printf("Version: %s\n", VERSION_STRING);
@@ -125,7 +134,7 @@ static void usage()
 #endif
 }
 
-static void keyUsage()
+static void keyUsage(void)
 {
 	printf( "---------------\n"
 			"Key description\n"
@@ -136,6 +145,7 @@ static void keyUsage()
 			"ALT+Enter   fullscreen mode(toggle).\n"
 			"TAB         Horizontal flipping(toggle).\n"
 			"Escape      Quit\n"
+			"ALT+0-9     change video input channel.\n"
 			"F1/F2       increase/decrease brightness of video input.\n"
 			"F3/F4       increase/decrease hue.\n"
 			"F5/F6       increase/decrease color balance.\n"
@@ -143,92 +153,7 @@ static void keyUsage()
 			"F12         show this usage.\n");
 }
 
-static int parse_geometry(const char *str, int *w, int *h)
-{
-	int ret;
-
-	ret = sscanf(str, "%dx%d", w, h);
-	if(ret != 2) {
-		fprintf(stderr, "size specification is wrong.(e.g.\"320x240\")\n");
-		return -1;
-	}
-	if(*w <=0 || *h <= 0) {
-		fprintf(stderr, "width and height must be greater than 0.\n");
-		return -1;
-	}
-
-	return 0;
-}
-
-static void drawErrorPattern()
-{
-/* This is stil quick hack. XBM drawing function can be modularized. */
-	int x, y, b;
-	int mx, my;
-	int sw, sh;
-	int bpl, bytes, restbits;
-	RGB32 *dest, *q;
-	unsigned char *p, v;
-	int flag = 0;
-
-	bytes = syserr_xbm_width / 8;
-	bpl = (syserr_xbm_width + 7) / 8;
-	restbits = syserr_xbm_width - bytes * 8;
-	sw = screen_width;
-	sh = screen_height;
-
-	if(screen_lock() < 0) {
-		return;
-	}
-
-	if(screen_width >= syserr_xbm_width && screen_height >= syserr_xbm_height) {
-		dest = (RGB32 *)screen_getaddress();
-	} else {
-		if(syserr_xbm_width / sw > syserr_xbm_height / sh) {
-			sh = sh * syserr_xbm_width / sw;
-			sw = syserr_xbm_width;
-		} else {
-			sw = sw * syserr_xbm_height / sh;
-			sh = syserr_xbm_height;
-		}
-		dest = (RGB32 *)malloc(sw * sh * sizeof(RGB32));
-		flag = 1;
-	}
-	for(x=0; x<sw*sh; x++) {
-		dest[x] = 0xff0000;
-	}
-	mx = (sw - syserr_xbm_width) / 2;
-	my = (sh - syserr_xbm_height) / 2;
-	q = dest + my*sw + mx;
-	for(y=0; y<syserr_xbm_height; y++) {
-		p = syserr_xbm_bits + y * bpl;
-		for(x=0; x<bytes; x++) {
-			v = *p++;
-			for(b=0; b<8; b++) {
-				if(v&1) *q = 0;
-				q++;
-				v = v>>1;
-			}
-		}
-		if(restbits) {
-			v = *p++;
-			for(b=0; b<restbits; b++) {
-				if(v & 1) *q = 0;
-				q++;
-				v = v>>1;
-			}
-		}
-		q += sw - syserr_xbm_width;
-	}
-	if(flag) {
-		image_stretch(dest, sw, sh, (RGB32 *)screen_getaddress(), screen_width, screen_height);
-		free(dest);
-	}
-	screen_unlock();
-	screen_update();
-}
-
-static int registerEffects()
+static int registerEffects(void)
 {
 	int i, n;
 	effect *entry;
@@ -239,7 +164,7 @@ static int registerEffects()
 	for(i=0;i<n;i++) {
 		entry = (*effects_register_list[i])();
 		if(entry) {
-			printf("%.40s OK.\n",entry->name);
+			printf("%s OK.\n",entry->name);
 			effectsList[effectMax] = entry;
 			effectMax++;
 		}
@@ -258,9 +183,9 @@ static int changeEffect(int num)
 	if(currentEffect)
 		currentEffect->stop();
 	currentEffectNum = num;
-	if(currentEffectNum < 0)
+	while(currentEffectNum < 0)
 		currentEffectNum += effectMax;
-	if(currentEffectNum >= effectMax)
+	while(currentEffectNum >= effectMax)
 		currentEffectNum -= effectMax;
 	currentEffect = effectsList[currentEffectNum];
 	screen_setcaption(currentEffect->name);
@@ -274,7 +199,7 @@ static int changeEffect(int num)
 	return 1;
 }
 
-static int searchEffect(char *name)
+static int searchEffect(const char *name)
 {
 	int i, num, len1, len2;
 	char *p;
@@ -310,16 +235,14 @@ static int searchEffect(char *name)
 	return num;
 }
 
-static int startTV(char *startEffect)
+static int startTV(const char *startEffect)
 {
 	int ret;
 	int flag;
-	int frames=0;
-	struct timeval tv;
-	long lastusec=0, usec=0;
 	SDL_Event event;
-	char buf[256];
+	int eventDone;
 	RGB32 *src, *dest;
+	int retry = 0;
 
 	ret = video_grabstart();
 	if(ret != 0) {
@@ -339,10 +262,10 @@ static int startTV(char *startEffect)
 	}
 
 	if(fps) {
-		gettimeofday(&tv, NULL);
-		lastusec = tv.tv_sec*1000000+tv.tv_usec;
-		frames = 0;
+		fpsInit();
 	}
+
+	/* main loop */
 	while(flag) {
 		if(flag == 1) {
 			ret = video_syncframe();
@@ -387,24 +310,28 @@ static int startTV(char *startEffect)
 		if (flag == 2) {
 			drawErrorPattern();
 			flag = 3;
+			retry = RETRY_LOOP;
 		}
 		if (flag == 3) {
 			usleep(300);
-		}
-
-		if(fps) {
-			frames++;
-			if(frames == 100) {
-				gettimeofday(&tv, NULL);
-				usec = tv.tv_sec*1000000+tv.tv_usec;
-				snprintf(buf, 256, "%s (%2.2f fps)", currentEffect->name, (float)100000000/(usec - lastusec));
-				screen_setcaption(buf);
-				lastusec = usec;
-				frames = 0;
+			if(retry > 0) {
+				retry--;
+				if(retry == 0) {
+					if(video_retry() == 0) {
+						video_grabstart();
+						flag = changeEffect(currentEffectNum);
+					} else {
+						retry = RETRY_LOOP;
+					}
+				}
 			}
 		}
 
-		if(autoplay) {
+		if(fps) {
+			fpsCount();
+		}
+
+		if(flag == 1 && autoplay) {
 			autoplay_counter--;
 			if(autoplay_counter == 0) {
 				autoplay_counter = autoplay;
@@ -413,17 +340,24 @@ static int startTV(char *startEffect)
 		}
 
 		while(SDL_PollEvent(&event)) {
+			eventDone = 0;
+
 			if(event.type == SDL_KEYDOWN) {
+				eventDone = 1;
 				switch(event.key.keysym.sym) {
 				case SDLK_UP:
-					flag = changeEffect(currentEffectNum-1);
-					if(autoplay)
-						autoplay_counter = autoplay;
+					if(flag == 1) {
+						flag = changeEffect(currentEffectNum-1);
+						if(autoplay)
+							autoplay_counter = autoplay;
+					}
 					break;
 				case SDLK_DOWN:
-					flag = changeEffect(currentEffectNum+1);
-					if(autoplay)
-						autoplay_counter = autoplay;
+					if(flag == 1) {
+						flag = changeEffect(currentEffectNum+1);
+						if(autoplay)
+							autoplay_counter = autoplay;
+					}
 					break;
 				case SDLK_LEFT:
 					video_setfreq(-1);
@@ -432,7 +366,7 @@ static int startTV(char *startEffect)
 					video_setfreq(1);
 					break;
 				case SDLK_TAB:
-					horizontal_flip = horizontal_flip ^ 1;
+					video_horizontalFlip ^= 1;
 					break;
 				case SDLK_F1:
 					video_change_brightness(+4096);
@@ -460,6 +394,39 @@ static int startTV(char *startEffect)
 					break;
 				case SDLK_F12:
 					keyUsage();
+					flag = 2;
+					break;
+				case SDLK_0:
+				case SDLK_1:
+				case SDLK_2:
+				case SDLK_3:
+				case SDLK_4:
+				case SDLK_5:
+				case SDLK_6:
+				case SDLK_7:
+				case SDLK_8:
+				case SDLK_9:
+					if(event.key.keysym.mod & KMOD_ALT) {
+						video_change_channel(event.key.keysym.sym - SDLK_0);
+					} else {
+						eventDone = 0;
+					}
+					break;
+				case SDLK_KP0:
+				case SDLK_KP1:
+				case SDLK_KP2:
+				case SDLK_KP3:
+				case SDLK_KP4:
+				case SDLK_KP5:
+				case SDLK_KP6:
+				case SDLK_KP7:
+				case SDLK_KP8:
+				case SDLK_KP9:
+					if(event.key.keysym.mod & KMOD_ALT) {
+						video_change_channel(event.key.keysym.sym - SDLK_KP0);
+					} else {
+						eventDone = 0;
+					}
 					break;
 				case SDLK_RETURN:
 					if(event.key.keysym.mod & KMOD_ALT) {
@@ -470,6 +437,7 @@ static int startTV(char *startEffect)
 					flag = 0;
 					break;
 				default:
+					eventDone = 0;
 					break;
 				}
 			}
@@ -479,8 +447,11 @@ static int startTV(char *startEffect)
 					break;
 				}
 			}
-			if(event.type == SDL_QUIT) flag=0;
-			if(currentEffect->event) {
+			if(event.type == SDL_QUIT) {
+				flag=0;
+				eventDone = 1;
+			}
+			if(eventDone == 0 && currentEffect->event) {
 				currentEffect->event(&event);
 			}
 		}
@@ -590,7 +561,7 @@ int main(int argc, char **argv)
 		} else if(strcmp(option, "size") == 0) {
 			i++;
 			if(i<argc) {
-				if(parse_geometry(argv[i], &vw, &vh)) {
+				if(parseGeometry(argv[i], &vw, &vh)) {
 					exit(1);
 				}
 			} else {
@@ -600,7 +571,7 @@ int main(int argc, char **argv)
 		} else if(strcmp(option, "geometry") == 0) {
 			i++;
 			if(i<argc) {
-				if(parse_geometry(argv[i], &sw, &sh)) {
+				if(parseGeometry(argv[i], &sw, &sh)) {
 					exit(1);
 				}
 			} else {
@@ -709,5 +680,128 @@ int main(int argc, char **argv)
 	}
 #endif
 
+	video_quit();
+
 	return 0;
+}
+
+/* Parse string contains geometry size */
+
+static int parseGeometry(const char *str, int *w, int *h)
+{
+	int ret;
+
+	ret = sscanf(str, "%dx%d", w, h);
+	if(ret != 2) {
+		fprintf(stderr, "size specification is wrong.(e.g.\"320x240\")\n");
+		return -1;
+	}
+	if(*w <=0 || *h <= 0) {
+		fprintf(stderr, "width and height must be greater than 0.\n");
+		return -1;
+	}
+
+	return 0;
+}
+
+/* FPS counter */
+
+static int fps_frames;
+static long fps_lastusec;
+
+static void fpsInit(void)
+{
+	fps_frames = 0;
+	fps_lastusec = 0;
+}
+
+static void fpsCount(void)
+{
+	long usec;
+	char buf[256];
+	struct timeval tv;
+
+	fps_frames++;
+	if(fps_frames == 100) {
+		gettimeofday(&tv, NULL);
+		usec = tv.tv_sec * 1000000 + tv.tv_usec;
+		if(usec - fps_lastusec < 0) {
+			snprintf(buf, 256, "N/A");
+		} else {
+			snprintf(buf, 256, "%s (%2.2f fps)", currentEffect->name, (float)100000000/(usec - fps_lastusec));
+		}
+
+		screen_setcaption(buf);
+
+		fps_lastusec = usec;
+		fps_frames = 0;
+	}
+}
+
+static void drawErrorPattern(void)
+{
+/* This is stil quick hack. XBM drawing function can be modularized. */
+	int x, y, b;
+	int mx, my;
+	int sw, sh;
+	int bpl, bytes, restbits;
+	RGB32 *dest, *q;
+	unsigned char *p, v;
+	int flag = 0;
+
+	bytes = syserr_xbm_width / 8;
+	bpl = (syserr_xbm_width + 7) / 8;
+	restbits = syserr_xbm_width - bytes * 8;
+	sw = screen_width;
+	sh = screen_height;
+
+	if(screen_lock() < 0) {
+		return;
+	}
+
+	if(screen_width >= syserr_xbm_width && screen_height >= syserr_xbm_height) {
+		dest = (RGB32 *)screen_getaddress();
+	} else {
+		if(syserr_xbm_width / sw > syserr_xbm_height / sh) {
+			sh = sh * syserr_xbm_width / sw;
+			sw = syserr_xbm_width;
+		} else {
+			sw = sw * syserr_xbm_height / sh;
+			sh = syserr_xbm_height;
+		}
+		dest = (RGB32 *)malloc(sw * sh * sizeof(RGB32));
+		flag = 1;
+	}
+	for(x=0; x<sw*sh; x++) {
+		dest[x] = 0xff0000;
+	}
+	mx = (sw - syserr_xbm_width) / 2;
+	my = (sh - syserr_xbm_height) / 2;
+	q = dest + my*sw + mx;
+	for(y=0; y<syserr_xbm_height; y++) {
+		p = syserr_xbm_bits + y * bpl;
+		for(x=0; x<bytes; x++) {
+			v = *p++;
+			for(b=0; b<8; b++) {
+				if(v&1) *q = 0;
+				q++;
+				v = v>>1;
+			}
+		}
+		if(restbits) {
+			v = *p++;
+			for(b=0; b<restbits; b++) {
+				if(v & 1) *q = 0;
+				q++;
+				v = v>>1;
+			}
+		}
+		q += sw - syserr_xbm_width;
+	}
+	if(flag) {
+		image_stretch(dest, sw, sh, (RGB32 *)screen_getaddress(), screen_width, screen_height);
+		free(dest);
+	}
+	screen_unlock();
+	screen_update();
 }
