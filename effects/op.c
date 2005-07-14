@@ -3,7 +3,7 @@
  * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * OpTV - Optical art meets real-time video effect.
- * Copyright (C) 2004 FUKUCHI Kentaro
+ * Copyright (C) 2004-2005 FUKUCHI Kentaro
  *
  */
 
@@ -33,7 +33,7 @@ static char *opmap[OPMAP_MAX];
 
 static RGB32 palette[256];
 
-static void initPalette()
+static void initPalette(void)
 {
 	int i;
 	unsigned char v;
@@ -50,57 +50,7 @@ static void initPalette()
 	}
 }
 
-#if 0
-static void setOpmap()
-{
-	int i, j, x, y;
-#ifndef PS2
-	double xx, yy, r, at, rr;
-	double sc; /* scale factor */
-#else
-	float xx, yy, r, at, rr;
-	float sc; /* scale factor */
-#endif
-	int sci;
-
-#ifndef PS2
-	sc = 320.0 / (double)video_width; /* sc = 1.0 normally */
-#else
-	sc = 320.0 / (float)video_width;
-#endif
-	sci = sc * 2;
-	i = 0;
-	for(y=0; y<video_height; y++) {
-		yy = y - video_height/2;
-		for(x=0; x<video_width; x++) {
-			xx = x - video_width/2;
-#ifndef PS2
-			r = sqrt(xx * xx + yy * yy);
-			at = atan2(xx, yy);
-#else
-			r = sqrtf(xx * xx + yy * yy);
-			at = atan2f(xx, yy);
-#endif
-
-			opmap[OP_SPIRAL1][i] = ((unsigned int)
-				((at / M_PI * 256) + (r* sc * 16))) & 255;
-
-			j = r / 32;
-			rr = r - j * 32;
-			j *= 64;
-			j += (rr > 28) ? (rr - 28) * 16 : 0;
-			opmap[OP_SPIRAL2][i] = ((unsigned int)
-				((at / M_PI * 4096) + (r * 8 * sc) - j )) & 255;
-
-			opmap[OP_PARABOLA][i] = ((unsigned int)(yy/(xx*xx*sc*0.000004+0.1)*1.5*sc))&255;
-			opmap[OP_HSTRIPE][i] = x*8*sci;
-			/* opmap[OP_RIPPLE][i] = ((unsigned int)-(sqrt(xx*xx+yy*yy)*16+sin(x*0.7+yy*0.3)*17)&255); */
-			i++;
-		}
-	}
-}
-#else
-static void setOpmap()
+static void setOpmap(void)
 {
 	int i, j, x, y;
 #ifndef PS2
@@ -140,9 +90,8 @@ static void setOpmap()
 		}
 	}
 }
-#endif
 
-effect *opRegister()
+effect *opRegister(void)
 {
 	effect *entry;
 	int i;
@@ -171,7 +120,7 @@ effect *opRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	phase = 0;
 	image_set_threshold_y(50);
@@ -180,7 +129,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * ShagadelicTV - makes you shagadelic! Yeah baby yeah!
- * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2001-2005 FUKUCHI Kentaro
  *
  * Inspired by Adrian Likin's script for the GIMP.
  */
@@ -30,7 +30,7 @@ static int rvx, rvy;
 static int bvx, bvy;
 static int mask;
 
-effect *shagadelicRegister()
+effect *shagadelicRegister(void)
 {
 	effect *entry;
 	
@@ -55,7 +55,7 @@ effect *shagadelicRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i, x, y;
 #ifdef PS2
@@ -110,7 +110,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	stat = 0;
 	return 0;
