@@ -62,7 +62,7 @@ static palette_converter_fromRGB32 *converter;
 #define VIDIOCSINVALID _IO('v',BASE_VIDIOCPRIVATE+1)
 #endif
 
-static void gbuf_clear()
+static void gbuf_clear(void)
 {
 	gbufstat[0] = GBUFFER_UNUSED;
 	gbufstat[1] = GBUFFER_UNUSED;
@@ -70,12 +70,12 @@ static void gbuf_clear()
 	gbufqueue[1] = -1;
 }
 
-static inline int gbuf_lock()
+static inline int gbuf_lock(void)
 {
 	return pthread_mutex_lock(&gbufmutex);
 }
 
-static inline int gbuf_unlock()
+static inline int gbuf_unlock(void)
 {
 	return pthread_mutex_unlock(&gbufmutex);
 }
@@ -342,7 +342,7 @@ static int v4l_ioctlhandler(unsigned int cmd, void *arg)
 	}
 }
 
-static int signal_loop_init()
+static int signal_loop_init(void)
 {
 	outputfd = open(output_devname, O_RDWR);
 	if(outputfd < 0) {
@@ -459,13 +459,13 @@ int vloopback_init(char *name)
 
 /* vloopback_quit() is called automatically when the process terminates.
  * This function is registerd in vloopback_init() by calling atexit(). */
-void vloopback_quit()
+void vloopback_quit(void)
 {
 	close(outputfd);
 	fprintf(stderr, "vloopback: video pipelining is stopped.\n");
 }
 
-int vloopback_push()
+int vloopback_push(void)
 {
 	int frame;
 	RGB32 *src;
