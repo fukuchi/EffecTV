@@ -47,7 +47,7 @@ static void right(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror);
 static void upper(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror);
 static void bottom(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror);
 
-effect *nervousHalfRegister()
+effect *nervousHalfRegister(void)
 {
 	effect *entry;
 
@@ -65,7 +65,7 @@ effect *nervousHalfRegister()
 	return entry;
 }
 
-static int start()
+static int start(void)
 {
 	int i;
 
@@ -85,7 +85,7 @@ static int start()
 	return 0;
 }
 
-static int stop()
+static int stop(void)
 {
 	if(state) {
 		if(buffer)
@@ -177,7 +177,8 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			mirror ^= 1;
+			mirror++;
+			if(mirror > 2) mirror = 0;
 			break;
 		case SDLK_1:
 		case SDLK_2:
@@ -222,17 +223,24 @@ static void upper(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror)
 	len = video_height / 2 * video_width;
 	memcpy(dest, src, len * PIXEL_SIZE);
 
-	if(mirror) {
-		p = buf + len - video_width;
-		dest += len;
-		len = PIXEL_SIZE * video_width;
-		for(y = video_height / 2; y > 0; y--) {
-			memcpy(dest, p, len);
-			p -= video_width;
-			dest += video_width;
-		}
-	} else {
-		memcpy(dest + len, buf + len, len * PIXEL_SIZE);
+	switch(mirror) {
+		case 1:
+			p = buf + len - video_width;
+			dest += len;
+			len = PIXEL_SIZE * video_width;
+			for(y = video_height / 2; y > 0; y--) {
+				memcpy(dest, p, len);
+				p -= video_width;
+				dest += video_width;
+			}
+			break;
+		case 2:
+			memcpy(dest + len, buf, len * PIXEL_SIZE);
+			break;
+		case 0:
+		default:
+			memcpy(dest + len, buf + len, len * PIXEL_SIZE);
+			break;
 	}
 }
 
@@ -245,16 +253,23 @@ static void bottom(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror)
 	len = video_height / 2 * video_width;
 	memcpy(dest + len, src + len, len * PIXEL_SIZE);
 
-	if(mirror) {
-		p = buf + video_area - video_width;
-		len = PIXEL_SIZE * video_width;
-		for(y = video_height / 2; y > 0; y--) {
-			memcpy(dest, p, len);
-			p -= video_width;
-			dest += video_width;
-		}
-	} else {
-		memcpy(dest, buf, len * PIXEL_SIZE);
+	switch(mirror) {
+		case 1:
+			p = buf + video_area - video_width;
+			len = PIXEL_SIZE * video_width;
+			for(y = video_height / 2; y > 0; y--) {
+				memcpy(dest, p, len);
+				p -= video_width;
+				dest += video_width;
+			}
+			break;
+		case 2:
+			memcpy(dest, buf + len, len * PIXEL_SIZE);
+			break;
+		case 0:
+		default:
+			memcpy(dest, buf, len * PIXEL_SIZE);
+			break;
 	}
 }
 
@@ -266,31 +281,47 @@ static void left(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror)
 	len = video_width / 2;
 	st = len * PIXEL_SIZE;
 
-	if(mirror) {
-		s1 = src;
-		s2 = buf + len;
-		d = dest;
-		for(y=0; y<video_height; y++) {
-			memcpy(d, s1, st);
-			d1 = d + len;
-			for(x=0; x<len; x++) {
-				*d1++ = *s2--;
+	switch(mirror) {
+		case 1:
+			s1 = src;
+			s2 = buf + len;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d, s1, st);
+				d1 = d + len;
+				for(x=0; x<len; x++) {
+					*d1++ = *s2--;
+				}
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width + len;
 			}
-			d += video_width;
-			s1 += video_width;
-			s2 += video_width + len;
-		}
-	} else {
-		s1 = src;
-		s2 = buf + len;
-		d = dest;
-		for(y=0; y<video_height; y++) {
-			memcpy(d, s1, st);
-			memcpy(d + len, s2, st);
-			d += video_width;
-			s1 += video_width;
-			s2 += video_width;
-		}
+			break;
+		case 2:
+			s1 = src;
+			s2 = buf;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d, s1, st);
+				memcpy(d + len, s2, st);
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width;
+			}
+			break;
+		case 0:
+		default:
+			s1 = src;
+			s2 = buf + len;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d, s1, st);
+				memcpy(d + len, s2, st);
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width;
+			}
+			break;
 	}
 }
 
@@ -302,30 +333,46 @@ static void right(RGB32 *src, RGB32 *buf, RGB32 *dest, int mirror)
 	len = video_width / 2;
 	st = len * PIXEL_SIZE;
 
-	if(mirror) {
-		s1 = src + len;
-		s2 = buf + video_width - 1;
-		d = dest;
-		for(y=0; y<video_height; y++) {
-			memcpy(d + len, s1, st);
-			d1 = d;
-			for(x=0; x<len; x++) {
-				*d1++ = *s2--;
+	switch(mirror) {
+		case 1:
+			s1 = src + len;
+			s2 = buf + video_width - 1;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d + len, s1, st);
+				d1 = d;
+				for(x=0; x<len; x++) {
+					*d1++ = *s2--;
+				}
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width + len;
 			}
-			d += video_width;
-			s1 += video_width;
-			s2 += video_width + len;
-		}
-	} else {
-		s1 = src + len;
-		s2 = buf;
-		d = dest;
-		for(y=0; y<video_height; y++) {
-			memcpy(d + len, s1, st);
-			memcpy(d, s2, st);
-			d += video_width;
-			s1 += video_width;
-			s2 += video_width;
-		}
+			break;
+		case 2:
+			s1 = src + len;
+			s2 = buf + len;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d + len, s1, st);
+				memcpy(d, s2, st);
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width;
+			}
+			break;
+		case 0:
+		default:
+			s1 = src + len;
+			s2 = buf;
+			d = dest;
+			for(y=0; y<video_height; y++) {
+				memcpy(d + len, s1, st);
+				memcpy(d, s2, st);
+				d += video_width;
+				s1 += video_width;
+				s2 += video_width;
+			}
+			break;
 	}
 }
