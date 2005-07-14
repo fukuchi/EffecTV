@@ -21,10 +21,9 @@ static RGB32 *GB55table;
 #define CLIP 320
 static unsigned char clip[256 + CLIP * 2];
 static RGB32 *buffer = NULL;
-static int buffer_width = 0;
-static int buffer_height = 0;
+static int buffer_length = 0;
 
-int palette_init()
+int palette_init(void)
 {
 	int i;
 	int g, b;
@@ -66,17 +65,19 @@ void palette_end(void)
 
 static inline void check_buffer(int width, int height)
 {
-	if(buffer_width != width || buffer_height != height) {
+	int length;
+
+	length = width * height * PIXEL_SIZE;
+	if(length > buffer_length) {
 		if(buffer != NULL) {
 			free(buffer);
 		}
-		buffer = (RGB32 *)malloc(width * height * PIXEL_SIZE);
+		buffer = (RGB32 *)malloc(length);
 		if(buffer == NULL) {
 			fprintf(stderr, "Memory allocation failed.\n");
 			exit(1);
 		}
-		buffer_width = width;
-		buffer_height = height;
+		buffer_length = length;
 	}
 }
 
