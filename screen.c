@@ -137,14 +137,14 @@ int screen_init(int w, int h, int s)
 
 /* screen_quit() is called automatically when the process terminates.
  * This function is registerd in screen_init() by callint atexit(). */
-void screen_quit()
+void screen_quit(void)
 {
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 }
 
 /* Returns bits-per-pixel value. */
-int screen_bpp()
+int screen_bpp(void)
 {
 	if(screen) {
 		return screen->format->BitsPerPixel;
@@ -178,7 +178,7 @@ void screen_clear(int color)
 }
 
 /* Toggles fullscreen mode. */
-void screen_fullscreen()
+void screen_fullscreen(void)
 {
 	if(screeninfo->wm_available) {
 		if(SDL_WM_ToggleFullScreen(screen))
@@ -187,7 +187,7 @@ void screen_fullscreen()
 }
 
 /* Lock the screen, if needed. */
-int screen_lock()
+int screen_lock(void)
 {
 	if(SDL_MUSTLOCK(screen))
 		return SDL_LockSurface(screen);
@@ -195,7 +195,7 @@ int screen_lock()
 }
 
 /* Unlock the screen, if needed. */
-void screen_unlock()
+void screen_unlock(void)
 {
 	if(SDL_MUSTLOCK(screen))
 		SDL_UnlockSurface(screen);
@@ -203,13 +203,13 @@ void screen_unlock()
 
 #ifdef RGB_BGR_CONVERSION
 /* Returns an address of the framebuffer */
-unsigned char *screen_getaddress()
+unsigned char *screen_getaddress(void)
 {
 	return bgr_buf;
 }
 
 /* Updates the screen */
-int screen_update()
+int screen_update(void)
 {
 	int i;
 	int j;

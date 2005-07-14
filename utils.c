@@ -10,7 +10,7 @@
 #include "EffecTV.h"
 #include "utils.h"
 
-int utils_init()
+int utils_init(void)
 {
 	yuv_init();
 	if(image_init())
@@ -18,7 +18,7 @@ int utils_init()
 	return 0;
 }
 
-void utils_end()
+void utils_end(void)
 {
 	image_end();
 }
@@ -58,7 +58,7 @@ void HSItoRGB(double H, double S, double I, int *r, int *g, int *b)
  */
 unsigned int fastrand_val;
 
-unsigned int fastrand()
+unsigned int fastrand(void)
 {
 	return (fastrand_val=fastrand_val*1103515245+12345);
 }

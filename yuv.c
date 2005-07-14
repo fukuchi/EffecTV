@@ -27,7 +27,7 @@ int RtoY[256], RtoU[256], RtoV[256];
 int GtoY[256], GtoU[256], GtoV[256];
 int BtoY[256],            BtoV[256];
 
-int yuv_init()
+int yuv_init(void)
 {
 	int i;
 

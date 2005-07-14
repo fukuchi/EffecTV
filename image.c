@@ -18,7 +18,7 @@ static unsigned char *diff;
 static unsigned char *diff2;
 
 /* Initializer is called from utils_init(). */
-int image_init()
+int image_init(void)
 {
 	stretching_buffer = (RGB32 *)malloc(video_area * sizeof(RGB32));
 	background = (RGB32 *)malloc(video_area * sizeof(RGB32));
@@ -32,7 +32,7 @@ int image_init()
 	return 0;
 }
 
-void image_end()
+void image_end(void)
 {
 	free(stretching_buffer);
 	free(background);
@@ -73,7 +73,7 @@ void image_stretch(RGB32 *src, int src_width, int src_height,
 	}
 }
 
-static void image_stretch_to_screen_double()
+static void image_stretch_to_screen_double(void)
 {
 	int x, y;
 	RGB32 *src, *dest1, *dest2;
@@ -98,7 +98,7 @@ static void image_stretch_to_screen_double()
 	}
 }
 
-void image_stretch_to_screen()
+void image_stretch_to_screen(void)
 {
 	if(screen_scale == 2) {
 		image_stretch_to_screen_double();
