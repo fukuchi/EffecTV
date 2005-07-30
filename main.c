@@ -91,6 +91,8 @@ static effectRegisterFunc *effects_register_list[] =
 	slofastRegister,
 	displayWallRegister,
 	bluescreenRegister,
+	colstreakRegister,
+	timeDistortionRegister,
 };
 
 static effect **effectsList;

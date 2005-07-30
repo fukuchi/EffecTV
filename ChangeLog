@@ -1,3 +1,7 @@
+2005/07/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/{colstreak.c, timedist.c}:
+	  - New effects "ColorfulStreak" and "TimeDistortion".
+
 2005/07/12	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* palette.c:
 	  - Code cleaning.

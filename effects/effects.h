@@ -52,3 +52,5 @@ extern effectRegisterFunc nervousHalfRegister;
 extern effectRegisterFunc slofastRegister;
 extern effectRegisterFunc displayWallRegister;
 extern effectRegisterFunc bluescreenRegister;
+extern effectRegisterFunc colstreakRegister;
+extern effectRegisterFunc timeDistortionRegister;
