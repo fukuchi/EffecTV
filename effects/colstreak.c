@@ -9,6 +9,10 @@
  *
  * Ported to EffecTV by Kentaro Fukuchi
  *
+ * This is heavy effect because of the 3 divisions per pixel.
+ * If you want a light effect, you can declare 'blendnum' as a constant value,
+ * and disable the parameter controll (comment out the inside of 'event()').
+ *
  */
 
 #include <stdlib.h>
@@ -21,6 +25,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static int event(SDL_Event *event);
 
 static char *effectname = "ColourfulStreak";
 static int state = 0;
@@ -29,7 +34,7 @@ static unsigned char *Rplane;
 static unsigned char *Gplane;
 static unsigned char *Bplane;
 static int plane;
-static const int blendnum = 4;
+static int blendnum = 4;
 
 effect *colstreakRegister(void)
 {
@@ -44,7 +49,7 @@ effect *colstreakRegister(void)
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
-	entry->event = NULL;
+	entry->event = event;
 
 	return entry;
 }
@@ -129,6 +134,29 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 	plane++;
 	plane = plane & (MAX_PLANES-1);
+
+	return 0;
+}
+
+static int event(SDL_Event *event)
+{
+	if(event->type == SDL_KEYDOWN) {
+		switch(event->key.keysym.sym) {
+		case SDLK_INSERT:
+			blendnum++;
+			if(blendnum > MAX_PLANES / 3) {
+				blendnum = MAX_PLANES / 3;
+			}
+			break;
+
+		case SDLK_DELETE:
+			if(blendnum > 1) blendnum--;
+			break;
+
+		default:
+			break;
+		}
+	}
 
 	return 0;
 }

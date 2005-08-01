@@ -363,3 +363,38 @@ void image_hflip(RGB32 *src, RGB32 *dest, int width, int height)
 		src += width * 2;
 	}
 }
+
+unsigned char *image_edge(RGB32 *src)
+{
+	int x, y;
+	unsigned char *p, *q;
+	int r, g, b;
+	int ar, ag, ab;
+	int w;
+
+	p = (unsigned char *)src;
+	q = diff2;
+	w = video_width * sizeof(RGB32);
+
+	for(y=0; y<video_height - 1; y++) {
+		for(x=0; x<video_width - 1; x++) {
+			b = p[0];
+			g = p[1];
+			r = p[2];
+			ab = abs(b - p[4]);
+			ag = abs(g - p[5]);
+			ar = abs(r - p[6]);
+			ab += abs(b - p[w]);
+			ag += abs(g - p[w+1]);
+			ar += abs(r - p[w+2]);
+			b = ab+ag+ar;
+			if(b > 255) b = 255;
+			*q++ = (unsigned char)b;
+			p += 4;
+		}
+		p += 4;
+		q++;
+	}
+
+	return diff2;
+}

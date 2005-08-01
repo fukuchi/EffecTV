@@ -5,7 +5,7 @@
  * TimeDistortionTV - scratch the surface and playback old images.
  * Copyright (C) 2005 Ryo-ta
  *
- * Ported to EffecTV by Kentaro Fukuchi
+ * Ported and arranged by Kentaro Fukuchi
  */
 
 #include <stdlib.h>
@@ -25,7 +25,8 @@ static int state = 0;
 static RGB32 *buffer;
 static RGB32 *planetable[PLANES];
 static int plane;
-static int *warptime;
+static int *warptime[2];
+static int warptimeFrame;
 
 effect *timeDistortionRegister(void)
 {
@@ -37,12 +38,12 @@ effect *timeDistortionRegister(void)
 	}
 
 	sharedbuffer_reset();
-	warptime = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
-	if(warptime == NULL) {
+	warptime[0] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
+	warptime[1] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
+	if(warptime[0] == NULL || warptime[1] == NULL) {
 		free(entry);
 		return NULL;
 	}
-
 	
 	entry->name = effectname;
 	entry->start = start;
@@ -64,7 +65,8 @@ static int start(void)
 	for(i=0;i<PLANES;i++)
 		planetable[i] = &buffer[video_area*i];
 
-	memset(warptime, 0, video_area * sizeof(int));
+	memset(warptime[0], 0, video_area * sizeof(int));
+	memset(warptime[1], 0, video_area * sizeof(int));
 
 	plane = 0;
 	image_set_threshold_y(MAGIC_THRESHOLD);
@@ -89,30 +91,37 @@ static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i, x, y;
 	unsigned char *diff;
-	int *p;
+	int *p, *q;
 
 	memcpy(planetable[plane], src, PIXEL_SIZE * video_area);
 	diff = image_bgsubtract_update_y(src);
 
-	p = warptime + video_width + 1;
+	p = warptime[warptimeFrame    ] + video_width + 1;
+	q = warptime[warptimeFrame ^ 1] + video_width + 1;
 	for(y=video_height - 2; y>0; y--) {
 		for(x=video_width - 2; x>0; x--) {
 			i = *(p - video_width) + *(p - 1) + *(p + 1) + *(p + video_width);
 			if(i > 3) i -= 3;
-			*p++ = i >> 2;
+			p++;
+			*q++ = i >> 2;
 		}
 		p += 2;
+		q += 2;
 	}
 
+	q = warptime[warptimeFrame ^ 1] + video_width + 1;
 	for(i=0; i<video_area; i++) {
 		if(*diff++) {
-			warptime[i] = PLANES;
+			*q = PLANES - 1;
 		}
-		dest[i] = planetable[(plane - warptime[i] + PLANES) & (PLANES - 1)][i];
+		*dest++ = planetable[(plane - *q + PLANES) & (PLANES - 1)][i];
+		q++;
 	}
 
 	plane++;
 	plane = plane & (PLANES-1);
+
+	warptimeFrame ^= 1;
 
 	return 0;
 }

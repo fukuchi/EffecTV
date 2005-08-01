@@ -15,7 +15,7 @@ EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
           $(DICE) $(DIZZY) $(DEINTERLACE) $(NERVOUS) $(RNDM) $(REV) $(RDS) \
           $(LENS) $(DIFF) $(SCROLL) $(WARHOL) $(MATRIX) $(PUP) \
 		  $(CHAMELEON) $(OP) $(HALF) $(SLOFAST) $(DISPLAYWALL) $(BLUESCREEN) \
-		  $(COLSTREAK) $(TIMEDIST)
+		  $(COLSTREAK) $(TIMEDIST) $(DIFFBLUR)
 
 SUBDIRS =
 
@@ -86,6 +86,7 @@ DISPLAYWALL = displaywall.o
 BLUESCREEN = bluescreen.o
 COLSTREAK = colstreak.o
 TIMEDIST = timedist.o
+DIFFBLUR = diffblur.o
 
 $(LIBEFFECTS): $(EFFECTS)
 	ar rc $(LIBEFFECTS) $(EFFECTS)

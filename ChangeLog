@@ -1,3 +1,9 @@
+2005/08/01	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/colstreak.c:
+	  - Optimization. (but it is still heavy on 500MHz...)
+	* effects/timedist.c:
+	  - Smoothing the time depth field (warptime[]) has been added.
+
 2005/07/30	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{colstreak.c, timedist.c}:
 	  - New effects "ColorfulStreak" and "TimeDistortion".
