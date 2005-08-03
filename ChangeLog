@@ -1,3 +1,9 @@
+2005/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effects/edgeblur.c:
+	  - "EdgeBlurTV" has been added.
+	* image.c:
+	  - image_edge() has been added.
+
 2005/08/01	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/colstreak.c:
 	  - Optimization. (but it is still heavy on 500MHz...)

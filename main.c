@@ -93,7 +93,7 @@ static effectRegisterFunc *effects_register_list[] =
 	bluescreenRegister,
 	colstreakRegister,
 	timeDistortionRegister,
-	diffBlurRegister,
+	edgeBlurRegister,
 };
 
 static effect **effectsList;

@@ -54,4 +54,4 @@ extern effectRegisterFunc displayWallRegister;
 extern effectRegisterFunc bluescreenRegister;
 extern effectRegisterFunc colstreakRegister;
 extern effectRegisterFunc timeDistortionRegister;
-extern effectRegisterFunc diffBlurRegister;
+extern effectRegisterFunc edgeBlurRegister;

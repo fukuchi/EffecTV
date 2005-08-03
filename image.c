@@ -350,20 +350,7 @@ unsigned char *image_y_under(RGB32 *src)
 	return diff;
 }
 
-/* horizontal flipping */
-void image_hflip(RGB32 *src, RGB32 *dest, int width, int height)
-{
-	int x, y;
-
-	src += width - 1;
-	for(y=0; y<height; y++) {
-		for(x=0; x<width; x++) {
-			*dest++ = *src--;
-		}
-		src += width * 2;
-	}
-}
-
+/* tiny edge detection */
 unsigned char *image_edge(RGB32 *src)
 {
 	int x, y;
@@ -388,13 +375,33 @@ unsigned char *image_edge(RGB32 *src)
 			ag += abs(g - p[w+1]);
 			ar += abs(r - p[w+2]);
 			b = ab+ag+ar;
-			if(b > 255) b = 255;
-			*q++ = (unsigned char)b;
+			if(b > y_threshold) {
+				*q = 255;
+			} else {
+				*q = 0;
+			}
+			q++;
 			p += 4;
 		}
 		p += 4;
-		q++;
+		*q++ = 0;
 	}
+	memset(q, 0, video_width);
 
 	return diff2;
 }
+
+/* horizontal flipping */
+void image_hflip(RGB32 *src, RGB32 *dest, int width, int height)
+{
+	int x, y;
+
+	src += width - 1;
+	for(y=0; y<height; y++) {
+		for(x=0; x<width; x++) {
+			*dest++ = *src--;
+		}
+		src += width * 2;
+	}
+}
+
