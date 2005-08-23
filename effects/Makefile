@@ -5,7 +5,7 @@ include ../config.mk
 CC = gcc
 NASM = nasm
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config --cflags`
-LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs` -lm
+LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
