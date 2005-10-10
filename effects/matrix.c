@@ -67,6 +67,7 @@ effect *matrixRegister(void)
 {
 	effect *entry;
 	
+	sharedbuffer_reset();
 	mapW = video_width / FONT_W;
 	mapH = video_height / FONT_H;
 	cmap = (unsigned char *)sharedbuffer_alloc(mapW * mapH);
@@ -219,14 +220,13 @@ static RGB32 green(unsigned int v)
 
 static void setPalette(void)
 {
-	int i, c;
+	int i;
 
 	for(i=0; i<256; i++) {
-		c = i;
 		palette[i*FONT_DEPTH  ] = 0;
-		palette[i*FONT_DEPTH+1] = green(0x44 * c / 170);
-		palette[i*FONT_DEPTH+2] = green(0x99 * c / 170);
-		palette[i*FONT_DEPTH+3] = green(0xff * c / 170);
+		palette[i*FONT_DEPTH+1] = green(0x44 * i / 170);
+		palette[i*FONT_DEPTH+2] = green(0x99 * i / 170);
+		palette[i*FONT_DEPTH+3] = green(0xff * i / 170);
 	}
 }
 
