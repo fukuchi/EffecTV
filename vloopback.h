@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * vloopback.h: header for vloopback device manager
  *

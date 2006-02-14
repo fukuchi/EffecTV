@@ -283,6 +283,15 @@ DisplayWall
 BlueScreenTV
 	Blue sceen effect: changes scene background.
 
+ColourfulStreak
+	Streak effect with color.
+
+TimeDistortion
+	Scratch the surface and playback old images.
+
+EdgeBlurTV
+	Extract edge, and make blur.
+
 
 Vloopback support - chaining/recording/broadcasting EffecTV
 -----------------------------------------------------------

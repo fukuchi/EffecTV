@@ -1,9 +1,9 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * BlueScreenTV - blue sceen effect: changes scene background
- * Copyright (C) 2005 Nicolas Argyrou
+ * Copyright (C) 2005-2006 Nicolas Argyrou
  *
  * s: take 4-frames background snapshot
  * d: take delayed background snapshot after 3 seconds

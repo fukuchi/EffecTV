@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * ColourfulStreak - streak effect with color.
  *                   It blends Red, Green and Blue layers independently. The

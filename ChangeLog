@@ -1,3 +1,12 @@
+2006/02/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* effectv.1, docs.japanese/{README,effectv.1} :
+	  - Bumped version to 0.3.11.
+	* video.[ch]:
+	  - Moved "v4ldevice vd" into its private.
+	* iidc1394.patch:
+	  - updated.
+	* EffecTV-0.3.11 has been released.
+
 2005/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/edgeblur.c:
 	  - "EdgeBlurTV" has been added.
@@ -37,8 +46,6 @@
 	  - URL to vloopback module is updated.
 	* ChangeLog:
 	  - Typo fix. (log of 2005/02/13)
-	* effects/{op.c, shagadelic.c}:
-	  - Now its appearance are resolution independent. 
 
 2005/05/18	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effects/{shagadelic,op}.c:

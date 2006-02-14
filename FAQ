@@ -38,6 +38,9 @@ $ effectv -channel 1
 Typically, meaning of the number is; 0=TV/1=Composite1/2=S-Video/3=Composite2.
 This depends on the implementation of the video capturing card. Try several
 numbers to detect the right one.
+
+Since version 0.3.11, it is able to change the input channel by pressing 0-9
+key with ALT key.
 ----------
 Q3: Some effects do not work.
 

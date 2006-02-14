@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * DotTV: convert gray scale image into a set of dots
  * Copyright (C) 2001-2002 FUKUCHI Kentaro

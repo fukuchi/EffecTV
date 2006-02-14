@@ -36,6 +36,9 @@ $ effectv -channel 1
 大抵の機器では、0=TV/1=Composite1/2=S-Video/3=Composite2 となっています。
 これらの設定は使用しているビデオキャプチャーカードの仕様に依存しています。
 いくつか試してみて、正しい設定を見付けてください。
+
+バージョン 0.3.11 より、ALT キーを押しながら数字キーを押すことで、実行時にも入
+力チャネルを切り換えられるようになりました。試してみてください。
 ----------
 Q3: 一部のイフェクトが動作しない。
 
@@ -76,10 +79,12 @@ Q7: EffecTVの出力を録画したいんだけど。
 
 A: EffecTVは、vloopbackデバイスを使って、出力画像を他のアプリケーションに渡す
 事ができます。まずは、Jeroen Vreeken作のvloopbackドライバを、
-http://motion.sourceforge.net/vloopback/index.html からダウンロードしてきて、
-インストールしましょう。次に、ドライバをロードしたら、パイプの入出力デバイス
-ファイルの名前を控えておきます(大抵の場合、/dev/video1と/dev/video2になる)。
-そうしたら、次のようにしてEffecTVを立ち上げます。
+
+http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
+
+からダウンロードしてきて、インストールしましょう。次に、ドライバをロードしたら
+パイプの入出力デバイスファイルの名前を控えておきます(大抵の場合、/dev/video1と
+/dev/video2になる)。そうしたら、次のようにしてEffecTVを立ち上げます。
 
 $ effectv -vloopback /dev/video1
 

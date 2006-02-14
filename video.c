@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * video.c: video manager
  *
@@ -18,7 +18,7 @@
 #include "utils.h"
 
 /* Currently there is only one v4l device obeject. */
-v4ldevice vd;
+static v4ldevice vd;
 
 /* Flag for horizontal flipping mode */
 int video_horizontalFlip = 0;
@@ -240,7 +240,7 @@ int video_syncframe(void)
 }
 
 /* Start capturing next image */
-int video_grabframe(){
+int video_grabframe(void){
 	return v4lgrabf(&vd);
 }
 

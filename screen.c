@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * screen.c: screen manager
  *
@@ -12,7 +12,6 @@
 #include <SDL/SDL.h>
 
 #include "EffecTV.h"
-#include "screen.h"
 
 /* Main screen for displaying video image */
 SDL_Surface *screen = NULL;

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * PUPTV - comes from "Partial UPdate", certain part of image is updated at a
  *         frame. This techniques is also used by 1DTV, but the result is

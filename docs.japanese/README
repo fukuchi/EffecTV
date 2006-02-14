@@ -1,4 +1,4 @@
-EffecTV 0.3.10
+EffecTV 0.3.11
 
 序
 ==
@@ -292,6 +292,14 @@ DisplayWall
 BlueScreenTV
 	背景をカメラ画像から作って、さらにクロマキー合成をします。
 
+ColourfulStreak
+	色つきの残像を表示します。
+
+TimeDistortion
+	動きのあったところで時間が巻き戻る効果です。
+
+EdgeBlurTV
+	輪郭を抽出し、ぼかしをかけます。
 
 Vloopback機能の使い方 - EffecTVの出力を録画・放送するには
 ---------------------------------------------------------

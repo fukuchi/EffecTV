@@ -1,3 +1,17 @@
+Overview of Changes in EffecTV-0.3.11 (2006/2/14)
+==================================================
+* New effects "DisplayWall", "BlueScreenTV", "ColourfulStreak", "TimeDistortion"
+  and "EdgeBlurTV" have been added.
+
+* Appearance of ShagadelicTV and OpTV become resolution independent.
+
+* Now it is able to change the video input channel at runtime. (ALT+0-9)
+
+* Video capturing becomes robust. Even if it failed to grab a image, it retry
+  every second instead of the red screen of death.
+
+* Some bug fixes and code cleanings.
+
 Overview of Changes in EffecTV-0.3.10 (2005/2/14)
 =================================================
 * New effects "OpTV", "NervousHalf" and "SloFastTV" have been added.

@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2005 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
  * video.h: header for video manager
  *
@@ -17,7 +17,6 @@ typedef struct _normlist
 	int type;
 } normlist;
 
-extern v4ldevice vd;
 extern int video_hasTuner;
 extern int video_horizontalFlip;
 extern int video_width;
@@ -43,8 +42,6 @@ void video_change_contrast(int);
 void video_change_whiteness(int);
 int video_change_channel(int channel);
 int video_retry(void);
-
-#define video_getformat() (vd.mmap.format)
 
 int videox_getnorm(const char *name);
 int videox_getfreq(const char *name);

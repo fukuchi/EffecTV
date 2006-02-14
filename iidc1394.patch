@@ -1,12 +1,6 @@
-This patch adds an experimental support for IEEE1394 Digital Camera to EffecTV.
-Libdc1394 (http://sourceforge.net/projects/libdc1394/) is required.
-Note that IEEE1394 Digital Camera is completely different from DV.
-See http://www.linux1394.org/faq.php#DCvsDV for the detailed information.
-
-
-diff -ruN effectv-0.3.10/Makefile dctrial/Makefile
---- effectv-0.3.10/Makefile	2003-12-15 21:00:18.000000000 +0900
-+++ dctrial/Makefile	2004-10-26 16:09:33.000000000 +0900
+diff -ruN effectv-0.3.11/Makefile dctrial/Makefile
+--- effectv-0.3.11/Makefile	2003-12-25 23:03:46.854199000 +0900
++++ dctrial/Makefile	2004-10-26 16:09:33.465259000 +0900
 @@ -7,7 +7,7 @@
  INSTALL = /usr/bin/install -c
  
@@ -16,10 +10,10 @@ diff -ruN effectv-0.3.10/Makefile dctrial/Makefile
  
  PROGRAM = effectv
  
-diff -ruN effectv-0.3.10/palette.c dctrial/palette.c
---- effectv-0.3.10/palette.c	2005-02-01 08:51:13.000000000 +0900
-+++ dctrial/palette.c	2005-02-04 01:48:40.000000000 +0900
-@@ -280,6 +280,134 @@
+diff -ruN effectv-0.3.11/palette.c dctrial/palette.c
+--- effectv-0.3.11/palette.c	2005-07-12 21:12:56.265754000 +0900
++++ dctrial/palette.c	2006-02-14 22:33:05.377335000 +0900
+@@ -281,6 +281,134 @@
  	}
  }
  
@@ -154,7 +148,7 @@ diff -ruN effectv-0.3.10/palette.c dctrial/palette.c
  static void convert_YUV422PtoRGB32
  (unsigned char *src, RGB32 *dest, int width, int height)
  {
-@@ -629,6 +757,8 @@
+@@ -630,6 +758,8 @@
  	{VIDEO_PALETTE_RGB24,   convert_RGB24toRGB32,   convert_RGB24toRGB32_hflip},
  	{VIDEO_PALETTE_RGB565,  convert_RGB565toRGB32,  convert_RGB565toRGB32_hflip},
  	{VIDEO_PALETTE_RGB555,  convert_RGB555toRGB32,  convert_RGB555toRGB32_hflip},
@@ -163,23 +157,7 @@ diff -ruN effectv-0.3.10/palette.c dctrial/palette.c
  	{VIDEO_PALETTE_YUV422,  convert_YUV422toRGB32,  convert_YUV422toRGB32_hflip},
  	{VIDEO_PALETTE_YUV422P, convert_YUV422PtoRGB32, convert_YUV422PtoRGB32_hflip},
  	{VIDEO_PALETTE_YUV420P, convert_YUV420PtoRGB32, convert_YUV420PtoRGB32_hflip},
-@@ -646,7 +776,6 @@
- 
- 	for(i=0; converter_toRGB32_list[i].palette>=0; i++) {
- 		if(palette != converter_toRGB32_list[i].palette) continue;
--
- 		if(video_grab_check(converter_toRGB32_list[i].palette)) {
- 			*conv = NULL;
- 			*conv_hflip = NULL;
-@@ -660,7 +789,6 @@
- 			return 1;
- 		}
- 	}
--
- 	return 0;
- }
- 
-@@ -874,6 +1002,8 @@
+@@ -875,6 +1005,8 @@
  	{"rgb565", VIDEO_PALETTE_RGB565, "VIDEO_PALETTE_RGB565"},
  	{"rgb555", VIDEO_PALETTE_RGB555, "VIDEO_PALETTE_RGB555"},
  	{"yuv422", VIDEO_PALETTE_YUV422, "VIDEO_PALETTE_YUV422"},
@@ -188,9 +166,9 @@ diff -ruN effectv-0.3.10/palette.c dctrial/palette.c
  	{"yuv422p", VIDEO_PALETTE_YUV422P, "VIDEO_PALETTE_YUV422P"},
  	{"yuv420p", VIDEO_PALETTE_YUV420P, "VIDEO_PALETTE_YUV420P"},
  	{"yuv411p", VIDEO_PALETTE_YUV411P, "VIDEO_PALETTE_YUV411P"},
-diff -ruN effectv-0.3.10/palette.h dctrial/palette.h
---- effectv-0.3.10/palette.h	2005-02-01 08:51:13.000000000 +0900
-+++ dctrial/palette.h	2005-02-04 01:48:40.000000000 +0900
+diff -ruN effectv-0.3.11/palette.h dctrial/palette.h
+--- effectv-0.3.11/palette.h	2005-02-01 08:50:48.839709000 +0900
++++ dctrial/palette.h	2005-02-04 01:48:40.296489000 +0900
 @@ -9,6 +9,9 @@
  #ifndef __PALETTE_H__
  #define __PALETTE_H__
@@ -201,17 +179,9 @@ diff -ruN effectv-0.3.10/palette.h dctrial/palette.h
  typedef void palette_converter_toRGB32(unsigned char *, RGB32 *, int, int);
  typedef void palette_converter_fromRGB32(RGB32 *, int, int, unsigned char *, int, int);
  struct palette_converter_toRGB32_map
-diff -ruN effectv-0.3.10/video.c dctrial/video.c
---- effectv-0.3.10/video.c	2005-02-01 08:51:13.000000000 +0900
-+++ dctrial/video.c	2005-02-14 20:22:43.000000000 +0900
-@@ -1,6 +1,6 @@
- /*
-  * EffecTV - Realtime Digital Video Effector
-- * Copyright (C) 2001-2005 FUKUCHI Kentaro
-+ * Copyright (C) 2001-2003 FUKUCHI Kentaro
-  *
-  * video.c: video manager
-  *
+diff -ruN effectv-0.3.11/video.c dctrial/video.c
+--- effectv-0.3.11/video.c	2006-02-14 19:25:42.493158000 +0900
++++ dctrial/video.c	2006-02-14 22:38:06.005440000 +0900
 @@ -9,7 +9,11 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -224,39 +194,36 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  #include <v4lutils.h>
  
  #include "EffecTV.h"
-@@ -20,6 +24,9 @@
- /* Currently there is only one v4l device obeject. */
- v4ldevice vd;
+@@ -18,7 +22,12 @@
+ #include "utils.h"
  
+ /* Currently there is only one v4l device obeject. */
++#if 0
+ static v4ldevice vd;
++#endif
++
 +static raw1394handle_t dc1394Handle = NULL;
 +static dc1394_cameracapture dc1394Camera;
-+
- /* Is TV tuner enabled? */
- int hastuner = 0;
  
-@@ -31,12 +38,6 @@
+ /* Flag for horizontal flipping mode */
+ int video_horizontalFlip = 0;
+@@ -28,6 +37,7 @@
  int video_height;
  int video_area; // = video_width * video_height
  
--/* Picture parameters */
--static int picture_brightness;
--static int picture_hue;
--static int picture_colour;
--static int picture_contrast;
--
++#if 0
+ /* Video input parameters */
+ static int video_channel;
+ static int video_norm;
+@@ -47,6 +57,7 @@
+ static int picture_hue;
+ static int picture_colour;
+ static int picture_contrast;
++#endif
+ 
  static palette_converter_toRGB32 *converter;
  static palette_converter_toRGB32 *converter_hflip;
- 
-@@ -54,8 +55,6 @@
- 	{"", -1}
- };
- 
--static int frequency_table = 0;
--static int TVchannel = 0;
- static RGB32 *framebuffer;
- 
- #define MAXWIDTH (vd.capability.maxwidth)
-@@ -63,26 +62,116 @@
+@@ -72,12 +83,83 @@
  #define MINWIDTH (vd.capability.minwidth)
  #define MINHEIGHT (vd.capability.minheight)
  
@@ -339,9 +306,15 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +		perror("Unable to aquire a raw1394 handle.\n");
 +		return -1;
  	}
--	if(v4lopen(file, &vd)) return -1;
--	v4lsetdefaultnorm(&vd, norm);
--	v4lgetcapability(&vd);
++#if 0
+ 	if(v4lopen(file, &vd)) return -1;
+ 
+ 	video_file    = strdup(file);
+@@ -87,17 +169,48 @@
+ 
+ 	v4lsetdefaultnorm(&vd, norm);
+ 	v4lgetcapability(&vd);
++#endif
  
 -	if(!(vd.capability.type & VID_TYPE_CAPTURE)) {
 -		fprintf(stderr, "video_init: This device seems not to support video capturing.\n");
@@ -350,11 +323,6 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +		fprintf(stderr, "Failed to find cameras.\n");
  		return -1;
  	}
--	if((vd.capability.type & VID_TYPE_TUNER)) {
--		hastuner = 1;
--		frequency_table = freq;
--		TVchannel = 0;
--		video_setfreq(0);
 +
 +	{
 +		dc1394_feature_set features;
@@ -362,12 +330,19 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +			exit(-1);
 +		}
 +		dc1394_print_feature_set(&features);
++#if 0
+ 	if((vd.capability.type & VID_TYPE_TUNER)) {
+ 		video_hasTuner = 1;
+ 		video_frequencyTable = freq;
+ 		video_TVchannel = 0;
+ 		video_setfreq(0);
++#endif
 +	}
 +
 +	if(dc1394_start_iso_transmission(dc1394Handle, dc1394Camera.node) != DC1394_SUCCESS) {
 +		perror("Failed to start iso transmission.\n");
 +		exit(-1);
-+	}
+ 	}
 +
 +	if(dc1394_get_iso_channel_and_speed(dc1394Handle, dc1394Camera.node, 
 +				&channel, &speed) != DC1394_SUCCESS) {
@@ -380,13 +355,13 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +				NULL, &dc1394Camera) != DC1394_SUCCESS) {
 +		perror("Failed to set DMA capture mode.\n");
 +		exit(-1);
- 	}
++	}
 +
 +#if 0
  	if(w == 0 && h == 0) {
  		w = DEFAULT_VIDEO_WIDTH;
  		h = DEFAULT_VIDEO_HEIGHT;
-@@ -96,9 +185,10 @@
+@@ -111,9 +224,10 @@
  		h = MINHEIGHT;
  		fprintf(stderr, "capturing size is set to %dx%d.\n", w, h);
  	}
@@ -399,7 +374,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	video_area = video_width * video_height;
  
  	framebuffer = (RGB32 *)malloc(video_area*sizeof(RGB32));
-@@ -107,6 +197,7 @@
+@@ -122,6 +236,7 @@
  		return -1;
  	}
  
@@ -407,24 +382,26 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	if(v4lmaxchannel(&vd)) {
  		if(v4lsetchannel(&vd, channel)) return -1;
  	}
-@@ -134,7 +225,9 @@
+@@ -149,6 +264,10 @@
  	picture_hue = vd.picture.hue;
  	picture_colour = vd.picture.colour;
  	picture_contrast = vd.picture.contrast;
 +#endif
- 
++
 +	video_set_grabformat(VIDEO_PALETTE_DCYUV411);
- 	atexit(video_quit);
++	atexit(video_quit);
+ 
  	return 0;
  }
-@@ -143,19 +236,21 @@
-  * This function is registerd in video_init() by callint atexit(). */
- void video_quit()
+@@ -156,20 +275,22 @@
+ /* close v4l device. */
+ void video_quit(void)
  {
 -	v4lmunmap(&vd);
 -	v4lclose(&vd);
 +	dc1394_dma_unlisten(dc1394Handle, &dc1394Camera);
 +	dc1394_dma_release_camera(dc1394Handle, &dc1394Camera);
+ 	free(framebuffer);
  }
  
  /* Set the format of captured data. */
@@ -442,7 +419,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	int ret;
  
  	v4lseterrorlevel(V4L_PERROR_NONE);
-@@ -171,10 +266,13 @@
+@@ -185,10 +306,13 @@
  EXIT:
  	v4lseterrorlevel(V4L_PERROR_ALL);
  	return ret;
@@ -456,21 +433,20 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	if(palette == 0) {
  		if(video_grab_check(DEFAULT_PALETTE) == 0) {
  			converter = NULL;
-@@ -190,24 +288,31 @@
+@@ -204,6 +328,10 @@
  			return -1;
  		}
  	}
 +#endif
-+	if(palette_check_supported_converter_toRGB32(palette, &converter, &converter_hflip)) {
-+		return 0;
++	if(!palette_check_supported_converter_toRGB32(palette, &converter, &converter_hflip)) {
++		return -1;
 +	}
  
--	return 0;
-+	return -1;
+ 	return 0;
  }
- 
+@@ -211,17 +339,20 @@
  /* Start the continuous grabbing */
- int video_grabstart()
+ int video_grabstart(void)
  {
 +#if 0
  	vd.frame = 0;
@@ -483,13 +459,13 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  }
  
  /* Stop the continuous grabbing */
- int video_grabstop()
+ int video_grabstop(void)
  {
 +#if 0
  	if(vd.framestat[vd.frame]) {
  		if(v4lsync(&vd, vd.frame) < 0)
  			return -1;
-@@ -216,18 +321,24 @@
+@@ -230,18 +361,24 @@
  		if(v4lsync(&vd, vd.frame ^ 1) < 0)
  			return -1;
  	}
@@ -498,7 +474,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  }
  
  /* Wait on the capturing image */
- int video_syncframe()
+ int video_syncframe(void)
  {
 -	return v4lsyncf(&vd);
 +	if(dc1394_dma_single_capture(&dc1394Camera) == DC1394_SUCCESS)
@@ -508,7 +484,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  }
  
  /* Start capturing next image */
- int video_grabframe(){
+ int video_grabframe(void){
 -	return v4lgrabf(&vd);
 +	dc1394_dma_done_with_buffer(&dc1394Camera);
 +
@@ -516,10 +492,10 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  }
  
  /* Returns a pointer to captured image */
-@@ -235,17 +346,19 @@
+@@ -249,17 +386,19 @@
  {
  	if(converter) {
- 		if(horizontal_flip) {
+ 		if(video_horizontalFlip) {
 -			(*converter_hflip)(v4lgetaddress(&vd), framebuffer, video_width, video_height);
 +			(*converter_hflip)((unsigned char *)dc1394Camera.capture_buffer,
 +							   framebuffer, video_width, video_height);
@@ -529,7 +505,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +						 framebuffer, video_width, video_height);
  		}
  		return (unsigned char *)framebuffer;
- 	} else if(horizontal_flip) {
+ 	} else if(video_horizontalFlip) {
 -		image_hflip((RGB32 *)v4lgetaddress(&vd), framebuffer,
 +		image_hflip((RGB32 *)dc1394Camera.capture_buffer, framebuffer,
  			video_width, video_height);
@@ -540,7 +516,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	}
  }
  
-@@ -253,6 +366,7 @@
+@@ -267,6 +406,7 @@
   * the size is set to default size. */
  int video_changesize(int width, int height)
  {
@@ -548,7 +524,7 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	if(width == 0 || height == 0) {
  		width = DEFAULT_VIDEO_WIDTH;
  		height = DEFAULT_VIDEO_HEIGHT;
-@@ -261,58 +375,58 @@
+@@ -275,11 +415,15 @@
  	video_height = height;
  
  	return v4lgrabinit(&vd, width, height);
@@ -556,21 +532,19 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
 +	return 0;
  }
  
- /* change TVchannel to TVchannel+v */
+ /* change video_TVchannel to video_TVchannel+v */
  int video_setfreq(int v)
  {
--	if(hastuner && (frequency_table >= 0)) {
--		TVchannel += v;
--		while(TVchannel<0) {
--			TVchannel += chanlists[frequency_table].count;
--		}
--		TVchannel %= chanlists[frequency_table].count;
--
--		return v4lsetfreq(&vd, chanlists[frequency_table].list[TVchannel].freq);
--	} else {
--		return 0;
--	}
 +	return 0;
++#if 0
+ 	if(video_hasTuner && (video_frequencyTable >= 0)) {
+ 		video_TVchannel += v;
+ 		while(video_TVchannel<0) {
+@@ -291,48 +435,59 @@
+ 	} else {
+ 		return 0;
+ 	}
++#endif
  }
  
  /* increase brightness value with v */
@@ -614,6 +588,37 @@ diff -ruN effectv-0.3.10/video.c dctrial/video.c
  	if(picture_contrast < 0) picture_contrast = 0;
  	if(picture_contrast > 65535) picture_contrast = 65535;
  	v4lsetpicture(&vd, -1, -1, -1, picture_contrast, -1);
++#endif
+ }
+ 
+ /* change channel: stops video grabbing at first, then recreate v4ldevice
+  * object. */
+ int video_change_channel(int channel)
+ {
++	return 0;
++#if 0
+ 	int ret = 0;
+ 	int maxch;
+ 
+@@ -346,11 +501,14 @@
+ 	video_grabstart();
+ 
+ 	return ret;
++#endif
+ }
+ 
+ /* retry grabbing */
+ int video_retry(void)
+ {
++	return 0;
++#if 0
+ 	video_quit();
+ 	return video_init(
+ 			video_file,
+@@ -360,6 +518,7 @@
+ 			video_width,
+ 			video_height,
+ 			video_palette);
 +#endif
  }
  
