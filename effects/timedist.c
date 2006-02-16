@@ -27,6 +27,15 @@ static RGB32 *planetable[PLANES];
 static int plane;
 static int *warptime[2];
 static int warptimeFrame;
+static int bgIsSet;
+
+static int setBackground(RGB32 *src)
+{
+	image_bgset_y(src);
+	bgIsSet = 1;
+
+	return 0;
+}
 
 effect *timeDistortionRegister(void)
 {
@@ -70,6 +79,7 @@ static int start(void)
 
 	plane = 0;
 	image_set_threshold_y(MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -94,6 +104,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 	int *p, *q;
 
 	memcpy(planetable[plane], src, PIXEL_SIZE * video_area);
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 	diff = image_bgsubtract_update_y(src);
 
 	p = warptime[warptimeFrame    ] + video_width + 1;
@@ -109,7 +122,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		q += 2;
 	}
 
-	q = warptime[warptimeFrame ^ 1] + video_width + 1;
+	q = warptime[warptimeFrame ^ 1];
 	for(i=0; i<video_area; i++) {
 		if(*diff++) {
 			*q = PLANES - 1;
