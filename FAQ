@@ -1,6 +1,6 @@
 FAQ
 ===
-Last updated 2005/6/3 for release 0.3.11
+Last updated 2006/5/13 for release 0.3.12
 
 Contents
 --------
@@ -14,6 +14,7 @@ Q6: Why don't you port EffecTV to ANY-GREAT-OS?
 Q7: How can I capture the video output from EffecTV to harddisk?
 Q8: EffecTV is slow.
 Q9: I upgraded the Video4Linux driver(or the kernel) and I got error...
+Q10: My QuickCam does not work.
 
 ----------
 Q1: I got a distorted/still/gray scale/shrunken image.
@@ -125,3 +126,20 @@ completed yet.
 
 If you got that error, try 'palettecheck' utility in 'tools' directory and
 please send us the output with a bug report.
+----------
+Q10: My QuickCam does not work.
+
+A: EffecTV uses double buffering mode for smooth capturing. On the other hand,
+qc-usb, a driver for old USB Quick Cams, does not support double buffering by
+default. In order to enable double buffering, you should use "qcset" command.
+Here is a report from an anonymous user.
+
+> You can improve the speed of the camera using the qcset util. You may enable
+> the double-buffering using the command  
+> 
+> qcset compat=dblbuf 
+>  
+>  The qcset util is full of interesting settings. With qcset keepsettings=1,
+> the settings will be stored into the webcam and you will be able to control
+> brightness, contrast, etc. You can check that your settings have been
+> correctly saved with the following command : qcset -i  
