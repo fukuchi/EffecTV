@@ -1,3 +1,7 @@
+2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
+	* utils.c:
+	  - Renamed trunc() to itrunc() to avoid name collision.
+
 2006/02/14	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* effectv.1, docs.japanese/{README,effectv.1} :
 	  - Bumped version to 0.3.11.

@@ -26,7 +26,7 @@ void utils_end(void)
 /*
  * HSI color system utilities
  */
-static int trunc(double f)
+static int itrunc(double f)
 {
 	int i;
 
@@ -44,9 +44,9 @@ void HSItoRGB(double H, double S, double I, int *r, int *g, int *b)
 	Gv=1+S*sin(H);
 	Bv=1+S*sin(H+2*M_PI/3);
 	T=255.999*I/2;
-	*r=trunc(Rv*T);
-	*g=trunc(Gv*T);
-	*b=trunc(Bv*T);
+	*r=itrunc(Rv*T);
+	*g=itrunc(Gv*T);
+	*b=itrunc(Bv*T);
 }
 
 /*
