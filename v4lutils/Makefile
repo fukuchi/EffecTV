@@ -21,8 +21,5 @@ libv4lutils.a: v4lutils.o
 
 v4lutils.o: v4lutils.c v4lutils.h
 
-v4ltest: v4lutils_test.c v4lutils_test.h
-	gcc -o $@ $< -lv4l2
-
 clean:
 	rm -f *.o libv4lutils.a

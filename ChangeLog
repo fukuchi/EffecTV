@@ -9,6 +9,8 @@
 	[v4l2-support]
 	* v4lutils/{Makefile, v4lutils.[ch]}, video.[ch], main.c, Makefile:
 	  - Switched to Video4Linux2.
+	* frequencies.[ch], iidc1394.patch, v4lutils/Makefile:
+	  - Obsolete files deleted.
 
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:
