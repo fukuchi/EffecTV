@@ -16,18 +16,9 @@ ARCH = i686-linux
 ## Linux for PlayStation2
 # ARCH = ps2-linux
 
-### Multimedia extension code set
-## MMX
-## comment out next line if you want not to enable MMX operation.
-USE_MMX = yes
-
-### NASM
-## comment out next line if you want not to use NASM.
-USE_NASM = yes
-
 ### vloopback
 ## comment out next line if you want to disable vloopback support.
-USE_VLOOPBACK = yes
+USE_VLOOPBACK = no
 
 ## choose vloopback version (only one).
 # version 0.91 or later
@@ -50,26 +41,7 @@ DEFAULT_VIDEO_DEVICE = "/dev/video0"
 ## i686-linux
 ifeq ($(ARCH), i686-linux)
 CONFIG.arch = -DI686
-CFLAGS.opt = -march=pentiumpro -O3 -fomit-frame-pointer -funroll-loops
-endif
-
-## PlayStaion2
-ifeq ($(ARCH), ps2-linux)
-CONFIG.arch = -DPS2
 CFLAGS.opt = -O3 -fomit-frame-pointer -funroll-loops
-USE_NASM = no
-USE_MMX = no
-USE_VLOOPBACK = no
-CONFIG += -DRGB_BGR_CONVERSION
-LIBS.extra = -ldl -L/usr/X11R6/lib -lX11 -lXext
-endif
-
-ifeq ($(USE_NASM), yes)
-CONFIG += -DUSE_NASM
-endif
-
-ifeq ($(USE_MMX), yes)
-CONFIG += -DUSE_MMX
 endif
 
 ifeq ($(USE_VLOOPBACK), yes)

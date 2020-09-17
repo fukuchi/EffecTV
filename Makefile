@@ -3,7 +3,6 @@
 include ./config.mk
 
 CC = gcc
-NASM = nasm
 INSTALL = /usr/bin/install -c
 
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
@@ -28,8 +27,6 @@ SUBDIRS = effects v4lutils tools
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<
-%.o: %.nas
-	$(NASM) -f elf $<
 
 all-recursive:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \

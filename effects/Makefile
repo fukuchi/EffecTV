@@ -3,7 +3,6 @@
 include ../config.mk
 
 CC = gcc
-NASM = nasm
 CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config --cflags`
 LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs`
 
@@ -21,8 +20,6 @@ SUBDIRS =
 
 %.o: %.c
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<
-%.o: %.nas
-	$(NASM) -f elf $<
 
 # just for checking optimized code
 %.s: %.c
@@ -41,9 +38,6 @@ QUARK = quark.o
 FIRE = fire.o
 BURN = burn.o
 BLURZOOM = blurzoom.o
-ifeq ($(USE_NASM), yes)
-BLURZOOM += blurzoomcore.o
-endif
 BALTAN = baltan.o
 STREAK = streak.o
 ONED = 1d.o

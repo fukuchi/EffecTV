@@ -2,6 +2,10 @@
 	[code-cleaning]
 	* .gitignore:
 	  - Newly introduced.
+	* Coding-HOWTO, README.ps2, README.vloopback, docs.japanese/*:
+	  - Obsolete documents deleted.
+	* Makefile, config.mk, effects/{Makefile, blurzoomcore.nas}:
+	  - Assembly code eliminated.
 
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:
