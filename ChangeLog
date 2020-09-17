@@ -1,3 +1,8 @@
+2020.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[code-cleaning]
+	* .gitignore:
+	  - Newly introduced.
+
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:
 	  - Renamed trunc() to itrunc() to avoid name collision.
