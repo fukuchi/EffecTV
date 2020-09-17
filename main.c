@@ -32,7 +32,6 @@
 #include "effects/effects.h"
 #include "utils.h"
 #include "syserr.xbm"
-#include "palette.h"
 #ifdef USE_VLOOPBACK
 #include "vloopback.h"
 #endif
@@ -363,42 +362,43 @@ static int startTV(const char *startEffect)
 					}
 					break;
 				case SDLK_LEFT:
-					video_setfreq(-1);
+					//video_setfreq(-1);
 					break;
 				case SDLK_RIGHT:
-					video_setfreq(1);
+					//video_setfreq(1);
 					break;
 				case SDLK_TAB:
 					video_horizontalFlip ^= 1;
 					break;
 				case SDLK_F1:
-					video_change_brightness(+4096);
+					//video_change_brightness(+4096);
 					break;
 				case SDLK_F2:
-					video_change_brightness(-4096);
+					//video_change_brightness(-4096);
 					break;
 				case SDLK_F3:
-					video_change_hue(+4096);
+					//video_change_hue(+4096);
 					break;
 				case SDLK_F4:
-					video_change_hue(-4096);
+					//video_change_hue(-4096);
 					break;
 				case SDLK_F5:
-					video_change_color(+4096);
+					//video_change_color(+4096);
 					break;
 				case SDLK_F6:
-					video_change_color(-4096);
+					//video_change_color(-4096);
 					break;
 				case SDLK_F7:
-					video_change_contrast(+4096);
+					//video_change_contrast(+4096);
 					break;
 				case SDLK_F8:
-					video_change_contrast(-4096);
+					//video_change_contrast(-4096);
 					break;
 				case SDLK_F12:
 					keyUsage();
 					flag = 2;
 					break;
+#if 0
 				case SDLK_0:
 				case SDLK_1:
 				case SDLK_2:
@@ -431,6 +431,7 @@ static int startTV(const char *startEffect)
 						eventDone = 0;
 					}
 					break;
+#endif
 				case SDLK_RETURN:
 					if(event.key.keysym.mod & KMOD_ALT) {
 						screen_fullscreen();
@@ -471,15 +472,12 @@ int main(int argc, char **argv)
 	int i;
 	char *option;
 	int channel = 0;
-	int norm = DEFAULT_VIDEO_NORM;
-	int freqtab = 0;
 	char *devfile = NULL;
 #ifdef USE_VLOOPBACK
 	char *vloopbackfile = NULL;
 #endif
 	int vw, vh; /* video width,height */
 	int sw, sh, ss; /* screen width,height,scale */
-	int palette = 0;
 	char *startEffect = NULL;
 
 	vw = vh = sw = sh = 0;
@@ -498,28 +496,6 @@ int main(int argc, char **argv)
 				channel = atoi(argv[i]);
 			} else {
 				fprintf(stderr, "-channel: missing channel number.\n");
-				exit(1);
-			}
-		} else if(strcmp(option, "norm") == 0) {
-			i++;
-			if(i<argc) {
-				if((norm = videox_getnorm(argv[i])) < 0) {
-					fprintf(stderr, "-norm: norm %s is not supported.\n", argv[i]);
-					exit(1);
-				}
-			} else {
-				fprintf(stderr, "-norm: missing norm.\n");
-				exit(1);
-			}
-		} else if(strcmp(option, "freqtab") == 0) {
-			i++;
-			if(i<argc) {
-				if((freqtab = videox_getfreq(argv[i])) < 0) {
-					fprintf(stderr, "-freqtab: frequency table %s is not supported.\n", argv[i]);
-					exit(1);
-				}
-			} else {
-				fprintf(stderr, "-freqtab: missing frequency table.\n");
 				exit(1);
 			}
 		} else if(strncmp(option, "device", 6) == 0) {
@@ -593,17 +569,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, "-scale: missing a scale value.\n");
 				exit(1);
 			}
-		} else if(strncmp(option, "palette", 3) == 0) {
-			i++;
-			if(i<argc) {
-				if((palette = palettex_getpalette(argv[i])) < 0) {
-					fprintf(stderr, "-palette: palette %s is not supported.\n",argv[i]);
-					exit(1);
-				}
-			} else {
-				fprintf(stderr, "-palette: missing palette name.\n");
-				exit(1);
-			}
 		} else if(strncmp(option, "debug", 5) == 0) {
 			debug = 1;
 		} else if(strncmp(option, "help", 1) == 0) {
@@ -632,11 +597,7 @@ int main(int argc, char **argv)
 		v4ldebug(1);
 	}
 
-	if(palette_init()) {
-		fprintf(stderr, "Palette initialization failed.\n");
-		exit(1);
-	}
-	if(video_init(devfile, channel, norm, freqtab, vw, vh, palette)) {
+	if(video_init(devfile, channel, vw, vh)) {
 		fprintf(stderr, "Video initialization failed.\n");
 		exit(1);
 	}
@@ -677,7 +638,6 @@ int main(int argc, char **argv)
 
 #ifdef MEM_DEBUG
 	if(debug) {
-		palette_end();
 		utils_end();
 		sharedbuffer_end();
 	}

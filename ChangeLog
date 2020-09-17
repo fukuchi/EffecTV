@@ -6,6 +6,9 @@
 	  - Obsolete documents deleted.
 	* Makefile, config.mk, effects/{Makefile, blurzoomcore.nas}:
 	  - Assembly code eliminated.
+	[v4l2-support]
+	* v4lutils/{Makefile, v4lutils.[ch]}, video.[ch], main.c, Makefile:
+	  - Switched to Video4Linux2.
 
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:

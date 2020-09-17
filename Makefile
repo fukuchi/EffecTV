@@ -5,12 +5,12 @@ include ./config.mk
 CC = gcc
 INSTALL = /usr/bin/install -c
 
-CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `sdl-config --cflags`
-LIBS = v4lutils/libv4lutils.a -lm `sdl-config --libs` $(LIBS.extra)
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `pkg-config --cflags sdl libv4l2`
+LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl libv4l2` $(LIBS.extra)
 
 PROGRAM = effectv
 
-COREOBJS = main.o screen.o video.o frequencies.o palette.o
+COREOBJS = main.o screen.o video.o
 VLOOPBACKOBJS = vloopback.o
 UTILS = utils.o yuv.o buffer.o image.o
 
@@ -21,7 +21,7 @@ OBJS += $(VLOOPBACKOBJS)
 endif
 
 LIBEFFECTS = effects/libeffects.a
-SUBDIRS = effects v4lutils tools
+SUBDIRS = effects v4lutils
 
 ### rules
 
@@ -39,7 +39,7 @@ all-am: $(PROGRAM)
 $(PROGRAM): $(OBJS) $(LIBEFFECTS) v4lutils/libv4lutils.a
 	$(CC) -o $@ $(OBJS) $(LIBEFFECTS) $(LIBS)
 
-$(OBJS): EffecTV.h screen.h video.h palette.h frequencies.h vloopback.h utils.h
+$(OBJS): EffecTV.h screen.h video.h utils.h
 
 install: all-am
 	$(INSTALL) -s $(PROGRAM) $(bindir)/
@@ -49,4 +49,3 @@ clean:
 	rm -f *.o $(PROGRAM)
 	cd effects && $(MAKE) clean
 	cd v4lutils && $(MAKE) clean
-	cd tools && $(MAKE) clean

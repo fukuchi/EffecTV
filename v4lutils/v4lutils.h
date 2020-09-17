@@ -25,7 +25,7 @@
 #define __V4LUTILS_H__
 
 #include <sys/types.h>
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
 #include <pthread.h>
 
 /*
@@ -35,26 +35,29 @@
 #define V4L_PERROR_ALL (1)
 
 /*
+ * Constant values
+ */
+#define V4L_MAXINPUTS (10)
+#define V4L_FRAMEBUFFERS (2)
+
+/*
  * Video4Linux Device Structure
  */
+struct frame {
+	unsigned char *data;
+	int length;
+};
+
 struct _v4ldevice
 {
 	int fd;
-	struct video_capability capability;
-	struct video_channel channel[10];
-	struct video_picture picture;
-	struct video_clip clip;
-	struct video_window window;
-	struct video_capture capture;
-	struct video_buffer buffer;
-	struct video_mmap mmap;
-	struct video_mbuf mbuf;
-	struct video_unit unit;
-	unsigned char *map;
+	struct v4l2_format fmt;
+	struct v4l2_capability capability;
+	int inputs_num;
+	struct v4l2_input inputs[V4L_MAXINPUTS];
+	struct frame frames[V4L_FRAMEBUFFERS];
 	pthread_mutex_t mutex;
-	int frame;
-	int framestat[2];
-	int overlay;
+	struct v4l2_buffer lastbuf;
 };
 
 typedef struct _v4ldevice v4ldevice;
@@ -62,34 +65,17 @@ typedef struct _v4ldevice v4ldevice;
 extern int v4lopen(char *, v4ldevice *);
 extern int v4lclose(v4ldevice *);
 extern int v4lgetcapability(v4ldevice *);
-extern int v4lsetdefaultnorm(v4ldevice *, int);
-extern int v4lgetsubcapture(v4ldevice *);
-extern int v4lsetsubcapture(v4ldevice *, int, int, int, int, int, int);
-extern int v4lgetframebuffer(v4ldevice *);
-extern int v4lsetframebuffer(v4ldevice *, void *, int, int, int, int);
-extern int v4loverlaystart(v4ldevice *);
-extern int v4loverlaystop(v4ldevice *);
-extern int v4lsetchannel(v4ldevice *, int);
-extern int v4lmaxchannel(v4ldevice *);
-extern int v4lsetfreq(v4ldevice *,int);
-extern int v4lsetchannelnorm(v4ldevice *vd, int, int);
-extern int v4lgetpicture(v4ldevice *);
-extern int v4lsetpicture(v4ldevice *, int, int, int, int, int);
-extern int v4lsetpalette(v4ldevice *, int);
-extern int v4lgetmbuf(v4ldevice *);
-extern int v4lmmap(v4ldevice *);
-extern int v4lmunmap(v4ldevice *);
-extern int v4lgrabinit(v4ldevice *, int, int);
-extern int v4lgrabstart(v4ldevice *, int);
-extern int v4lsync(v4ldevice *, int);
-extern int v4llock(v4ldevice *);
-extern int v4ltrylock(v4ldevice *);
-extern int v4lunlock(v4ldevice *);
-extern int v4lsyncf(v4ldevice *);
-extern int v4lgrabf(v4ldevice *);
+extern int v4lenuminputs(v4ldevice *);
+extern int v4lgrabinit(v4ldevice *vd, int width, int height);
+extern int v4lgrabstart(v4ldevice *vd);
+extern int v4lgrabstop(v4ldevice *vd);
+extern int v4lsync(v4ldevice *vd);
 extern unsigned char *v4lgetaddress(v4ldevice *);
-extern int v4lreadframe(v4ldevice *, unsigned char *);
-extern void v4lprint(v4ldevice *);
+extern int v4lnext(v4ldevice *vd);
+extern int v4llock(v4ldevice *vd);
+extern int v4ltrylock(v4ldevice *vd);
+extern int v4lunlock(v4ldevice *vd);
+extern void v4linfo(v4ldevice *);
 extern void v4lseterrorlevel(int);
 extern void v4ldebug(int);
 

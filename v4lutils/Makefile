@@ -10,7 +10,7 @@ LIBS =
 	$(CC) $(CFLAGS) -Wall -c -o $@ $<
 
 all-recursive: all
-all: libv4lutils.a
+all: libv4lutils.a v4ltest
 
 install: libv4lutils.a
 	cp -f libv4lutils.a /usr/local/lib/
@@ -20,6 +20,9 @@ libv4lutils.a: v4lutils.o
 	ar rc libv4lutils.a v4lutils.o
 
 v4lutils.o: v4lutils.c v4lutils.h
+
+v4ltest: v4lutils_test.c v4lutils_test.h
+	gcc -o $@ $< -lv4l2
 
 clean:
 	rm -f *.o libv4lutils.a

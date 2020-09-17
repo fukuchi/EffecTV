@@ -22,18 +22,21 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <linux/videodev.h>
 #include <pthread.h>
 #include <errno.h>
+#include <linux/videodev2.h>
+#include <libv4l2.h>
 #include "v4lutils.h"
 
 #define DEFAULT_DEVICE "/dev/video"
+
 
 #define STRBUF_LENGTH 1024
 
@@ -59,30 +62,22 @@ static void v4lperror(const char *str)
  */
 int v4lopen(char *name, v4ldevice *vd)
 {
-	int i;
 	char buf[STRBUF_LENGTH];
 
 	if(name == NULL)
 		name = DEFAULT_DEVICE;
 
 	if(v4l_debug) fprintf(stderr, "v4lopen:open...\n");
-	if((vd->fd = open(name,O_RDWR)) < 0) {
+	if((vd->fd = v4l2_open(name,O_RDWR)) < 0) {
 		snprintf(buf, STRBUF_LENGTH, "v4lopen: failed to open %s", name);
 		v4lperror(buf);
 		return -1;
 	}
 	if(v4lgetcapability(vd))
 		return -1;
+	if(v4lenuminputs(vd))
+		return -1;
 
-	if(v4l_debug) fprintf(stderr, "v4lopen:VIDIOCGCHAN...\n");
-	for(i=0;i<vd->capability.channels;i++) {
-		vd->channel[i].channel = i;
-		if(ioctl(vd->fd, VIDIOCGCHAN, &(vd->channel[i])) < 0) {
-			v4lperror("v4lopen:VIDIOCGCHAN");
-			return -1;
-		}
-	}
-	v4lgetpicture(vd);
 	pthread_mutex_init(&vd->mutex, NULL);
 	if(v4l_debug) fprintf(stderr, "v4lopen:quit\n");
 	return 0;
@@ -96,7 +91,7 @@ int v4lopen(char *name, v4ldevice *vd)
 int v4lclose(v4ldevice *vd)
 {
 	if(v4l_debug) fprintf(stderr, "v4lclose:close...\n");
-	close(vd->fd);
+	v4l2_close(vd->fd);
 	if(v4l_debug) fprintf(stderr, "v4lclose:quit\n");
 	return 0;
 }
@@ -108,290 +103,47 @@ int v4lclose(v4ldevice *vd)
  */
 int v4lgetcapability(v4ldevice *vd)
 {
-	if(v4l_debug) fprintf(stderr, "v4lgetcapability:VIDIOCGCAP...\n");
-	if(ioctl(vd->fd, VIDIOCGCAP, &(vd->capability)) < 0) {
-		v4lperror("v4lopen:VIDIOCGCAP");
+	if(v4l_debug) fprintf(stderr, "v4lgetcapability:VIDIOC_QUERYCAP...\n");
+	if(v4l2_ioctl(vd->fd, VIDIOC_QUERYCAP, &(vd->capability)) < 0) {
+		v4lperror("v4lgetcapability:VIDIOC_QUERYCAP");
 		return -1;
 	}
 	if(v4l_debug) fprintf(stderr, "v4lgetcapability:quit\n");
 	return 0;
 }
 
-/*
- * v4lsetdefaultnorm - set default norm and reset parameters
- *
- * vd: v4l device object
- * norm: default norm
+/* 
+ * v4lenuminputs - enumerate all video inputs
  */
-int v4lsetdefaultnorm(v4ldevice *vd, int norm)
+int v4lenuminputs(v4ldevice *vd)
 {
 	int i;
 
-	for(i=0;i<vd->capability.channels;i++) {
-		v4lsetchannelnorm(vd, i, norm);
+	memset(vd->inputs, 0, sizeof(vd->inputs));
+	for(i=0; i<V4L_MAXINPUTS; i++) {
+		vd->inputs[i].index = i;
+		if(v4l2_ioctl(vd->fd, VIDIOC_ENUMINPUT, &vd->inputs[i]) < 0) {
+			if(errno == EINVAL) {
+				break;
+			}
+			v4lperror("v4lenuminputs:VIDIOC_ENUMINPUT");
+			return -1;
+		}
 	}
-	if(v4lgetcapability(vd))
-		return -1;
-	if(v4lgetpicture(vd))
-		return -1;
+	vd->inputs_num = i;
 	return 0;
 }
 
 /*
- * v4lgetsubcapture - get current status of subfield capturing
- *
- * vd: v4l device object
- */
-int v4lgetsubcapture(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		v4lperror("v4lgetsubcapture:VIDIOCGCAPTURE");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lsetsubcapture - set parameters for subfield capturing
- *
- * vd: v4l device object
- * x,y: coordinate of source rectangle to grab
- * width: width of source rectangle to grab
- * height: height of source rectangle to grab
- * decimation: decimation to apply
- * flags: flag setting for grabbing odd/even frames
- */
-int v4lsetsubcapture(v4ldevice *vd, int x, int y, int width, int height, int decimation, int flags)
-{
-	vd->capture.x = x;
-	vd->capture.y = y;
-	vd->capture.width = width;
-	vd->capture.height = height;
-	vd->capture.decimation = decimation;
-	vd->capture.flags = flags;
-	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		v4lperror("v4lsetsubcapture:VIDIOCSCAPTURE");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lgetframebuffer - get current status of frame buffer
- *
- * vd: v4l device object
- */
-int v4lgetframebuffer(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCGFBUF, &(vd->buffer)) < 0) {
-		v4lperror("v4lgetframebuffer:VIDIOCGFBUF");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lsetframebuffer - set parameters of frame buffer
- *
- * vd: v4l device object
- * base: base PHYSICAL address of the frame buffer
- * width: width of the frame buffer
- * height: height of the frame buffer
- * depth: color depth of the frame buffer
- * bpl: number of bytes of memory between the start of two adjacent lines
- */
-int v4lsetframebuffer(v4ldevice *vd, void *base, int width, int height, int depth, int bpl)
-{
-	vd->buffer.base = base;
-	vd->buffer.width = width;
-	vd->buffer.height = height;
-	vd->buffer.depth = depth;
-	vd->buffer.bytesperline = bpl;
-	if(ioctl(vd->fd, VIDIOCSFBUF, &(vd->buffer)) < 0) {
-		v4lperror("v4lsetframebuffer:VIDIOCSFBUF");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4loverlaystart - activate overlay capturing
- *
- * vd: v4l device object
- */
-int v4loverlaystart(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCCAPTURE, 1) < 0) {
-		v4lperror("v4loverlaystart:VIDIOCCAPTURE");
-		return -1;
-	}
-	vd->overlay = 1;
-	return 0;
-}
-
-/*
- * v4loverlaystop - stop overlay capturing
- *
- * vd: v4l device object
- */
-int v4loverlaystop(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCCAPTURE, 0) < 0) {
-		v4lperror("v4loverlaystop:VIDIOCCAPTURE");
-		return -1;
-	}
-	vd->overlay = 0;
-	return 0;
-}
-
-/*
- * v4lsetchannel - select the video source
+ * v4lsetinput - select the video source
  *
  * vd: v4l device object
  * ch: the channel number
  */
-int v4lsetchannel(v4ldevice *vd, int ch)
+int v4lsetinput(v4ldevice *vd, int ch)
 {
-	if(ioctl(vd->fd, VIDIOCSCHAN, &(vd->channel[ch])) < 0) {
-		v4lperror("v4lsetchannel:VIDIOCSCHAN");
-		return -1;
-	}
-	return 0;
-}
-
-int v4lmaxchannel(v4ldevice *vd)
-{
-	return vd->capability.channels;
-}
-
-/*
- * v4lsetfreq - set the frequency of tuner
- *
- * vd: v4l device object
- * ch: frequency in KHz
- */
-int v4lsetfreq(v4ldevice *vd, int freq)
-{
-	unsigned long longfreq=(freq*16)/1000;
-	if(ioctl(vd->fd, VIDIOCSFREQ, &longfreq) < 0) {
-		v4lperror("v4lsetfreq:VIDIOCSFREQ");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lsetchannelnorm - set the norm of channel
- *
- * vd: v4l device object
- * ch: the channel number
- * norm: PAL/NTSC/OTHER (see videodev.h)
- */
-int v4lsetchannelnorm(v4ldevice *vd, int ch, int norm)
-{
-	vd->channel[ch].norm = norm;
-	return 0;
-}
-
-/*
- * v4lgetpicture - get current properties of the picture
- *
- * vd: v4l device object
- */
-int v4lgetpicture(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCGPICT, &(vd->picture)) < 0) {
-		v4lperror("v4lgetpicture:VIDIOCGPICT");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lsetpicture - set the image properties of the picture
- *
- * vd: v4l device object
- * br: picture brightness
- * hue: picture hue
- * col: picture color
- * cont: picture contrast
- * white: picture whiteness
- */
-int v4lsetpicture(v4ldevice *vd, int br, int hue, int col, int cont, int white)
-{
-	if(br>=0)
-		vd->picture.brightness = br;
-	if(hue>=0)
-		vd->picture.hue = hue;
-	if(col>=0)
-		vd->picture.colour = col;
-	if(cont>=0)
-		vd->picture.contrast = cont;
-	if(white>=0)
-		vd->picture.whiteness = white;
-	if(ioctl(vd->fd, VIDIOCSPICT, &(vd->picture)) < 0) {
-		v4lperror("v4lsetpicture:VIDIOCSPICT");
-		return -1;
-	}
-	return 0;
-}
- 
-/*
- * v4lsetpalette - set the palette for the images
- *
- * vd: v4l device object
- * palette: palette
- */
-int v4lsetpalette(v4ldevice *vd, int palette)
-{
-	vd->picture.palette = palette;
-	vd->mmap.format = palette;
-	if(ioctl(vd->fd, VIDIOCSPICT, &(vd->picture)) < 0) {
-		v4lperror("v4lsetpalette:VIDIOCSPICT");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lgetmbuf - get the size of the buffer to mmap
- *
- * vd: v4l device object
- */
-int v4lgetmbuf(v4ldevice *vd)
-{
-	if(ioctl(vd->fd, VIDIOCGMBUF, &(vd->mbuf))<0) {
-		v4lperror("v4lgetmbuf:VIDIOCGMBUF");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lmmap - initialize mmap interface
- *
- * vd: v4l device object
- */
-int v4lmmap(v4ldevice *vd)
-{
-	if(v4lgetmbuf(vd)<0)
-		return -1;
-	if((vd->map = mmap(0, vd->mbuf.size, PROT_READ|PROT_WRITE, MAP_SHARED, vd->fd, 0)) < 0) {
-		v4lperror("v4lmmap:mmap");
-		return -1;
-	}
-	return 0;
-}
-
-/*
- * v4lmunmap - free memory area for mmap interface
- *
- * vd: v4l device object
- */
-int v4lmunmap(v4ldevice *vd)
-{
-	if(munmap(vd->map, vd->mbuf.size) < 0) {
-		v4lperror("v4lmunmap:munmap");
+	if(v4l2_ioctl(vd->fd, VIDIOC_S_INPUT, &(ch)) < 0) {
+		v4lperror("v4lsetchannel:VIDIOC_S_INPUT");
 		return -1;
 	}
 	return 0;
@@ -406,12 +158,49 @@ int v4lmunmap(v4ldevice *vd)
  */
 int v4lgrabinit(v4ldevice *vd, int width, int height)
 {
-	vd->mmap.width = width;
-	vd->mmap.height = height;
-	vd->mmap.format = vd->picture.palette;
-	vd->frame = 0;
-	vd->framestat[0] = 0;
-	vd->framestat[1] = 0;
+	struct v4l2_requestbuffers req;
+	struct v4l2_buffer buf;
+	int i;
+
+	vd->fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	vd->fmt.fmt.pix.width  = width;
+	vd->fmt.fmt.pix.height = height;
+	vd->fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGR24;
+	vd->fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
+
+	if (v4l2_ioctl(vd->fd, VIDIOC_S_FMT, &vd->fmt) < 0) {
+		v4lperror("v4lgrabinit:VIDIOC_S_FMT");
+		return -1;
+	}
+
+	memset(&req, 0, sizeof(req));
+	req.count = V4L_FRAMEBUFFERS;
+	req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	req.memory = V4L2_MEMORY_MMAP;
+	if(v4l2_ioctl(vd->fd, VIDIOC_REQBUFS, &req) < 0) {
+		v4lperror("v4lgrabinit:VIDIOC_REQBUFS");
+		return -1;
+	}
+
+	for(i = 0; i < req.count; i++) {
+		memset(&buf, 0, sizeof(buf));
+		buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		buf.memory = V4L2_MEMORY_MMAP;
+		buf.index  = i;
+
+		if (v4l2_ioctl(vd->fd, VIDIOC_QUERYBUF, &buf) < 0) {
+			v4lperror("v4lgrabinit: VIDIOC_QUERYBUF");
+			return -1;
+		}
+
+		vd->frames[i].length = buf.length;
+		vd->frames[i].data = v4l2_mmap(NULL, buf.length, PROT_READ|PROT_READ, MAP_SHARED, vd->fd, buf.m.offset);
+		if(vd->frames[i].data == MAP_FAILED) {
+			v4lperror("v4lgrabinit: v4l2_mmap");
+			return -1;
+		}
+	}
+
 	return 0;
 }
 
@@ -419,20 +208,52 @@ int v4lgrabinit(v4ldevice *vd, int width, int height)
  * v4lgrabstart - activate mmap capturing
  *
  * vd: v4l device object
- * frame: frame number for storing captured image
  */
-int v4lgrabstart(v4ldevice *vd, int frame)
+int v4lgrabstart(v4ldevice *vd)
 {
-	if(v4l_debug) fprintf(stderr, "v4lgrabstart: grab frame %d.\n",frame);
-	if(vd->framestat[frame]) {
-		fprintf(stderr, "v4lgrabstart: frame %d is already used to grab.\n", frame);
+	int i;
+	struct v4l2_buffer buf;
+	enum v4l2_buf_type type;
+
+	if(v4l_debug) fprintf(stderr, "v4lgrabstart: grab frame.\n");
+	for (i = 0; i < V4L_FRAMEBUFFERS; ++i) {
+		memset(&buf, 0, sizeof(buf));
+		buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+		buf.memory = V4L2_MEMORY_MMAP;
+		buf.index = i;
+		if(v4l2_ioctl(vd->fd, VIDIOC_QBUF, &buf) < 0) {
+			v4lperror("v4lgrabstart:VIDIOC_QBUF");
+			return -1;
+		}
 	}
-	vd->mmap.frame = frame;
-	if(ioctl(vd->fd, VIDIOCMCAPTURE, &(vd->mmap)) < 0) {
-		v4lperror("v4lgrabstart:VIDIOCMCAPTURE");
+	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (v4l2_ioctl(vd->fd, VIDIOC_STREAMON, &type) < 0) {
+		v4lperror("v4lgrabstart:VIDIOC_STREAMON");
 		return -1;
 	}
-	vd->framestat[frame] = 1;
+
+	return 0;
+}
+
+/*
+ * v4lgrabstop - stop mmap capturing
+ *
+ * vd: v4l device object
+ */
+int v4lgrabstop(v4ldevice *vd)
+{
+	enum v4l2_buf_type type;
+	int i;
+
+	type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if (v4l2_ioctl(vd->fd, VIDIOC_STREAMOFF, &type) < 0) {
+		v4lperror("v4lgrabstop:VIDIOC_STREAMOFF");
+		return -1;
+	}
+	for (i = 0; i < V4L_FRAMEBUFFERS; ++i) {
+		v4l2_munmap(vd->frames[i].data, vd->frames[i].length);
+	}
+
 	return 0;
 }
 
@@ -440,19 +261,71 @@ int v4lgrabstart(v4ldevice *vd, int frame)
  * v4lsync - wait until mmap capturing of the frame is finished
  *
  * vd: v4l device object
- * frame: frame number
  */
-int v4lsync(v4ldevice *vd, int frame)
+int v4lsync(v4ldevice *vd)
 {
-	if(v4l_debug) fprintf(stderr, "v4lsync: sync frame %d.\n",frame);
-	if(vd->framestat[frame] == 0) {
-		fprintf(stderr, "v4lsync: grabbing to frame %d is not started.\n", frame);
-	}
-	if(ioctl(vd->fd, VIDIOCSYNC, &frame) < 0) {
-		v4lperror("v4lsync:VIDIOCSYNC");
+	fd_set fds;
+	struct timeval tv;
+	int ret;
+
+	if(v4l_debug) fprintf(stderr, "v4lsync: sync frame.\n");
+
+	FD_ZERO(&fds);
+	FD_SET(vd->fd, &fds);
+
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	ret = select(vd->fd + 1, &fds, NULL, NULL, &tv);
+
+	if(ret < 0) {
+		v4lperror("v4lsync: select failed");
+		return -1;
+	} else if(ret == 0) {
+		v4lperror("v4lsync: select timeout");
 		return -1;
 	}
-	vd->framestat[frame] = 0;
+
+	return 0;
+}
+
+/*
+ * v4lgetaddress - returns a offset addres of buffer for mmap capturing
+ *
+ * vd: v4l device object
+ */
+unsigned char *v4lgetaddress(v4ldevice *vd)
+{
+	memset(&vd->lastbuf, 0, sizeof(vd->lastbuf));
+
+	vd->lastbuf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	vd->lastbuf.memory = V4L2_MEMORY_MMAP;
+
+	if (v4l2_ioctl(vd->fd, VIDIOC_DQBUF, &vd->lastbuf) < 0) {
+		if(errno == EAGAIN) {
+			return NULL;
+		} else {
+			v4lperror("v4lgetaddress: VIDIOC_DQBUF");
+			return NULL;
+		}
+	}
+
+	assert(vd->lastbuf.index < V4L_FRAMEBUFFERS);
+
+	return vd->frames[vd->lastbuf.index].data;
+}
+
+/*
+ * v4lnext - start the next mmap capturing
+ *
+ * vd: v4l device object
+ */
+
+int v4lnext(v4ldevice *vd)
+{
+	if(v4l2_ioctl(vd->fd, VIDIOC_QBUF, &vd->lastbuf) < 0) {
+		v4lperror("v4lnext: VIDIOC_QBUF");
+		return -1;
+	}
 	return 0;
 }
 
@@ -486,77 +359,40 @@ int v4ltrylock(v4ldevice *vd)
 	return pthread_mutex_trylock(&vd->mutex);
 }
 
+
 /*
- * v4lsyncf - flip-flop sync
+ * v4linfo - print v4l device object
  *
  * vd: v4l device object
  */
-int v4lsyncf(v4ldevice *vd)
+#define V4L2_CAPABILITY_CHECK(_flag_) if(vd->capability.capabilities & _flag_) printf(#_flag_  ",")
+
+void v4linfo(v4ldevice *vd)
 {
-	return v4lsync(vd, vd->frame);
-}
+	int i;
 
-/*
- * v4lgrabf - flip-flop grabbing
- *
- * vd: v4l device object
- */
-int v4lgrabf(v4ldevice *vd)
-{
-	int f;
-
-	f = vd->frame;
-	vd->frame = vd->frame ^ 1;
-	return v4lgrabstart(vd, f);
-}
-
-/*
- * v4lgetaddress - returns a offset addres of buffer for mmap capturing
- *
- * vd: v4l device object
- */
-unsigned char *v4lgetaddress(v4ldevice *vd)
-{
-	return (vd->map + vd->mbuf.offsets[vd->frame]);
-}
-
-/*
- * v4lreadframe - grab one frame by calling read system call
- * vd: v4l device object
- * buf: buffer where a grabbed imaged is stored
- */
-
-int v4lreadframe(v4ldevice *vd, unsigned char *buf)
-{
-	/* to do */
-	return -1;
-}
-
-/*
- * v4lprint - print v4l device object
- *
- * vd: v4l device object
- */
-void v4lprint(v4ldevice *vd)
-{
-	printf("v4l device data\nname: %s\n",vd->capability.name);
-	printf("channels: %d\n",vd->capability.channels);
-	printf("max size: %dx%d\n",vd->capability.maxwidth, vd->capability.maxheight);
-	printf("min size: %dx%d\n",vd->capability.minwidth, vd->capability.minheight);
-	printf("device type;\n");
-	if(vd->capability.type & VID_TYPE_CAPTURE) printf("VID_TYPE_CAPTURE,");
-	if(vd->capability.type & VID_TYPE_OVERLAY) printf("VID_TYPE_OVERLAY,");
-	if(vd->capability.type & VID_TYPE_CLIPPING) printf("VID_TYPE_CLIPPING,");
-	if(vd->capability.type & VID_TYPE_FRAMERAM) printf("VID_TYPE_FRAMERAM,");
-	if(vd->capability.type & VID_TYPE_SCALES) printf("VID_TYPE_SCALES,");
-	if(vd->capability.type & VID_TYPE_MONOCHROME) printf("VID_TYPE_MONOCHROME,");
-	if(vd->capability.type & VID_TYPE_SUBCAPTURE) printf("VID_TYPE_SUBCAPTURE,");
-	printf("\ncurrent status;\n");
-	printf("picture.depth: %d\n",vd->picture.depth);
-	printf("mbuf.size: %08x\n",vd->mbuf.size);
-	printf("mbuf.frames: %d\n",vd->mbuf.frames);
-	printf("mbuf.offsets[0]: %08x\n",vd->mbuf.offsets[0]);
-	printf("mbuf.offsets[1]: %08x\n",vd->mbuf.offsets[1]);
+	printf("Driver: %s\n", vd->capability.driver);
+	printf("Card: %s\n", vd->capability.card);
+	printf("Device type;\n");
+	V4L2_CAPABILITY_CHECK(V4L2_CAP_VIDEO_CAPTURE);
+	V4L2_CAPABILITY_CHECK(V4L2_CAP_VIDEO_OVERLAY);
+	V4L2_CAPABILITY_CHECK(V4L2_CAP_TUNER);
+	printf("Number of inputs: %d\n", vd->inputs_num);
+	for(i=0; i<vd->inputs_num; i++) {
+		printf("Input #%d:\n", i);
+		printf("  Name: %s\n", vd->inputs[i].name);
+		switch(vd->inputs[i].type) {
+			case V4L2_INPUT_TYPE_TUNER:
+				printf("  Type: tuner\n");
+				break;
+			case V4L2_INPUT_TYPE_CAMERA:
+				printf("  Type: camera\n");
+				break;
+			default:
+				printf("  Type: unknown\n");
+				break;
+		}
+	}
 }
 
 /*
