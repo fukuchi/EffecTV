@@ -11,6 +11,9 @@
 	  - Switched to Video4Linux2.
 	* frequencies.[ch], iidc1394.patch, v4lutils/Makefile:
 	  - Obsolete files deleted.
+	* main.c, video.[ch]:
+	  - Unused functions deleted.
+	  - Unused key bindings deleted.
 
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:

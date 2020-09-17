@@ -114,12 +114,6 @@ static void usage(void)
 	printf("Options:\n");
 	printf("  -device FILE     use device FILE for video4linux\n");
 	printf("  -channel NUMBER  channel number of video source\n");
-	printf("  -norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}\n"
-           "                   set video norm\n");
-	printf("  -freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,\n"
-           "            europe-east,italy,newzealand,australia,ireland,france,china-bcast,\n"
-           "            southafrica,argentina,canada-cable,australia-optus}\n"
-           "                   set frequency table\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");
 	printf("  -doublebuffer    enable double buffering mode (if possible)\n");
@@ -141,17 +135,11 @@ static void keyUsage(void)
 	printf( "---------------\n"
 			"Key description\n"
 			"Up/Down     change effect.\n"
-			"Right/Left  change TV channel.\n"
 			"Space       capture a background image(for FireTV, BurningTV, etc.).\n"
 			"            change mode(for SpiralTV, TransFormTV)\n"
 			"ALT+Enter   fullscreen mode(toggle).\n"
 			"TAB         Horizontal flipping(toggle).\n"
 			"Escape      Quit\n"
-			"ALT+0-9     change video input channel.\n"
-			"F1/F2       increase/decrease brightness of video input.\n"
-			"F3/F4       increase/decrease hue.\n"
-			"F5/F6       increase/decrease color balance.\n"
-			"F7/F8       increase/decrease contrast.\n"
 			"F12         show this usage.\n");
 }
 
@@ -361,77 +349,13 @@ static int startTV(const char *startEffect)
 							autoplay_counter = autoplay;
 					}
 					break;
-				case SDLK_LEFT:
-					//video_setfreq(-1);
-					break;
-				case SDLK_RIGHT:
-					//video_setfreq(1);
-					break;
 				case SDLK_TAB:
 					video_horizontalFlip ^= 1;
-					break;
-				case SDLK_F1:
-					//video_change_brightness(+4096);
-					break;
-				case SDLK_F2:
-					//video_change_brightness(-4096);
-					break;
-				case SDLK_F3:
-					//video_change_hue(+4096);
-					break;
-				case SDLK_F4:
-					//video_change_hue(-4096);
-					break;
-				case SDLK_F5:
-					//video_change_color(+4096);
-					break;
-				case SDLK_F6:
-					//video_change_color(-4096);
-					break;
-				case SDLK_F7:
-					//video_change_contrast(+4096);
-					break;
-				case SDLK_F8:
-					//video_change_contrast(-4096);
 					break;
 				case SDLK_F12:
 					keyUsage();
 					flag = 2;
 					break;
-#if 0
-				case SDLK_0:
-				case SDLK_1:
-				case SDLK_2:
-				case SDLK_3:
-				case SDLK_4:
-				case SDLK_5:
-				case SDLK_6:
-				case SDLK_7:
-				case SDLK_8:
-				case SDLK_9:
-					if(event.key.keysym.mod & KMOD_ALT) {
-						video_change_channel(event.key.keysym.sym - SDLK_0);
-					} else {
-						eventDone = 0;
-					}
-					break;
-				case SDLK_KP0:
-				case SDLK_KP1:
-				case SDLK_KP2:
-				case SDLK_KP3:
-				case SDLK_KP4:
-				case SDLK_KP5:
-				case SDLK_KP6:
-				case SDLK_KP7:
-				case SDLK_KP8:
-				case SDLK_KP9:
-					if(event.key.keysym.mod & KMOD_ALT) {
-						video_change_channel(event.key.keysym.sym - SDLK_KP0);
-					} else {
-						eventDone = 0;
-					}
-					break;
-#endif
 				case SDLK_RETURN:
 					if(event.key.keysym.mod & KMOD_ALT) {
 						screen_fullscreen();

@@ -34,12 +34,6 @@ static int video_channel;
 /* Initial parameters */
 static char *video_file;
 
-/* Picture parameters */
-static int picture_brightness;
-static int picture_hue;
-static int picture_colour;
-static int picture_contrast;
-
 static RGB32 *framebuffer;
 
 static void convert_BGR24toBGR32
@@ -102,14 +96,6 @@ int video_init(char *file, int channel, int w, int h)
 	video_width = vd.fmt.fmt.pix.width;
 	video_height = vd.fmt.fmt.pix.height;
 
-	/*
-	v4lgetpicture(&vd);
-	picture_brightness = vd.picture.brightness;
-	picture_hue = vd.picture.hue;
-	picture_colour = vd.picture.colour;
-	picture_contrast = vd.picture.contrast;
-	*/
-
 	return 0;
 }
 
@@ -154,63 +140,6 @@ unsigned char *video_getaddress(void)
 	}
 	return (unsigned char *)framebuffer;
 }
-
-#if 0
-/* increase brightness value with v */
-void video_change_brightness(int v)
-{
-	picture_brightness += v;
-	if(picture_brightness < 0) picture_brightness = 0;
-	if(picture_brightness > 65535) picture_brightness = 65535;
-	v4lsetpicture(&vd, picture_brightness, -1, -1, -1, -1);
-}
-
-/* increase hue value with v */
-void video_change_hue(int v)
-{
-	picture_hue += v;
-	if(picture_hue < 0) picture_hue = 0;
-	if(picture_hue > 65535) picture_hue = 65535;
-	v4lsetpicture(&vd, -1, picture_hue, -1, -1, -1);
-}
-
-/* increase color value with v */
-void video_change_color(int v)
-{
-	picture_colour += v;
-	if(picture_colour < 0) picture_colour = 0;
-	if(picture_colour > 65535) picture_colour = 65535;
-	v4lsetpicture(&vd, -1, -1, picture_colour, -1, -1);
-}
-
-/* increase contrast value with v */
-void video_change_contrast(int v)
-{
-	picture_contrast += v;
-	if(picture_contrast < 0) picture_contrast = 0;
-	if(picture_contrast > 65535) picture_contrast = 65535;
-	v4lsetpicture(&vd, -1, -1, -1, picture_contrast, -1);
-}
-
-/* change channel: stops video grabbing at first, then recreate v4ldevice
- * object. */
-int video_change_channel(int channel)
-{
-	int ret = 0;
-	int maxch;
-
-	maxch = v4lmaxchannel(&vd);
-	if(channel < 0) channel = 0;
-	if(channel > maxch) channel = maxch;
-
-	video_grabstop();
-	if(v4lsetchannel(&vd, channel)) ret = -1;
-	video_channel = channel;
-	video_grabstart();
-
-	return ret;
-}
-#endif
 
 /* retry grabbing */
 int video_retry(void)

@@ -33,14 +33,6 @@ int video_setfreq(int v);
 int video_syncframe(void);
 int video_grabframe(void);
 unsigned char *video_getaddress(void);
-#if 0
-void video_change_brightness(int);
-void video_change_hue(int);
-void video_change_color(int);
-void video_change_contrast(int);
-void video_change_whiteness(int);
-int video_change_channel(int channel);
-#endif
 int video_retry(void);
 
 #endif /* __VIDEO_H__ */
