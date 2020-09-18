@@ -20,19 +20,9 @@ ARCH = i686-linux
 ## comment out next line if you want to disable vloopback support.
 USE_VLOOPBACK = no
 
-## choose vloopback version (only one).
-# version 0.91 or later
-VLOOPBACK_VERSION = 91
-## version 0.83 or former (obsolete!!)
-# VLOOPBACK_VERSION = 83
-
 ### Default settings
 ## Set a default device file name of the video input.
 DEFAULT_VIDEO_DEVICE = "/dev/video0"
-
-
-### Memory debug
-#MEM_DEBUG = yes
 
 ###############################################################################
 ### none user configurable settings
@@ -46,12 +36,6 @@ endif
 
 ifeq ($(USE_VLOOPBACK), yes)
 CONFIG += -DUSE_VLOOPBACK
-CONFIG += -DVLOOPBACK_VERSION=$(VLOOPBACK_VERSION)
 endif
 
 CONFIG += -DDEFAULT_VIDEO_DEVICE=\"$(DEFAULT_VIDEO_DEVICE)\"
-
-ifeq ($(MEM_DEBUG), yes)
-CONFIG += -DMEM_DEBUG
-CFLAGS.opt = -g -O2
-endif

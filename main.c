@@ -556,16 +556,13 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-//	showTitle();
 	keyUsage();
 	startTV(startEffect);
 
-#ifdef MEM_DEBUG
 	if(debug) {
 		utils_end();
 		sharedbuffer_end();
 	}
-#endif
 
 	video_quit();
 
