@@ -27,19 +27,6 @@ Show usage (help) information.
 .I \-device FILE
 Use device FILE for video4linux (default is /dev/video0).
 .TP
-.I \-channel NUMBER
-Channel number of video source (default is 0).
-.TP
-.I \-norm NORM
-Set video norm (default is ntsc). One of
-ntsc, pal, secam, pal-nc, pal-m, pal-n, ntsc-jp.
-.TP
-.I \-freqtab FREQTAB
-Set frequency table. One of
-us-bcast, us-cable, us-cable-hrc, japan-bcast, japan-cable,
-europe-west, europe-east, italy, newzealand, australia, ireland,
-france, china-bcast, southafrica, argentina, canada-cable, australia-optus.
-.TP
 .I \-fullscreen
 Enable fullscreen mode.
 .TP
@@ -76,9 +63,6 @@ Use device FILE for output of vloopback device.
 .I Up/Down
 Change effect.
 .TP
-.I Right/Left
-Change TV channel.
-.TP
 .I Space
 Capture a background image(for FireTV, BurningTV, etc.).
 Change mode(for SpiralTV, TransFormTV).
@@ -91,21 +75,6 @@ Flip images horizontally.
 .TP
 .I Escape
 Quit
-.TP
-.I ALT+0-9
-Change video input channel (0-9).
-.TP
-.I F1/F2
-Increase/decrease brightness of video input.
-.TP
-.I F3/F4
-Increase/decrease hue.
-.TP
-.I F5/F6
-Increase/decrease color balance.
-.TP
-.I F7/F8
-Increase/decrease contrast.
 .TP
 .I F12
 Show this key usage.
@@ -258,4 +227,4 @@ The core of EffecTV was developed by FUKUCHI Kentaro <fukuchi@users.sourceforge.
 See the file CREWS for full list of developers.
 
 .SH SEE ALSO
-v4l-conf(1)
+v4l2-ctl(1)

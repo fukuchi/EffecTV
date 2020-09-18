@@ -10,32 +10,11 @@ INSTALL
 
 Requirements
 ------------
-Currently, EffecTV highly depends upon the Intel architecture. It may not work
-on any other platform.
-EffecTV also works on PlayStation2. Please read "README.ps2".
-
-Video capture card or USB device supported by video4linux is required.
+Video capture card or USB device supported by Video4Linux2 (V4L2) is required.
 
 EffecTV requires the SDL library, available from http://www.libsdl.org/.
 
-EffecTV uses video4linux. Your kernel should be configured with 
-CONFIG_VIDEO_DEV and enable drivers for your video capture card.
-
-Bttv driver included in linux-2.2.18 is broken. Get latest bttv driver
-from http://www.bytesex.org/bttv/.
-
 Vloopback device driver is required for the video loopback feature.
-You should use vloopback-0.91 or later.
-http://www.lavrsen.dk/twiki/bin/view/Motion/VideoFourLinuxLoopbackDevice
-
-*NOTICE* If you uses libc-2.2.5, try latest patch kit or package for your
-distro. Vloopback support does not work on early version of libc-2.2.5. If you
-are Debian GNU/Linux user and installed "woody", install libc6_2.2.5-4 or
-later.
-
-NASM can be used to assemble some modules. See following URL:
-http://nasm.sourceforge.net/
-If you want not to use NASM, you have to modify "config.mk".
 
 Compiling & installing
 ----------------------
@@ -59,10 +38,6 @@ USING
 Before using
 ------------
 Before starting up EffecTV, you should know about your hardwares settings.
-* Video norm(NTSC, PAL, etc.) of your video camera or player
-* Channel number of the Video source (this is different from channel numbers
-  of TV stations)
-* Video4linux device file name
 You can adjust these settings with command line options. See the next section.
 
 Synopsis
@@ -72,21 +47,7 @@ effectv [options...] [effect name]
 Options
 -------
 -device FILE
-	Use device FILE for video4linux (default is /dev/video0).
-
--channel NUMBER
-	Set channel number of video source (default is 0).
-	If your video capturing device has multiple video source(TV,Video1,...),
-	you may want to change this number to get correct images.
-
--norm {ntsc,pal,secam,pal-nc,pal-m,pal-n,ntsc-jp}
-	Set video norm(signal format) of your video source (default is ntsc).
-
--freqtab {us-bcast,us-cable,us-cable-hrc,japan-bcast,japan-cable,europe-west,
-          europe-east,italy,newzealand,australia,ireland,france,china-bcast,
-          southafrica,argentina,canada-cable,australia-optus}
-	Set frequency table of TV tuner. Choose one of them if you want to watch
-	TV on EffecTV.
+	Use device FILE for V4L2 (default is /dev/video0).
 
 -fullscreen
 	Launch EffecTV in fullscreen mode.
@@ -136,17 +97,11 @@ effect name
 Key
 ---
 Up/Down     change effect.
-Right/Left  change TV channel.
 Space       capture a background image(for FireTV, BurningTV, etc.).
             change mode(for SpiralTV, TransFormTV)
 ALT+Enter   fullscreen mode(toggle).
 TAB         Horizontal flipping(toggle).
 Escape      Quit
-ALT+0-9     change video input channel.
-F1/F2       increase/decrease brightness of video input.
-F3/F4       increase/decrease hue.
-F5/F6       increase/decrease color balance.
-F7/F8       increase/decrease contrast.
 F12         show this key usage.
 
 Individual effects are described in further detail in the documents package.
@@ -331,7 +286,7 @@ CONTACT
 
 Web
 ---
-See http://effectv.sourceforge.net/index.html
+See https://www.effectv.dev/
 
 Bug-reporting & Suggestions
 ---------------------------
@@ -401,4 +356,4 @@ See the file "CREWS".
 ---
 EffecTV crews
 E-mail: effectv-developers@lists.sourceforge.net
-Web: http://effectv.sourceforge.net/index.html
+Web: https://www.effectv.dev/

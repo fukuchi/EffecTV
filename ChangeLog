@@ -14,6 +14,9 @@
 	* main.c, video.[ch]:
 	  - Unused functions deleted.
 	  - Unused key bindings deleted.
+	[develop]
+	* README, effectv.1:
+	  - Obsolete descriptions are eliminated.
 
 2006/08/03	FUKUCHI Kentaro		<fukuchi@users.sourceforge.net>
 	* utils.c:
