@@ -53,11 +53,7 @@ static void initPalette(void)
 static void setOpmap(void)
 {
 	int i, j, x, y;
-#ifndef PS2
 	double xx, yy, r, at, rr;
-#else
-	float xx, yy, r, at, rr;
-#endif
 	int sci;
 
 	sci = 640 / video_width;
@@ -66,13 +62,8 @@ static void setOpmap(void)
 		yy = (double)(y - video_height/2) / video_width;
 		for(x=0; x<video_width; x++) {
 			xx = (double)x / video_width - 0.5;
-#ifndef PS2
 			r = sqrt(xx * xx + yy * yy);
 			at = atan2(xx, yy);
-#else
-			r = sqrtf(xx * xx + yy * yy);
-			at = atan2f(xx, yy);
-#endif
 
 			opmap[OP_SPIRAL1][i] = ((unsigned int)
 				((at / M_PI * 256) + (r * 4000))) & 255;

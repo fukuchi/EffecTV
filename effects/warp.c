@@ -90,11 +90,7 @@ static void initOffsTable (void) {
       
 static void initDistTable (void) {
 	Sint32	halfw, halfh, *distptr;
-#ifdef PS2
-	float	x,y,m;
-#else
 	double	x,y,m;
-#endif
 
 	halfw = video_width>> 1;
 	halfh = video_height >> 1;
@@ -105,13 +101,8 @@ static void initDistTable (void) {
 
 	for (y = -halfh; y < halfh; y++)
 		for (x= -halfw; x < halfw; x++)
-#ifdef PS2
-			*distptr++ = ((int)
-				( (sqrtf (x*x+y*y) * 511.9999) / m)) << 1;
-#else
 			*distptr++ = ((int)
 				( (sqrt (x*x+y*y) * 511.9999) / m)) << 1;
-#endif
 }
 
 static void initWarp (void) {
