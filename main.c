@@ -568,7 +568,7 @@ static int parseGeometry(const char *str, int *w, int *h)
 
 	ret = sscanf(str, "%dx%d", w, h);
 	if(ret != 2) {
-		fprintf(stderr, "size specification is wrong.(e.g.\"320x240\")\n");
+		fprintf(stderr, "size specification is wrong.(e.g.\"640x480\")\n");
 		return -1;
 	}
 	if(*w <=0 || *h <= 0) {

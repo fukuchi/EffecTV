@@ -262,7 +262,7 @@ $ xawtv -c /dev/video2
 
 To record the output to an MPEG file by using FFmpeg,
 
-$ ffmpeg -vd /dev/video2 -s 320x240 effect.mpg
+$ ffmpeg -vd /dev/video2 -s 640x480 effect.mpg
 
 You can use many recording or broadcasting tools that supports v4l device.
 Because vloopback does not support framebuffer I/O control, some tools don't

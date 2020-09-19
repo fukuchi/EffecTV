@@ -1,3 +1,12 @@
+2020.09.20 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* EffecTV.h, effectv.1, main.c, palette.c, palette.h, video.c,
+	  tools/{AddEffect.pl, Makefile, README, palettecheck.c},:
+	  - Obosolete palette functions and related options/files have been
+	    eliminated.
+	* EffecTV.h, README, effectv.1, main.c:
+	  - Default resolution has been changed to 640x480 from 320x240.
+
 2020.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* README, effectv.1, main.c, screen.[ch],
