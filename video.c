@@ -83,6 +83,11 @@ int video_init(char *file, int channel, int w, int h)
 
 	video_width = w;
 	video_height = h;
+
+	if(v4lgrabinit(&vd, video_width, video_height)) return -1;
+
+	video_width = vd.fmt.fmt.pix.width;
+	video_height = vd.fmt.fmt.pix.height;
 	video_area = video_width * video_height;
 
 	framebuffer = (RGB32 *)malloc(video_area*sizeof(RGB32));
@@ -90,11 +95,6 @@ int video_init(char *file, int channel, int w, int h)
 		fprintf(stderr, "video_init: Memory allocation error.\n");
 		return -1;
 	}
-
-	if(v4lgrabinit(&vd, video_width, video_height)) return -1;
-
-	video_width = vd.fmt.fmt.pix.width;
-	video_height = vd.fmt.fmt.pix.height;
 
 	return 0;
 }
