@@ -13,7 +13,6 @@
 #include <v4lutils.h>
 
 #include "EffecTV.h"
-#include "palette.h"
 #include "utils.h"
 
 /* Currently there is only one v4l device obeject. */

@@ -120,9 +120,6 @@ static void usage(void)
 	printf("  -geometry WxH    set the size of screen\n");
 	printf("  -scale NUMBER    scaling the screen\n");
 	printf("  -autoplay NUMBER changes effects automatically every NUMBER frames\n");
-	printf("  -palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}\n"
-           "                   set the palette of capturing device. It is detected\n"
-           "                   automatically by default.\n");
 #ifdef USE_VLOOPBACK
 	printf("  -vloopback FILE  use device FILE for output of vloopback device\n");
 #endif
