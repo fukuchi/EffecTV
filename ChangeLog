@@ -1,3 +1,16 @@
+2020.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* README, effectv.1, main.c, screen.[ch],
+	  effects/{1d.c, bluescreen.c, holo.c, predator.c}:
+	  - Double buffer option has been eliminated.
+	* effects/{op.c, shagadelic.c, spiral.c, warp.c}:
+	  - PS2Linux-related code dropped.
+	* video.c:
+	  - Now calculates video_area correctly when the video size changed by the
+	    driver.
+	* README, effectv.1, main.c, screen.[ch]:
+	  - Hardware surface option has been eliminated.
+
 2020.09.18 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[code-cleaning]
 	* .gitignore:

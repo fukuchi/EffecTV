@@ -52,10 +52,6 @@ Options
 -fullscreen
 	Launch EffecTV in fullscreen mode.
 
--hardware
-	Use direct video memory (if possible). It makes EffecTV faster in some
-	cases.
-
 -fps
 	Show frames/sec on its title bar (X11 only).
 

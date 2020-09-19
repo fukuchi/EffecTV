@@ -23,9 +23,6 @@ static const SDL_VideoInfo *screeninfo;
  * Screen properties. These variables are immutable after calling screen_init()
  */
 
-/* Flag for hardware surface mode. */
-int hwsurface = 0;
-
 /* Flag for fullscreen mode. */
 int fullscreen = 0;
 
@@ -46,9 +43,9 @@ unsigned char *bgr_buf;
 
 
 /* Screen initialization.
- * Before calling this function, screen properties(scale, hwsurface,
- * fullscreen) must be set. In the initializing process, those variables may be
- * reset and they are never changed again during run time.
+ * Before calling this function, screen properties(scale, fullscreen) must be
+ * set. In the initializing process, those variables may be reset and they are
+ * never changed again during run time.
  */
 int screen_init(int w, int h, int s)
 {
@@ -59,9 +56,6 @@ int screen_init(int w, int h, int s)
 		return -1;
 	}
 
-	if(hwsurface) {
-		flags |= SDL_HWSURFACE;
-	}
 	if(fullscreen) {
 		flags |= SDL_FULLSCREEN;
 	}
@@ -100,10 +94,6 @@ int screen_init(int w, int h, int s)
 		return -1;
 	}
 	if(screen->flags != flags) {
-		if(hwsurface && !(screen->flags & SDL_HWSURFACE)) {
-			hwsurface = 0;
-			fprintf(stderr, "Hardware surface is not supported.\n");
-		}
 		if(fullscreen && !(screen->flags & SDL_FULLSCREEN)) {
 			fullscreen = 0;
 			fprintf(stderr, "Fullscreen mode is not supported.\n");
