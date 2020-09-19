@@ -56,10 +56,6 @@ Options
 	Use direct video memory (if possible). It makes EffecTV faster in some
 	cases.
 
--doublebuffer
-	Enable double buffering mode (if possible). It makes EffecTV faster in
-	some cases.
-
 -fps
 	Show frames/sec on its title bar (X11 only).
 

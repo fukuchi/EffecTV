@@ -22,8 +22,6 @@ static const SDL_VideoInfo *screeninfo;
 /*
  * Screen properties. These variables are immutable after calling screen_init()
  */
-/* Flag for double buffering mode. */
-int doublebuf = 0;
 
 /* Flag for hardware surface mode. */
 int hwsurface = 0;
@@ -48,7 +46,7 @@ unsigned char *bgr_buf;
 
 
 /* Screen initialization.
- * Before calling this function, screen properties(scale, doublebuf, hwsurface,
+ * Before calling this function, screen properties(scale, hwsurface,
  * fullscreen) must be set. In the initializing process, those variables may be
  * reset and they are never changed again during run time.
  */
@@ -66,9 +64,6 @@ int screen_init(int w, int h, int s)
 	}
 	if(fullscreen) {
 		flags |= SDL_FULLSCREEN;
-	}
-	if(doublebuf) {
-		flags |= SDL_DOUBLEBUF;
 	}
 
 	if(w || h) {
@@ -112,10 +107,6 @@ int screen_init(int w, int h, int s)
 		if(fullscreen && !(screen->flags & SDL_FULLSCREEN)) {
 			fullscreen = 0;
 			fprintf(stderr, "Fullscreen mode is not supported.\n");
-		}
-		if(doublebuf && !(screen->flags & SDL_DOUBLEBUF)) {
-			doublebuf = 0;
-			fprintf(stderr, "Double buffer mode is not supported.\n");
 		}
 	}
 
@@ -161,8 +152,7 @@ void screen_setcaption(const char *str)
 	}
 }
 
-/* Fill the screen with the color. When double buffering mode is enable,
- * both buffers are cleared. */
+/* Fill the screen with the color. */
 void screen_clear(int color)
 {
 #ifdef RGB_BGR_CONVERSION
@@ -170,10 +160,6 @@ void screen_clear(int color)
 #endif
 	SDL_FillRect(screen, NULL, color);
 	screen_update();
-	if(doublebuf) {
-		SDL_FillRect(screen, NULL, color);
-		screen_update();
-	}
 }
 
 /* Toggles fullscreen mode. */

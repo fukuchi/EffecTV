@@ -108,28 +108,6 @@ static int setBackground(void)
 			+(((bgimage[i]^tmp[i])&0xfefefe)>>1))&0xfefefe;
 	}
 
-	/* displays the composite background
-	 * (not needed for this effect)
-	for(i=0; i<2; i++) {
-		if(screen_lock() < 0) {
-			break;
-		}
-		if(stretch) {
-			if(i == 0) {
-				memcpy(stretching_buffer, bgimage, video_area*PIXEL_SIZE);
-			}
-			image_stretch_to_screen();
-		} else {
-			memcpy((RGB32 *)screen_getaddress(), bgimage,
-					video_area*PIXEL_SIZE);
-		}
-		screen_unlock();
-		screen_update();
-		if(doublebuf == 0)
-			break;
-	}
-	*/
-
 	free(tmp);
 
 	return 0;

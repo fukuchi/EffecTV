@@ -13,7 +13,6 @@
 
 extern SDL_Surface *screen; /* display surface */
 extern int stretch;         /* flag for stretching requirement */
-extern int doublebuf;       /* flag for double buffering */
 extern int fullscreen;      /* flag for fullscreen mode */
 extern int hwsurface;       /* flag for hardware surface */
 extern int screen_width;

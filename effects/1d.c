@@ -85,11 +85,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i;
 
-	if(doublebuf) {
-		blitline_buf(src, dest);
-	} else {
-		blitline(src, dest);
-	}
+	blitline(src, dest);
 
 	line++;
 	if(line >= video_height)

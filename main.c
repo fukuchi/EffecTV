@@ -116,7 +116,6 @@ static void usage(void)
 	printf("  -channel NUMBER  channel number of video source\n");
 	printf("  -fullscreen      set fullscreen mode\n");
 	printf("  -hardware        use direct video memory (if possible)\n");
-	printf("  -doublebuffer    enable double buffering mode (if possible)\n");
 	printf("  -fps             show frames/sec\n");
 	printf("  -size WxH        set the size of capturing image\n");
 	printf("  -geometry WxH    set the size of screen\n");
@@ -445,8 +444,6 @@ int main(int argc, char **argv)
 			hwsurface = 1;
 		} else if(strncmp(option, "fullscreen", 4) == 0) {
 			fullscreen = 1;
-		} else if(strncmp(option, "doublebuffer", 9) == 0) {
-			doublebuf = 1;
 		} else if(strcmp(option, "fps") == 0) {
 			fps = 1;
 		} else if(strcmp(option, "autoplay") == 0) {
