@@ -62,6 +62,7 @@ static void v4lperror(const char *str)
  */
 int v4lopen(char *name, v4ldevice *vd)
 {
+	uint32_t caps;
 	char buf[STRBUF_LENGTH];
 
 	if(name == NULL)
@@ -75,8 +76,20 @@ int v4lopen(char *name, v4ldevice *vd)
 	}
 	if(v4lgetcapability(vd))
 		return -1;
-	if(v4lenuminputs(vd))
+	if(vd->capability.capabilities & V4L2_CAP_DEVICE_CAPS) {
+		caps = vd->capability.device_caps;
+	} else {
+		caps = vd->capability.capabilities;
+	}
+	if(!(caps & V4L2_CAP_VIDEO_CAPTURE)) {
+		fprintf(stderr, "This device does not support video capture.\n");
+		v4lclose(vd);
 		return -1;
+	}
+	if(v4lenuminputs(vd)) {
+		v4lclose(vd);
+		return -1;
+	}
 
 	pthread_mutex_init(&vd->mutex, NULL);
 	if(v4l_debug) fprintf(stderr, "v4lopen:quit\n");

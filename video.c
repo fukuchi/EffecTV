@@ -73,8 +73,6 @@ int video_init(char *file, int channel, int w, int h)
 	video_file    = strdup(file);
 	video_channel = channel;
 
-	v4lgetcapability(&vd);
-
 	if(w == 0 && h == 0) {
 		w = DEFAULT_VIDEO_WIDTH;
 		h = DEFAULT_VIDEO_HEIGHT;

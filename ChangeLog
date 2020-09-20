@@ -6,6 +6,8 @@
 	    eliminated.
 	* EffecTV.h, README, effectv.1, main.c:
 	  - Default resolution has been changed to 640x480 from 320x240.
+	* v4lutils/v4lutils.c, video.c:
+	  - Strict video capture capability check has been introduced.
 
 2020.09.19 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
