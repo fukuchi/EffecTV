@@ -69,18 +69,6 @@ static void blitline(RGB32 *src, RGB32 *dest)
 	memcpy(dest, src, PIXEL_SIZE * video_width);
 }
 
-static void blitline_buf(RGB32 *src, RGB32 *dest)
-{
-	memcpy(dest + video_width * prevline, linebuf, video_width * PIXEL_SIZE);
-
-	src += video_width * line;
-	dest += video_width * line;
-	memcpy(dest, src, video_width * PIXEL_SIZE);
-	memcpy(linebuf, src, video_width * PIXEL_SIZE);
-
-	prevline = line;
-}
-
 static int draw(RGB32 *src, RGB32 *dest)
 {
 	int i;

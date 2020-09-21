@@ -1,6 +1,8 @@
 2020.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
 	* v4lutils/v4lutils.c:
 	  - An user friendly error message has been added.
+	* effects/1d.c:
+	  - Deleted an unused function.
 
 2020.09.20 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
