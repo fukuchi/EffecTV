@@ -1,3 +1,7 @@
+2020.09.21 Kentaro Fukuchi <kentaro@fukuchi.org>
+	* v4lutils/v4lutils.c:
+	  - An user friendly error message has been added.
+
 2020.09.20 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* EffecTV.h, effectv.1, main.c, palette.c, palette.h, video.c,

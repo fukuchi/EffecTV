@@ -82,7 +82,11 @@ int v4lopen(char *name, v4ldevice *vd)
 		caps = vd->capability.capabilities;
 	}
 	if(!(caps & V4L2_CAP_VIDEO_CAPTURE)) {
-		fprintf(stderr, "This device does not support video capture.\n");
+		if(caps & V4L2_CAP_META_CAPTURE) {
+			fprintf(stderr, "This device is for metadata capture. Try another device file.\n");
+		} else {
+			fprintf(stderr, "This device does not support video capture.\n");
+		}
 		v4lclose(vd);
 		return -1;
 	}
