@@ -71,12 +71,6 @@ Options
 -autoplay NUMBER
 	Changes effects automatically every NUMBER frames.
 
--palette {rgb24,rgb565,rgb555,yuv422,yuv422p,yuv420p,yuv411p,yuv410p,grey}
-	Set the palette of capturing device. By default, it is detected
-	automatically, so you need not to set this value. Some USB devices are
-	very slow when it is used in RGB mode. Try YUV series if you feel your
-	USB device is too slow.
-
 -vloopback FILE
 	Use device FILE for output of vloopback device.
 	See "Recording/broadcasting EffecTV" section.
