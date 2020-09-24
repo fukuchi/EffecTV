@@ -64,53 +64,17 @@ static int event(SDL_Event *);
 static char *effectname = "BlueScreenTV";
 static int state = 0;
 static RGB32 *bgimage;
+static int bgIsSet;
 static RGB32 *bluescreen_min;
 static RGB32 *bluescreen_max;
 static unsigned char tolerance=MAGIC_THRESHOLD;
 static unsigned char tolerance2=MAGIC_THRESHOLD*2; /* pre-computation */
 
-static int setBackground(void)
+static void setBackground(RGB32 *src)
 {
-	int i;
-	RGB32 *src, *tmp;
-
-	tmp=(RGB32*)malloc(video_area * PIXEL_SIZE);
-	if(tmp==NULL)
-		return -1;
-
-/*
- * grabs 4 frames and composites them to get a quality background image
- * (original code by FUKUCHI Kentaro, debugged by Nicolas Argyrou)
- */
-/* step 1: grab frame-1 to buffer-1 */
-	video_syncframe();
-	memcpy(bgimage, video_getaddress(), video_area * PIXEL_SIZE);
-	video_grabframe();
-/* step 2: add frame-2 to buffer-1 */
-	video_syncframe();
-	src=(RGB32*)video_getaddress();
-	for(i=0;i<video_area;i++)
-		bgimage[i]=(src[i]&bgimage[i])+(((src[i]^bgimage[i])&0xfefefe)>>1);
-	video_grabframe();
-/* step 3: grab frame-3 to buffer-2 */
-	video_syncframe();
-	memcpy(tmp, video_getaddress(), video_area * PIXEL_SIZE);
-	video_grabframe();
-/* step 4: add frame-4 to buffer-2 */
-	video_syncframe();
-	src = (RGB32 *)video_getaddress();
-	for(i=0; i<video_area; i++)
-		tmp[i] = (src[i]&tmp[i])+(((src[i]^tmp[i])&0xfefefe)>>1);
-	video_grabframe();
-/* step 5: add buffer-3 to buffer-1 */
-	for(i=0; i<video_area; i++) {
-		bgimage[i] = ((bgimage[i]&tmp[i])
-			+(((bgimage[i]^tmp[i])&0xfefefe)>>1))&0xfefefe;
-	}
-
-	free(tmp);
-
-	return 0;
+	memcpy(bgimage, src, video_area * PIXEL_SIZE);
+	image_bgset_y(bgimage);
+	bgIsSet = 1;
 }
 
 static int setBlueScreen(int frames)
@@ -173,8 +137,7 @@ effect *bluescreenRegister(void)
 
 static int start(void)
 {
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	bluescreen_min = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(bluescreen_min == NULL) {
@@ -217,6 +180,10 @@ int errors=0;
 #ifdef USE_BLUR
 	unsigned char rold=0, gold=0, bold=0;
 #endif
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	for(k=0; k<video_area; k++)
 	{
@@ -338,11 +305,11 @@ static int event(SDL_Event *event)
 			tolerance2=MAGIC_THRESHOLD_BEST*2;
 			break;
 		case SDLK_s:
-			setBackground();
+			bgIsSet = 0;
 			break;
 		case SDLK_d:
 			sleep(SNAPSHOT_DELAY);
-			setBackground();
+			bgIsSet = 0;
 			break;
 		case SDLK_c:
 			tolerance-=TOLERANCE_STEP;

@@ -1,5 +1,10 @@
+2020.09.24 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* effects/{holo.c, bluescreen.c, predator.c}:
+	  - setBackground() have been simplified.
+
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
-	[develo]
+	[develop]
 	* v4lutils/Makefile:
 	  - An obsolete target has been removed.
 

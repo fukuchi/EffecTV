@@ -22,63 +22,14 @@ static int event(SDL_Event *);
 static char *effectname = "HolographicTV";
 static int state = 0;
 static RGB32 *bgimage;
+static int bgIsSet;
 static unsigned int noisepattern[256];
 
-static int setBackground(void)
+static void setBackground(RGB32 *src)
 {
-	int i;
-	RGB32 *src, *tmp;
-
-	tmp = (RGB32 *)malloc(video_area * PIXEL_SIZE);
-	if(tmp == NULL)
-		return -1;
-
-/*
- * grabs 4 frames and composites them to get a quality background image
- */
-/* step 1: grab frame-1 to buffer-1 */
-	video_syncframe();
-	src = (RGB32 *)video_getaddress();
-	memcpy(bgimage, src, video_area * sizeof(RGB32));
-	video_grabframe();
-/* step 2: add frame-2 to buffer-1 */
-	video_syncframe();
-	for(i=0; i<video_area; i++) {
-		bgimage[i] = (src[i]&bgimage[i])+(((src[i]^bgimage[i])&0xfefefe)>>1);
-	}
-	video_grabframe();
-/* step 3: grab frame-3 to buffer-2 */
-	video_syncframe();
-	src = (RGB32 *)video_getaddress();
-	memcpy(tmp, src, video_area*sizeof(RGB32));
-	video_grabframe();
-/* step 4: add frame-4 to buffer-2 */
-	video_syncframe();
-	for(i=0; i<video_area; i++) {
-		tmp[i] = (src[i]&tmp[i])+(((src[i]^tmp[i])&0xfefefe)>>1);
-	}
-	video_grabframe();
-/* step 5: add buffer-3 to buffer-1 */
-	for(i=0; i<video_area; i++) {
-		bgimage[i] = ((bgimage[i]&tmp[i])
-			+(((bgimage[i]^tmp[i])&0xfefefe)>>1))&0xfefefe;
-	}
+	memcpy(bgimage, src, video_area * PIXEL_SIZE);
 	image_bgset_y(bgimage);
-
-	if(screen_lock() == 0) {
-		if(stretch) {
-			memcpy(stretching_buffer, bgimage, video_area*PIXEL_SIZE);
-			image_stretch_to_screen();
-		} else {
-			memcpy((RGB32 *)screen_getaddress(), bgimage,
-					video_area*PIXEL_SIZE);
-		}
-		screen_unlock();
-		screen_update();
-	}
-	free(tmp);
-
-	return 0;
+	bgIsSet = 1;
 }
 
 static void holoInit(void)
@@ -118,8 +69,7 @@ effect *holoRegister(void)
 static int start(void)
 {
 	image_set_threshold_y(MAGIC_THRESHOLD);
-	if(setBackground())
-		return -1;
+	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -139,6 +89,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	RGB32 *bg;
 	RGB32 s, t;
 	int r, g, b;
+
+	if(!bgIsSet) {
+		setBackground(src);
+	}
 
 	diff = image_diff_filter(image_bgsubtract_y(src));
 
@@ -219,7 +173,7 @@ static int event(SDL_Event *event)
 	if(event->type == SDL_KEYDOWN) {
 		switch(event->key.keysym.sym) {
 		case SDLK_SPACE:
-			setBackground();
+			bgIsSet = 0;
 			break;
 		default:
 			break;
