@@ -2,6 +2,12 @@
 	[develop]
 	* effects/{holo.c, bluescreen.c, predator.c}:
 	  - setBackground() have been simplified.
+	* v4lutils/{COPYING, v4lutils.[ch], README}:
+	  - Changed to LGPL-2.1 from LGPL2.
+	  - Licensing information have been updated.
+	* COPYING, main.c, EffecTV.h, README:
+	  - COPYING file has been updated to the latest edition.
+	  - Minor changes to the Licensing information have been made.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
