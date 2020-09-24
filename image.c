@@ -82,7 +82,7 @@ static void image_stretch_to_screen_double(void)
 	int swidth = screen_width;
 
 	src = stretching_buffer;
-	dest1 = (RGB32 *)screen_getaddress();
+	dest1 = (RGB32 *)screen->pixels;
 	dest2 = dest1 + swidth;
 
 	for(y=0; y<height; y++) {
@@ -104,7 +104,7 @@ void image_stretch_to_screen(void)
 		image_stretch_to_screen_double();
 	} else {
 		image_stretch(stretching_buffer, video_width, video_height,
-		  (RGB32 *)screen_getaddress(), screen_width, screen_height);
+		  (RGB32 *)screen->pixels, screen_width, screen_height);
 	}
 }
 

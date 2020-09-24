@@ -84,6 +84,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	RGB32 p, q;
 	RGB32 v0, v1, v2, v3;
 
+	memset(dest, 0, PIXEL_SIZE * video_area);
 	src += video_width*4+4;
 	dest += video_width*4+4;
 	for(y=1; y<map_height-1; y++) {

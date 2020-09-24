@@ -146,9 +146,11 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 
 	for(y=0; y<video_height; y++) {
+		dest[y * video_width] = 0;
 		for(x=1; x<video_width-1; x++) {
 			dest[y*video_width+x] = palette[buffer[y*video_width+x]];
 		}
+		dest[y * video_width + video_width - 1] = 0;
 	}
 
 	return 0;
@@ -164,15 +166,15 @@ static int event(SDL_Event *event)
 			}
 			break;
 		case SDLK_1:
-		case SDLK_KP1:
+		case SDLK_KP_1:
 			mode = 0;
 			break;
 		case SDLK_2:
-		case SDLK_KP2:
+		case SDLK_KP_2:
 			mode = 1;
 			break;
 		case SDLK_3:
-		case SDLK_KP3:
+		case SDLK_KP_3:
 			mode = 2;
 			break;
 		default:

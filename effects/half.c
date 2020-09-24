@@ -186,11 +186,11 @@ static int event(SDL_Event *event)
 		case SDLK_4:
 			dir = event->key.keysym.sym - SDLK_1;
 			break;
-		case SDLK_KP1:
-		case SDLK_KP2:
-		case SDLK_KP3:
-		case SDLK_KP4:
-			dir = event->key.keysym.sym - SDLK_KP1;
+		case SDLK_KP_1:
+		case SDLK_KP_2:
+		case SDLK_KP_3:
+		case SDLK_KP_4:
+			dir = event->key.keysym.sym - SDLK_KP_1;
 			break;
 		case SDLK_q:
 			mode = 0;

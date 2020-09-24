@@ -12,6 +12,10 @@
 	  - Version number has been updated.
 	* effects/dot.c:
 	  - Disabled to use an undocumented screen feature.
+	* EffecTV.h, Makefile, main.c, image.c, screen.[ch],
+	  effects/{blurzoom.c, burn.c, chameleon.c, dot.c, edge.c, fire.c, half.c,
+	           matrix.c, pup.c, simura.c, spark.c}:
+	  - Migration to SDL2 from SDL-1.2.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]

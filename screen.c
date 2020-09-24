@@ -9,15 +9,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "EffecTV.h"
+#include "utils.h"
 
 /* Main screen for displaying video image */
-SDL_Surface *screen = NULL;
-
-/* Screeninfo contains some properties of the screen */
-static const SDL_VideoInfo *screeninfo;
+SDL_Surface *screen;
+SDL_Window *window;
+SDL_Renderer *renderer;
+SDL_Texture *mainTexture;
 
 /*
  * Screen properties. These variables are immutable after calling screen_init()
@@ -36,11 +37,6 @@ int screen_height;
  * or scale of width and height are different, screen_scale is set to -1. */
 int screen_scale;
 
-#ifdef RGB_BGR_CONVERSION
-/* Temporal buffer for pixel format conversion */
-unsigned char *bgr_buf;
-#endif
-
 
 /* Screen initialization.
  * Before calling this function, screen properties(scale, fullscreen) must be
@@ -57,7 +53,7 @@ int screen_init(int w, int h, int s)
 	}
 
 	if(fullscreen) {
-		flags |= SDL_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 
 	if(w || h) {
@@ -86,32 +82,27 @@ int screen_init(int w, int h, int s)
 		stretch = 1;
 	}
 
-	screen = SDL_SetVideoMode(screen_width, screen_height,
-	                          DEFAULT_DEPTH, flags);
-	if(screen == NULL) {
+	window = SDL_CreateWindow("EffecTV", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			screen_width, screen_height, flags);
+	if(window == NULL) {
 		fprintf(stderr, "Couldn't set display mode: %s\n", SDL_GetError());
 		SDL_Quit();
 		return -1;
 	}
-	if(screen->flags != flags) {
-		if(fullscreen && !(screen->flags & SDL_FULLSCREEN)) {
-			fullscreen = 0;
-			fprintf(stderr, "Fullscreen mode is not supported.\n");
-		}
-	}
 
-#ifdef RGB_BGR_CONVERSION
-	bgr_buf = (unsigned char *)malloc(screen_width * screen_height * 4);
-	if(bgr_buf == NULL) {
-		fprintf(stderr, "Memory allocation failed.\n");
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
+	if(renderer == NULL) {
+		fprintf(stderr, "Couldn't get an appropriate renderer: %s\n", SDL_GetError());
 		SDL_Quit();
 		return -1;
 	}
-#endif
+
+	screen = SDL_CreateRGBSurface(0, screen_width, screen_height, 32,
+			0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	mainTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screen_width, screen_height);
 
 	SDL_ShowCursor(SDL_DISABLE);
 	atexit(screen_quit);
-	screeninfo = SDL_GetVideoInfo();
 	return 0;
 }
 
@@ -123,42 +114,33 @@ void screen_quit(void)
 	SDL_Quit();
 }
 
-/* Returns bits-per-pixel value. */
-int screen_bpp(void)
-{
-	if(screen) {
-		return screen->format->BitsPerPixel;
-	} else {
-		return 0;
-	}
-}
-
 /* Set the caption. Typically, captions is displayed in the title bar of
  * main screen when EffecTV runs in a windowing system. */
 void screen_setcaption(const char *str)
 {
-	if(screeninfo->wm_available) {
-		SDL_WM_SetCaption(str, NULL);
-	}
+	SDL_SetWindowTitle(window, str);
 }
 
 /* Fill the screen with the color. */
-void screen_clear(int color)
+void screen_clear(int r, int g, int b, int a)
 {
-#ifdef RGB_BGR_CONVERSION
-	bzero(bgr_buf, screen_width * screen_height * sizeof(RGB32));
-#endif
-	SDL_FillRect(screen, NULL, color);
-	screen_update();
+	SDL_SetRenderDrawColor(renderer, r, g, b, a);
+	SDL_RenderClear(renderer);
+	SDL_RenderPresent(renderer);
 }
 
 /* Toggles fullscreen mode. */
 void screen_fullscreen(void)
 {
-	if(screeninfo->wm_available) {
-		if(SDL_WM_ToggleFullScreen(screen))
-			fullscreen ^= 1;
+	int flag;
+
+	fullscreen ^= 1;
+	if(fullscreen) {
+		flag = SDL_WINDOW_FULLSCREEN_DESKTOP;
+	} else {
+		flag = 0;
 	}
+	SDL_SetWindowFullscreen(window, flag);
 }
 
 /* Lock the screen, if needed. */
@@ -176,35 +158,27 @@ void screen_unlock(void)
 		SDL_UnlockSurface(screen);
 }
 
-#ifdef RGB_BGR_CONVERSION
 /* Returns an address of the framebuffer */
 unsigned char *screen_getaddress(void)
 {
-	return bgr_buf;
+	if(stretch) {
+		return (unsigned char *)stretching_buffer;
+	}
+
+	return screen->pixels;
 }
 
 /* Updates the screen */
-int screen_update(void)
+int screen_update(int flag)
 {
-	int i;
-	int j;
-	unsigned char *src, *dest;
-	
-	if(screen_lock() < 0) {
-		return 0;
+	if(stretch && flag == 0) {
+		image_stretch_to_screen();
 	}
-	src = bgr_buf;
-	dest = (unsigned char *)screen->pixels;
-	j = screen_width * screen_height;
-	for(i=0; i<j; i++) {
-		dest[i*4] = src[i*4+2];
-		dest[i*4+1] = src[i*4+1];
-		dest[i*4+2] = src[i*4];
-	}
-	screen_unlock();
-	SDL_Flip(screen);
+
+	SDL_UpdateTexture(mainTexture, NULL, screen->pixels, screen->pitch);
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, mainTexture, NULL, NULL);
+	SDL_RenderPresent(renderer);
 
 	return 0;
 }
-
-#endif /* RGB_BGR_CONVERSION */

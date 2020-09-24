@@ -5,8 +5,8 @@ include ./config.mk
 CC = gcc
 INSTALL = /usr/bin/install -c
 
-CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `pkg-config --cflags sdl libv4l2`
-LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl libv4l2` $(LIBS.extra)
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `pkg-config --cflags sdl2 libv4l2`
+LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl2 libv4l2` $(LIBS.extra)
 
 PROGRAM = effectv
 

@@ -179,16 +179,16 @@ static int event(SDL_Event *event)
 		case SDLK_9:
 			mirror = event->key.keysym.sym - SDLK_1;
 			break;
-		case SDLK_KP1:
-		case SDLK_KP2:
-		case SDLK_KP3:
-		case SDLK_KP4:
-		case SDLK_KP5:
-		case SDLK_KP6:
-		case SDLK_KP7:
-		case SDLK_KP8:
-		case SDLK_KP9:
-			mirror = event->key.keysym.sym - SDLK_KP1;
+		case SDLK_KP_1:
+		case SDLK_KP_2:
+		case SDLK_KP_3:
+		case SDLK_KP_4:
+		case SDLK_KP_5:
+		case SDLK_KP_6:
+		case SDLK_KP_7:
+		case SDLK_KP_8:
+		case SDLK_KP_9:
+			mirror = event->key.keysym.sym - SDLK_KP_1;
 			break;
 		case SDLK_SPACE:
 			color = 0;

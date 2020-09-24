@@ -25,7 +25,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "EffecTV.h"
 #include "effects/effects.h"
@@ -173,7 +173,7 @@ static int changeEffect(int num)
 		currentEffectNum -= effectMax;
 	currentEffect = effectsList[currentEffectNum];
 	screen_setcaption(currentEffect->name);
-	screen_clear(0);
+	screen_clear(0, 0, 0, 255);
 	if(stretch) {
 		image_stretching_buffer_clear(0);
 	}
@@ -283,7 +283,7 @@ static int startTV(const char *startEffect)
 						vloopback_push();
 					}
 #endif
-					screen_update();
+					screen_update(0);
 				}
 				ret = video_grabframe();
 				if(ret != 0) {
@@ -677,5 +677,5 @@ static void drawErrorPattern(void)
 		free(dest);
 	}
 	screen_unlock();
-	screen_update();
+	screen_update(0);
 }

@@ -302,11 +302,11 @@ static int event(SDL_Event *event)
 			else
 				snapTime = 0;
 			break;
-		case SDLK_KP1:
-		case SDLK_KP2:
-		case SDLK_KP3:
-		case SDLK_KP4:
-			mode = event->key.keysym.sym - SDLK_KP1;
+		case SDLK_KP_1:
+		case SDLK_KP_2:
+		case SDLK_KP_3:
+		case SDLK_KP_4:
+			mode = event->key.keysym.sym - SDLK_KP_1;
 			if(mode == 3)
 				snapTime = 1;
 			else

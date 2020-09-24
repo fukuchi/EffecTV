@@ -202,11 +202,11 @@ static int event(SDL_Event *event)
 			bgIsSet = 0;
 			break;
 		case SDLK_1:
-		case SDLK_KP1:
+		case SDLK_KP_1:
 			mode = 0;
 			break;
 		case SDLK_2:
-		case SDLK_KP2:
+		case SDLK_KP_2:
 			mode = 1;
 			break;
 		default:

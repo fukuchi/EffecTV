@@ -22,7 +22,7 @@
 #ifndef __EFFECTV_H__
 #define __EFFECTV_H__
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "screen.h"
 #include "video.h"
 
@@ -38,13 +38,6 @@
 #define DEFAULT_VIDEO_DEVICE "/dev/video0"
 #endif
 #define DEFAULT_DEPTH 32
-
-#ifndef SDL_DISABLE
-#define SDL_DISABLE 0
-#endif
-#ifndef SDL_ENABLE
-#define SDL_ENABLE 1
-#endif
 
 typedef unsigned int RGB32;
 #define PIXEL_SIZE (sizeof(RGB32))

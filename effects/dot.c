@@ -167,8 +167,7 @@ effect *dotRegister(void)
 {
 	effect *entry;
 
-	dot_size = 8;
-	dot_size = dot_size & 0xfe;
+	dot_size = 16;
 	dot_hsize = dot_size / 2;
 	dots_width = video_width / dot_size;
 	dots_height = video_height / dot_size;
@@ -220,6 +219,9 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 	c = (c>>(8-DOTDEPTH));
 	pat = pattern + c * dot_hsize * dot_hsize;
 	dest = dest + yy * dot_size * video_width + xx * dot_size;
+	for(x=0; x<dot_size; x++) {
+		dest[(dot_size - 1) * video_width + x] = 0;
+	}
 	for(y=0; y<dot_hsize; y++) {
 		for(x=0; x<dot_hsize; x++) {
 			*dest++ = *pat++;
@@ -228,6 +230,7 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 		for(x=0; x<dot_hsize-1; x++) {
 			*dest++ = *pat--;
 		}
+		*dest = 0;
 		dest += video_width - dot_size + 1;
 		pat += dot_hsize + 1;
 	}
@@ -240,6 +243,7 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 		for(x=0; x<dot_hsize-1; x++) {
 			*dest++ = *pat--;
 		}
+		*dest = 0;
 		dest += video_width - dot_size + 1;
 		pat += -dot_hsize + 1;
 	}
