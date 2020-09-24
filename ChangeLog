@@ -8,6 +8,8 @@
 	* COPYING, main.c, EffecTV.h, README:
 	  - COPYING file has been updated to the latest edition.
 	  - Minor changes to the Licensing information have been made.
+	* EffecTV.h:
+	  - Version number has been updated.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
