@@ -10,6 +10,8 @@
 	  - Minor changes to the Licensing information have been made.
 	* EffecTV.h:
 	  - Version number has been updated.
+	* effects/dot.c:
+	  - Disabled to use an undocumented screen feature.
 
 2020.09.22 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]

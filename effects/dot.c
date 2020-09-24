@@ -29,7 +29,6 @@ static int dots_width;
 static int dots_height;
 static int dot_size;
 static int dot_hsize;
-static int *sampx, *sampy;
 static int mode = 0;
 
 inline static unsigned char inline_RGBtoY(int rgb)
@@ -40,22 +39,6 @@ inline static unsigned char inline_RGBtoY(int rgb)
 	i += GtoY[(rgb>>8)&0xff];
 	i += BtoY[rgb&0xff];
 	return i;
-}
-
-static void init_sampxy_table(void)
-{
-	int i, j;
-
-	j = dot_hsize;
-	for(i=0; i<dots_width; i++) {
-		sampx[i] = j * video_width / screen_width;
-		j += dot_size;
-	}
-	j = dot_hsize;
-	for(i=0; i<dots_height; i++) {
-		sampy[i] = j * video_height / screen_height;
-		j += dot_size;
-	}
 }
 
 static void makePattern(void)
@@ -183,21 +166,12 @@ static void makeHeartPattern(void)
 effect *dotRegister(void)
 {
 	effect *entry;
-	double scale;
-	
-	if(screen_scale > 0) {
-		scale = screen_scale;
-	} else {
-		scale = (double)screen_width / video_width;
-		if(scale > (double)screen_height / video_height) {
-			scale = (double)screen_height / video_height;
-		}
-	}
-	dot_size = 8 * scale;
+
+	dot_size = 8;
 	dot_size = dot_size & 0xfe;
 	dot_hsize = dot_size / 2;
-	dots_width = screen_width / dot_size;
-	dots_height = screen_height / dot_size;
+	dots_width = video_width / dot_size;
+	dots_height = video_height / dot_size;
 	
 	pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_hsize * sizeof(RGB32));
 	if(pattern == NULL) {
@@ -206,13 +180,6 @@ effect *dotRegister(void)
 	heart_pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_size * PIXEL_SIZE);
 	if(heart_pattern == NULL) {
 		free(pattern);
-		return NULL;
-	}
-
-	sharedbuffer_reset();
-	sampx = (int *)sharedbuffer_alloc(video_width*sizeof(int));
-	sampy = (int *)sharedbuffer_alloc(video_height*sizeof(int));
-	if(sampx == NULL || sampy == NULL) {
 		return NULL;
 	}
 
@@ -235,8 +202,6 @@ effect *dotRegister(void)
 
 static int start(void)
 {
-	init_sampxy_table();
-
 	state = 1;
 	return 0;
 }
@@ -254,7 +219,7 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 
 	c = (c>>(8-DOTDEPTH));
 	pat = pattern + c * dot_hsize * dot_hsize;
-	dest = dest + yy * dot_size * screen_width + xx * dot_size;
+	dest = dest + yy * dot_size * video_width + xx * dot_size;
 	for(y=0; y<dot_hsize; y++) {
 		for(x=0; x<dot_hsize; x++) {
 			*dest++ = *pat++;
@@ -263,7 +228,7 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 		for(x=0; x<dot_hsize-1; x++) {
 			*dest++ = *pat--;
 		}
-		dest += screen_width - dot_size + 1;
+		dest += video_width - dot_size + 1;
 		pat += dot_hsize + 1;
 	}
 	pat -= dot_hsize*2;
@@ -275,7 +240,7 @@ static void drawDot(int xx, int yy, unsigned char c, RGB32 *dest)
 		for(x=0; x<dot_hsize-1; x++) {
 			*dest++ = *pat--;
 		}
-		dest += screen_width - dot_size + 1;
+		dest += video_width - dot_size + 1;
 		pat += -dot_hsize + 1;
 	}
 }
@@ -287,7 +252,7 @@ static void drawHeart(int xx, int yy, unsigned char c, RGB32 *dest)
 
 	c = (c>>(8-DOTDEPTH));
 	pat = heart_pattern + c * dot_size * dot_hsize;
-	dest = dest + yy * dot_size * screen_width + xx * dot_size;
+	dest = dest + yy * dot_size * video_width + xx * dot_size;
 	for(y=0; y<dot_size; y++) {
 		for(x=0; x<dot_hsize; x++) {
 			*dest++ = *pat++;
@@ -296,7 +261,7 @@ static void drawHeart(int xx, int yy, unsigned char c, RGB32 *dest)
 		for(x=0; x<dot_hsize; x++) {
 			*dest++ = *pat--;
 		}
-		dest += screen_width - dot_size;
+		dest += video_width - dot_size;
 		pat += dot_hsize + 1;
 	}
 }
@@ -304,29 +269,18 @@ static void drawHeart(int xx, int yy, unsigned char c, RGB32 *dest)
 static int draw(RGB32 *src, RGB32 *dest)
 {
 	int x, y;
-	int sx, sy;
 
-	dest = (RGB32 *)screen_getaddress(); // cheater! cheater!
-
-	if(mode) {
-		for(y=0; y<dots_height; y++) {
-			sy = sampy[y];
-			for(x=0; x<dots_width; x++) {
-				sx = sampx[x];
-				drawHeart(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
-			}
-		}
-	} else {
-		for(y=0; y<dots_height; y++) {
-			sy = sampy[y];
-			for(x=0; x<dots_width; x++) {
-				sx = sampx[x];
-				drawDot(x, y, inline_RGBtoY(src[sy*video_width+sx]), dest);
+	for(y=0; y<dots_height; y++) {
+		for(x=0; x<dots_width; x++) {
+			if(mode) {
+				drawHeart(x, y, inline_RGBtoY(src[y * dot_size * video_width + x * dot_size]), dest);
+			} else {
+				drawDot(x, y, inline_RGBtoY(src[y * dot_size * video_width + x * dot_size]), dest);
 			}
 		}
 	}
 
-	return 1; // undocumented feature ;-)
+	return 0;
 }
 
 static int event(SDL_Event *event)
