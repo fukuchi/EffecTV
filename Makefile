@@ -12,7 +12,7 @@ PROGRAM = effectv
 
 COREOBJS = main.o screen.o video.o
 VLOOPBACKOBJS = vloopback.o
-UTILS = utils.o yuv.o buffer.o image.o
+UTILS = utils.o yuv.o image.o
 
 OBJS = $(COREOBJS) $(UTILS)
 

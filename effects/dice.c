@@ -59,8 +59,7 @@ effect *diceRegister(void)
 {
 	effect *entry;
 
-	sharedbuffer_reset();
-	dicemap = (char*)sharedbuffer_alloc(video_height * video_width * sizeof(char));
+	dicemap = (char*)malloc(video_height * video_width * sizeof(char));
 	if(dicemap == NULL) {
 		return NULL;
 	}

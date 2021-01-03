@@ -41,8 +41,7 @@ effect *diffRegister(void)
 {
 	effect *entry;
 
-	sharedbuffer_reset();
-	prevbuf = (RGB32*)sharedbuffer_alloc(video_area * PIXEL_SIZE);
+	prevbuf = (RGB32*)malloc(video_area * PIXEL_SIZE);
 	if(prevbuf == NULL) {
 		return NULL;
 	}

@@ -45,8 +45,7 @@ effect *holoRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
-	bgimage = (RGB32 *)sharedbuffer_alloc(video_area*PIXEL_SIZE);
+	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
 	}

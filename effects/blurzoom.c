@@ -181,8 +181,7 @@ effect *blurzoomRegister(void)
 	buf_margin_left = (video_width - buf_width)/2;
 	buf_margin_right = video_width - buf_width - buf_margin_left;
 
-	sharedbuffer_reset();
-	blurzoombuf = (unsigned char *)sharedbuffer_alloc(buf_area * 2);
+	blurzoombuf = (unsigned char *)malloc(buf_area * 2);
 	if(blurzoombuf == NULL) {
 		return NULL;
 	}

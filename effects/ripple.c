@@ -59,11 +59,10 @@ effect *rippleRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
 	map_h = video_height / 2 + 1;
 	map_w = video_width / 2 + 1;
-	map = (int *)sharedbuffer_alloc(map_h*map_w*3*sizeof(int));
-	vtable = (signed char *)sharedbuffer_alloc(map_h*map_w*2*sizeof(signed char));
+	map = (int *)malloc(map_h*map_w*3*sizeof(int));
+	vtable = (signed char *)malloc(map_h*map_w*2*sizeof(signed char));
 	if(map == NULL || vtable == NULL) {
 		return NULL;
 	}

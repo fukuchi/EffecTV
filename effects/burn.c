@@ -59,8 +59,7 @@ effect *burnRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
-	buffer = (unsigned char *)sharedbuffer_alloc(video_area);
+	buffer = (unsigned char *)malloc(video_area);
 	if(buffer == NULL) {
 		return NULL;
 	}

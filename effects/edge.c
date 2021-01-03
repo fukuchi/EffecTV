@@ -43,8 +43,7 @@ effect *edgeRegister(void)
 	map_height = video_height / 4;
 	video_width_margin = video_width - map_width * 4;
 
-	sharedbuffer_reset();
-	map = (RGB32 *)sharedbuffer_alloc(map_width*map_height*PIXEL_SIZE*2);
+	map = (RGB32 *)malloc(map_width*map_height*PIXEL_SIZE*2);
 	if(map == NULL) {
 		return NULL;
 	}
