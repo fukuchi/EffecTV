@@ -11,6 +11,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 #define MAGIC_THRESHOLD 50
 #define CENSOR_LEVEL 20
@@ -22,11 +23,12 @@ static int event(SDL_Event *event);
 
 static char *effectname = "MosaicTV";
 static int stat;
+static BgSubtractor *bgsub;
 static int bgIsSet = 0;
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -40,6 +42,12 @@ effect *mosaicRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(entry);
+		return NULL;
+	}
 	
 	entry->name = effectname;
 	entry->start = start;
@@ -47,14 +55,14 @@ effect *mosaicRegister(void)
 	entry->draw = draw;
 	entry->event = event;
 
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
+
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
-	bgIsSet = 0;
-
 	stat = 1;
 	return 0;
 }
@@ -76,7 +84,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		setBackground(src);
 	}
 
-	diff = image_bgsubtract_y(src);
+	diff = bgsub_subtract_y(bgsub, src);
 
 	for(y=0; y<video_height-7; y+=8) {
 		for(x=0; x<video_width-7; x+=8) {

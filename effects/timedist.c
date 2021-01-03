@@ -12,6 +12,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 #define PLANES 32
 #define MAGIC_THRESHOLD 40
@@ -27,11 +28,12 @@ static RGB32 *planetable[PLANES];
 static int plane;
 static int *warptime[2];
 static int warptimeFrame;
+static BgSubtractor *bgsub;
 static int bgIsSet;
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -52,12 +54,23 @@ effect *timeDistortionRegister(void)
 		free(entry);
 		return NULL;
 	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(warptime[0]);
+		free(warptime[1]);
+		free(entry);
+		return NULL;
+	}
 	
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	return entry;
 }
@@ -77,8 +90,6 @@ static int start(void)
 	memset(warptime[1], 0, video_area * sizeof(int));
 
 	plane = 0;
-	image_set_threshold_y(MAGIC_THRESHOLD);
-	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -106,7 +117,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	if(!bgIsSet) {
 		setBackground(src);
 	}
-	diff = image_bgsubtract_update_y(src);
+	diff = bgsub_subtract_update_y(bgsub, src);
 
 	p = warptime[warptimeFrame    ] + video_width + 1;
 	q = warptime[warptimeFrame ^ 1] + video_width + 1;

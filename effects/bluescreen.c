@@ -73,7 +73,6 @@ static unsigned char tolerance2=MAGIC_THRESHOLD*2; /* pre-computation */
 static void setBackground(RGB32 *src)
 {
 	memcpy(bgimage, src, video_area * PIXEL_SIZE);
-	image_bgset_y(bgimage);
 	bgIsSet = 1;
 }
 
@@ -122,8 +121,11 @@ effect *bluescreenRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
+		free(bgimage);
 		return NULL;
 	}
+	bluescreen_min = (RGB32 *)malloc(video_area*PIXEL_SIZE);
+	bluescreen_max = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	
 	entry->name = effectname;
 	entry->start = start;
@@ -131,23 +133,13 @@ effect *bluescreenRegister(void)
 	entry->draw = draw;
 	entry->event = event;
 
+	bgIsSet = 0;
+
 	return entry;
 }
 
 static int start(void)
 {
-	bgIsSet = 0;
-
-	bluescreen_min = (RGB32 *)malloc(video_area*PIXEL_SIZE);
-	if(bluescreen_min == NULL) {
-		return -1;
-	}
-
-	bluescreen_max = (RGB32 *)malloc(video_area*PIXEL_SIZE);
-	if(bluescreen_max == NULL) {
-		return -1;
-	}
-
 	if(setBlueScreen(BLUESCREEN_FRAMES))
 		return -1;
 
@@ -157,8 +149,6 @@ static int start(void)
 
 static int stop(void)
 {
-	free(bluescreen_min); /* from the bitbucket you came ... */
-	free(bluescreen_max); /* ... to the bit bucket you shall return */
 	state = 0;
 	return 0;
 }

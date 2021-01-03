@@ -11,6 +11,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -22,13 +23,14 @@ static int event(SDL_Event *);
 static char *effectname = "HolographicTV";
 static int state = 0;
 static RGB32 *bgimage;
+static BgSubtractor *bgsub;
 static int bgIsSet;
 static unsigned int noisepattern[256];
 
 static void setBackground(RGB32 *src)
 {
 	memcpy(bgimage, src, video_area * PIXEL_SIZE);
-	image_bgset_y(bgimage);
+	bgsub_bgset_y(bgsub, bgimage);
 	bgIsSet = 1;
 }
 
@@ -44,31 +46,40 @@ static void holoInit(void)
 effect *holoRegister(void)
 {
 	effect *entry;
-	
-	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
-	if(bgimage == NULL) {
-		return NULL;
-	}
-	holoInit();
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
+	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
+	if(bgimage == NULL) {
+		free(entry);
+		return NULL;
+	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(bgimage);
+		free(entry);
+		return NULL;
+	}
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
 
+	holoInit();
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
+
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
-	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -93,7 +104,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		setBackground(src);
 	}
 
-	diff = image_diff_filter(image_bgsubtract_y(src));
+	diff = image_diff_denoise(bgsub_subtract_y(bgsub, src));
 
 	diff += video_width;
 	dest += video_width;

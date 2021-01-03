@@ -13,6 +13,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -22,6 +23,9 @@ static int event(SDL_Event *event);
 static char *effectname = "LifeTV";
 static int stat;
 static unsigned char *field, *field1, *field2;
+static BgSubtractor *bgsub;
+
+#define MAGIC_THRESHOLD (40)
 
 static void clear_field(void)
 {
@@ -32,13 +36,21 @@ effect *lifeRegister(void)
 {
 	effect *entry;
 	
-	field = (unsigned char *)malloc(video_area*2);
-	if(field == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	field = (unsigned char *)malloc(video_area*2);
+	if(field == NULL) {
+		free(entry);
+		return NULL;
+	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(entry);
+		free(field);
 		return NULL;
 	}
 	
@@ -48,12 +60,13 @@ effect *lifeRegister(void)
 	entry->draw = draw;
 	entry->event = event;
 
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(40);
 	field1 = field;
 	field2 = field + video_area;
 	clear_field();
@@ -78,7 +91,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 	width = video_width;
 
-	p = image_diff_filter(image_bgsubtract_update_y(src));
+	p = image_diff_denoise(bgsub_subtract_update_y(bgsub, src));
 	for(x=0; x<video_area; x++) {
 		field1[x] |= p[x];
 	}

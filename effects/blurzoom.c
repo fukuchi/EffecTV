@@ -12,6 +12,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 #define COLORS 32
 #define PATTERN 4
@@ -43,6 +44,7 @@ static int mode = 0; /* 0=normal/1=strobe/2=strobe2/3=trigger */
 static int snapTime = 0;
 static int snapInterval = 3;
 static RGB32 *snapframe;
+static BgSubtractor *bgsub;
 
 #define VIDEO_HWIDTH (buf_width/2)
 #define VIDEO_HHEIGHT (buf_height/2)
@@ -192,6 +194,11 @@ effect *blurzoomRegister(void)
 		return NULL;
 	}
 
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		return NULL;
+	}
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
@@ -206,6 +213,7 @@ effect *blurzoomRegister(void)
 	setTable();
 	makePalette();
 	palette = palettes;
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
 
 	return entry;
 }
@@ -213,7 +221,6 @@ effect *blurzoomRegister(void)
 static int start(void)
 {
 	memset(blurzoombuf, 0, buf_area * 2);
-	image_set_threshold_y(MAGIC_THRESHOLD);
 	snapframe = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(snapframe == NULL)
 		return -1;
@@ -239,7 +246,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	unsigned char *diff, *p;
 
 	if(mode != 2 || snapTime <= 0) {
-		diff = image_bgsubtract_update_y(src);
+		diff = bgsub_subtract_update_y(bgsub, src);
 		if(mode == 0 || snapTime <= 0) {
 			diff += buf_margin_left;
 			p = blurzoombuf;

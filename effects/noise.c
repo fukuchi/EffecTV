@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
+
+#define MAGIC_THRESHOLD (40)
 
 static int start(void);
 static int stop(void);
@@ -18,11 +21,12 @@ static int event(SDL_Event *event);
 
 static char *effectname = "NoiseTV";
 static int stat;
+static BgSubtractor *bgsub;
 static int bgIsSet = 0;
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -36,6 +40,12 @@ effect *noiseRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(entry);
+		return NULL;
+	}
 	
 	entry->name = effectname;
 	entry->start = start;
@@ -43,14 +53,14 @@ effect *noiseRegister(void)
 	entry->draw = draw;
 	entry->event = event;
 
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
+
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(40);
-	bgIsSet = 0;
-
 	stat = 1;
 	return 0;
 }
@@ -70,7 +80,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		setBackground(src);
 	}
 
-	diff = image_diff_filter(image_bgsubtract_y(src));
+	diff = image_diff_denoise(bgsub_subtract_y(bgsub, src));
 	for(y=video_height; y>0; y--) {
 		for(x=video_width; x>0; x--) {
 			if(*diff++) {

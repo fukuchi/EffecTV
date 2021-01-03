@@ -13,21 +13,20 @@
 
 RGB32 *stretching_buffer;
 
-static RGB32 *background;
-static unsigned char *diff;
-static unsigned char *diff2;
+static unsigned char *buf;
+static unsigned char *buf2;
 
 /* Initializer is called from utils_init(). */
 int image_init(void)
 {
 	stretching_buffer = (RGB32 *)malloc(video_area * sizeof(RGB32));
-	background = (RGB32 *)malloc(video_area * sizeof(RGB32));
-	diff = (unsigned char *)malloc(video_area * sizeof(unsigned char));
-	diff2 = (unsigned char *)malloc(video_area * sizeof(unsigned char));
-	if(stretching_buffer == NULL || background == NULL || diff == NULL || diff2 == NULL) {
+	buf = (unsigned char *)malloc(video_area * sizeof(unsigned char));
+	buf2 = (unsigned char *)malloc(video_area * sizeof(unsigned char));
+	if(stretching_buffer == NULL || buf == NULL || buf2 == NULL) {
 		return -1;
 	}
-	memset(diff2, 0, video_area * sizeof(unsigned char));
+	memset(buf, 0, video_area * sizeof(unsigned char));
+	memset(buf2, 0, video_area * sizeof(unsigned char));
 
 	return 0;
 }
@@ -35,9 +34,7 @@ int image_init(void)
 void image_end(void)
 {
 	free(stretching_buffer);
-	free(background);
-	free(diff);
-	free(diff2);
+	free(buf);
 }
 
 void image_stretching_buffer_clear(RGB32 color)
@@ -108,215 +105,12 @@ void image_stretch_to_screen(void)
 	}
 }
 
-/*
- * Collection of background subtraction functions
- */
-
-/* checks only fake-Y value */
-/* In these function Y value is treated as R*2+G*4+B. */
-
-static int y_threshold;
-void image_set_threshold_y(int threshold)
-{
-	y_threshold = threshold * 7; /* fake-Y value is timed by 7 */
-}
-
-void image_bgset_y(RGB32 *src)
-{
-	int i;
-	int R, G, B;
-	RGB32 *p;
-	short *q;
-
-	p = src;
-	q = (short *)background;
-	for(i=0; i<video_area; i++) {
-		R = ((*p)&0xff0000)>>(16-1);
-		G = ((*p)&0xff00)>>(8-2);
-		B = (*p)&0xff;
-		*q = (short)(R + G + B);
-		p++;
-		q++;
-	}
-}
-
-unsigned char *image_bgsubtract_y(RGB32 *src)
-{
-	int i;
-	int R, G, B;
-	RGB32 *p;
-	short *q;
-	unsigned char *r;
-	int v;
-
-	p = src;
-	q = (short *)background;
-	r = diff;
-	for(i=0; i<video_area; i++) {
-		R = ((*p)&0xff0000)>>(16-1);
-		G = ((*p)&0xff00)>>(8-2);
-		B = (*p)&0xff;
-		v = (R + G + B) - (int)(*q);
-		*r = ((v + y_threshold)>>24) | ((y_threshold - v)>>24);
-
-		p++;
-		q++;
-		r++;
-	}
-
-	return diff;
-/* The origin of subtraction function is;
- * diff(src, dest) = (abs(src - dest) > threshold) ? 0xff : 0;
- *
- * This functions is transformed to;
- * (threshold > (src - dest) > -threshold) ? 0 : 0xff;
- *
- * (v + threshold)>>24 is 0xff when v is less than -threshold.
- * (v - threshold)>>24 is 0xff when v is less than threshold.
- * So, ((v + threshold)>>24) | ((threshold - v)>>24) will become 0xff when
- * abs(src - dest) > threshold.
- */
-}
-
-/* Background image is refreshed every frame */
-unsigned char *image_bgsubtract_update_y(RGB32 *src)
-{
-	int i;
-	int R, G, B;
-	RGB32 *p;
-	short *q;
-	unsigned char *r;
-	int v;
-
-	p = src;
-	q = (short *)background;
-	r = diff;
-	for(i=0; i<video_area; i++) {
-		R = ((*p)&0xff0000)>>(16-1);
-		G = ((*p)&0xff00)>>(8-2);
-		B = (*p)&0xff;
-		v = (R + G + B) - (int)(*q);
-		*q = (short)(R + G + B);
-		*r = ((v + y_threshold)>>24) | ((y_threshold - v)>>24);
-
-		p++;
-		q++;
-		r++;
-	}
-
-	return diff;
-}
-
-/* checks each RGB value */
-static RGB32 rgb_threshold;
-
-/* The range of r, g, b are [0..7] */
-void image_set_threshold_RGB(int r, int g, int b)
-{
-	unsigned char R, G, B;
-
-	R = G = B = 0xff;
-	R = R<<r;
-	G = G<<g;
-	B = B<<b;
-	rgb_threshold = (RGB32)(R<<16 | G<<8 | B);
-}
-
-void image_bgset_RGB(RGB32 *src)
-{
-	int i;
-	RGB32 *p;
-
-	p = background;
-	for(i=0; i<video_area; i++) {
-		*p++ = (*src++) & 0xfefefe;
-	}
-}
-
-unsigned char *image_bgsubtract_RGB(RGB32 *src)
-{
-	int i;
-	RGB32 *p, *q;
-	unsigned a, b;
-	unsigned char *r;
-
-	p = src;
-	q = background;
-	r = diff;
-	for(i=0; i<video_area; i++) {
-		a = (*p++)|0x1010100;
-		b = *q++;
-		a = a - b;
-		b = a & 0x1010100;
-		b = b - (b>>8);
-		b = b ^ 0xffffff;
-		a = a ^ b;
-		a = a & rgb_threshold;
-		*r++ = (0 - a)>>24;
-	}
-	return diff;
-}
-
-unsigned char *image_bgsubtract_update_RGB(RGB32 *src)
-{
-	int i;
-	RGB32 *p, *q;
-	unsigned a, b;
-	unsigned char *r;
-
-	p = src;
-	q = background;
-	r = diff;
-	for(i=0; i<video_area; i++) {
-		a = *p|0x1010100;
-		b = *q&0xfefefe;
-		*q++ = *p++;
-		a = a - b;
-		b = a & 0x1010100;
-		b = b - (b>>8);
-		b = b ^ 0xffffff;
-		a = a ^ b;
-		a = a & rgb_threshold;
-		*r++ = (0 - a)>>24;
-	}
-	return diff;
-}
-
-/* noise filter for subtracted image. */
-unsigned char *image_diff_filter(unsigned char *diff)
-{
-	int x, y;
-	unsigned char *src, *dest;
-	unsigned int count;
-	unsigned int sum1, sum2, sum3;
-	const int width = video_width;
-
-	src = diff;
-	dest = diff2 + width +1;
-	for(y=1; y<video_height-1; y++) {
-		sum1 = src[0] + src[width] + src[width*2];
-		sum2 = src[1] + src[width+1] + src[width*2+1];
-		src += 2;
-		for(x=1; x<width-1; x++) {
-			sum3 = src[0] + src[width] + src[width*2];
-			count = sum1 + sum2 + sum3;
-			sum1 = sum2;
-			sum2 = sum3;
-			*dest++ = (0xff*3 - count)>>24;
-			src++;
-		}
-		dest += 2;
-	}
-	
-	return diff2;
-}
-
 /* Y value filters */
-unsigned char *image_y_over(RGB32 *src)
+unsigned char *image_y_over(RGB32 *src, int y_threshold)
 {
 	int i;
 	int R, G, B, v;
-	unsigned char *p = diff;
+	unsigned char *p = buf;
 
 	for(i = video_area; i>0; i--) {
 		R = ((*src)&0xff0000)>>(16-1);
@@ -328,14 +122,14 @@ unsigned char *image_y_over(RGB32 *src)
 		p++;
 	}
 
-	return diff;
+	return buf;
 }
 
-unsigned char *image_y_under(RGB32 *src)
+unsigned char *image_y_under(RGB32 *src, int y_threshold)
 {
 	int i;
 	int R, G, B, v;
-	unsigned char *p = diff;
+	unsigned char *p = buf;
 
 	for(i = video_area; i>0; i--) {
 		R = ((*src)&0xff0000)>>(16-1);
@@ -347,11 +141,11 @@ unsigned char *image_y_under(RGB32 *src)
 		p++;
 	}
 
-	return diff;
+	return buf;
 }
 
 /* tiny edge detection */
-unsigned char *image_edge(RGB32 *src)
+unsigned char *image_edge(RGB32 *src, int y_threshold)
 {
 	int x, y;
 	unsigned char *p, *q;
@@ -360,7 +154,7 @@ unsigned char *image_edge(RGB32 *src)
 	int w;
 
 	p = (unsigned char *)src;
-	q = diff2;
+	q = buf;
 	w = video_width * sizeof(RGB32);
 
 	for(y=0; y<video_height - 1; y++) {
@@ -388,7 +182,35 @@ unsigned char *image_edge(RGB32 *src)
 	}
 	memset(q, 0, video_width);
 
-	return diff2;
+	return buf;
+}
+
+unsigned char *image_diff_denoise(unsigned char *diff)
+{
+	int x, y;
+	unsigned char *src, *dest;
+	unsigned int count;
+	unsigned int sum1, sum2, sum3;
+	const int width = video_width;
+
+	src = diff;
+	dest = buf2 + width + 1;
+	for(y=1; y<video_height-1; y++) {
+		sum1 = src[0] + src[width] + src[width*2];
+		sum2 = src[1] + src[width+1] + src[width*2+1];
+		src += 2;
+		for(x=1; x<width-1; x++) {
+			sum3 = src[0] + src[width] + src[width*2];
+			count = sum1 + sum2 + sum3;
+			sum1 = sum2;
+			sum2 = sum3;
+			*dest++ = (0xff*3 - count)>>24;
+			src++;
+		}
+		dest += 2;
+	}
+
+	return buf2;
 }
 
 /* horizontal flipping */

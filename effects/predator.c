@@ -11,6 +11,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -22,12 +23,13 @@ static int event(SDL_Event *);
 static char *effectname = "PredatorTV";
 static int state = 0;
 static RGB32 *bgimage;
+static BgSubtractor *bgsub;
 static int bgIsSet;
 
 static void setBackground(RGB32 *src)
 {
 	memcpy(bgimage, src, video_area * PIXEL_SIZE);
-	image_bgset_y(bgimage);
+	bgsub_bgset_y(bgsub, bgimage);
 	bgIsSet = 1;
 }
 
@@ -35,13 +37,21 @@ effect *predatorRegister(void)
 {
 	effect *entry;
 	
-	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
-	if(bgimage == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
+	if(bgimage == NULL) {
+		free(entry);
+		return NULL;
+	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(bgimage);
+		free(entry);
 		return NULL;
 	}
 	
@@ -51,14 +61,14 @@ effect *predatorRegister(void)
 	entry->draw = draw;
 	entry->event = event;
 
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
+
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
-	bgIsSet = 0;
-
 	state = 1;
 	return 0;
 }
@@ -78,8 +88,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 		setBackground(src);
 	}
 
-	diff = image_bgsubtract_y(src);
-	diff = image_diff_filter(diff);
+	diff = image_diff_denoise(bgsub_subtract_y(bgsub, src));
 
 	dest += video_width;
 	diff += video_width;

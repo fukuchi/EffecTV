@@ -12,6 +12,7 @@
 #include <math.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -20,6 +21,7 @@ static int event(SDL_Event *event);
 
 static char *effectname = "SparkTV";
 static int stat;
+static BgSubtractor *bgsub;
 static int bgIsSet = 0;
 static int mode = 0;
 
@@ -42,6 +44,8 @@ static int pp[POINT_MAX];
 #define SPARK_BLUE 0x80
 #define SPARK_CYAN 0x6080
 #define SPARK_WHITE 0x808080
+
+#define MAGIC_THRESHOLD (40)
 
 static int shortvec_length2(struct shortvec sv)
 {
@@ -329,7 +333,7 @@ static struct shortvec detectEdgePoints(unsigned char *diff)
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -343,12 +347,21 @@ effect *sparkRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(entry);
+		return NULL;
+	}
 	
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	return entry;
 }
@@ -364,8 +377,6 @@ static int start(void)
 		sparks_life[i] = 0;
 	}
 	sparks_head = 0;
-	image_set_threshold_y(40);
-	bgIsSet = 0;
 
 	stat = 1;
 	return 0;
@@ -390,13 +401,13 @@ static int draw(RGB32 *src, RGB32 *dest)
 	switch(mode) {
 		default:
 		case 0:
-			diff = image_diff_filter(image_bgsubtract_y(src));
+			diff = image_diff_denoise(bgsub_subtract_y(bgsub, src));
 			break;
 		case 1:
-			diff = image_diff_filter(image_y_over(src));
+			diff = image_diff_denoise(image_y_over(src, MAGIC_THRESHOLD));
 			break;
 		case 2:
-			diff = image_diff_filter(image_y_under(src));
+			diff = image_diff_denoise(image_y_under(src, MAGIC_THRESHOLD));
 			break;
 	}
 

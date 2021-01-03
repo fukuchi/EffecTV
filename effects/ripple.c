@@ -13,6 +13,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 #define MAGIC_THRESHOLD 70
 
@@ -33,6 +34,7 @@ static const int point = 16;
 static const int impact = 2;
 static const int decay = 8;
 static const int loopnum = 2;
+static BgSubtractor *bgsub;
 static int bgIsSet = 0;
 
 static void setTable(void)
@@ -49,7 +51,7 @@ static void setTable(void)
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -59,21 +61,29 @@ effect *rippleRegister(void)
 {
 	effect *entry;
 	
-	map_h = video_height / 2 + 1;
-	map_w = video_width / 2 + 1;
-	map = (int *)malloc(map_h*map_w*3*sizeof(int));
-	vtable = (signed char *)malloc(map_h*map_w*2*sizeof(signed char));
-	if(map == NULL || vtable == NULL) {
-		return NULL;
-	}
-
-	map3 = map + map_w * map_h * 2;
-
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
+	map_h = video_height / 2 + 1;
+	map_w = video_width / 2 + 1;
+	map = (int *)malloc(map_h*map_w*3*sizeof(int));
+	map3 = map + map_w * map_h * 2;
+	vtable = (signed char *)malloc(map_h*map_w*2*sizeof(signed char));
+	if(map == NULL || vtable == NULL) {
+		free(entry);
+		return NULL;
+	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(map);
+		free(vtable);
+		free(entry);
+		return NULL;
+	}
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -81,6 +91,8 @@ effect *rippleRegister(void)
 	entry->event = event;
 
 	setTable();
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	return entry;
 }
@@ -91,8 +103,6 @@ static int start(void)
 	memset(vtable, 0, map_h*map_w*2*sizeof(signed char));
 	map1 = map;
 	map2 = map + map_h*map_w;
-	image_set_threshold_y(MAGIC_THRESHOLD);
-	bgIsSet = 0;
 
 	stat = 1;
 	return 0;
@@ -115,7 +125,7 @@ static void motiondetect(RGB32 *src)
 		setBackground(src);
 	}
 
-	diff = image_bgsubtract_update_y(src);
+	diff = bgsub_subtract_update_y(bgsub, src);
 	width = video_width;
 	p = map1+map_w+1;
 	q = map2+map_w+1;

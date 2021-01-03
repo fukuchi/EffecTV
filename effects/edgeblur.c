@@ -56,7 +56,7 @@ effect *edgeBlurRegister(void)
 		free(entry);
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -75,7 +75,6 @@ static int start(void)
 	memset(blur[1], 0, video_area * sizeof(int));
 	blurFrame = 0;
 
-	image_set_threshold_y(MAGIC_THRESHOLD);
 
 	state = 1;
 	return 0;
@@ -95,7 +94,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	unsigned char *diff;
 	int v, *p, *q;
 
-	diff = image_edge(src);
+	diff = image_edge(src, MAGIC_THRESHOLD);
 
 	p = blur[blurFrame    ] + video_width + 1;
 	q = blur[blurFrame ^ 1] + video_width + 1;

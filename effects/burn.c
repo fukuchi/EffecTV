@@ -12,6 +12,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -26,6 +27,7 @@ static char *effectname = "BurningTV";
 static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];
+static BgSubtractor *bgsub;
 static int bgIsSet = 0;
 static int mode = 1;
 
@@ -50,7 +52,7 @@ static void makePalette(void)
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -59,17 +61,25 @@ static int setBackground(RGB32 *src)
 effect *burnRegister(void)
 {
 	effect *entry;
-	
-	buffer = (unsigned char *)malloc(video_area);
-	if(buffer == NULL) {
-		return NULL;
-	}
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
 	
+	buffer = (unsigned char *)malloc(video_area);
+	if(buffer == NULL) {
+		free(entry);
+		return NULL;
+	}
+
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		free(entry);
+		free(buffer);
+		return NULL;
+	}
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -77,15 +87,15 @@ effect *burnRegister(void)
 	entry->event = event;
 
 	makePalette();
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
 	memset(buffer, 0, video_area);
-	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -109,9 +119,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 
 	if(mode == 0) {
-		diff = image_bgsubtract_y(src);
+		diff = bgsub_subtract_y(bgsub, src);
 	} else {
-		diff = image_y_over(src);
+		diff = image_y_over(src, MAGIC_THRESHOLD);
 	}
 
 	for(x=1; x<video_width-1; x++) {

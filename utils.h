@@ -41,24 +41,12 @@ void image_end(void);
 void image_stretching_buffer_clear(RGB32 color);
 void image_stretch(RGB32 *, int, int, RGB32 *, int, int);
 void image_stretch_to_screen(void);
-
-void image_set_threshold_y(int threshold);
-void image_bgset_y(unsigned int *src);
-unsigned char *image_bgsubtract_y(unsigned int *src);
-unsigned char *image_bgsubtract_update_y(unsigned int *src);
-
-void image_set_threshold_RGB(int r, int g, int b);
-void image_bgset_RGB(unsigned int *src);
-unsigned char *image_bgsubtract_RGB(unsigned int *src);
-unsigned char *image_bgsubtract_update_RGB(unsigned int *src);
-
-unsigned char *image_diff_filter(unsigned char *diff);
-unsigned char *image_y_over(RGB32 *src);
-unsigned char *image_y_under(RGB32 *src);
-unsigned char *image_edge(RGB32 *src);
-
 void image_hflip(RGB32 *src, RGB32 *dest, int width, int height);
 
+unsigned char *image_y_over(RGB32 *src, int y_threshold);
+unsigned char *image_y_under(RGB32 *src, int y_threshold);
+unsigned char *image_edge(RGB32 *src, int y_threshold);
+unsigned char *image_diff_denoise(unsigned char *src);
 
 /*
  * yuv.c

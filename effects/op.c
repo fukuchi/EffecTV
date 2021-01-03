@@ -33,6 +33,8 @@ static char *opmap[OPMAP_MAX];
 
 static RGB32 palette[256];
 
+static const int y_threshold = 50;
+
 static void initPalette(void)
 {
 	int i;
@@ -114,7 +116,6 @@ effect *opRegister(void)
 static int start(void)
 {
 	phase = 0;
-	image_set_threshold_y(50);
 
 	stat = 1;
 	return 0;
@@ -152,7 +153,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	speed += speedInc;
 	phase -= speed;
 
-	diff = image_y_over(src);
+	diff = image_y_over(src, y_threshold);
 	for(y=0; y<video_height; y++) {
 		for(x=0; x<video_width; x++) {
 			*dest++ = palette[(((char)(*p+phase))^*diff++)&255];

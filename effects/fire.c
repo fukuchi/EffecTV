@@ -12,6 +12,7 @@
 #include <string.h>
 #include "EffecTV.h"
 #include "utils.h"
+#include "bgsub.h"
 
 static int start(void);
 static int stop(void);
@@ -27,11 +28,12 @@ static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];
 static int mode = 0;
+static BgSubtractor *bgsub;
 static int bgIsSet;
 
 static int setBackground(RGB32 *src)
 {
-	image_bgset_y(src);
+	bgsub_bgset_y(bgsub, src);
 	bgIsSet = 1;
 
 	return 0;
@@ -65,6 +67,11 @@ effect *fireRegister(void)
 		return NULL;
 	}
 
+	bgsub = bgsub_new(video_width, video_height);
+	if(bgsub == NULL) {
+		return NULL;
+	}
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
@@ -77,15 +84,15 @@ effect *fireRegister(void)
 	entry->event = event;
 
 	makePalette();
+	bgsub_set_threshold_y(bgsub, MAGIC_THRESHOLD);
+	bgIsSet = 0;
 
 	return entry;
 }
 
 static int start(void)
 {
-	image_set_threshold_y(MAGIC_THRESHOLD);
 	memset(buffer, 0, video_area);
-	bgIsSet = 0;
 
 	state = 1;
 	return 0;
@@ -110,7 +117,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	switch(mode) {
 		case 0:
 		default:
-			diff = image_bgsubtract_y(src);
+			diff = bgsub_subtract_y(bgsub, src);
 			for(i=0; i<video_area-video_width; i++) {
 				buffer[i] |= diff[i];
 			}
