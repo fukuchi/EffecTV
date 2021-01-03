@@ -47,8 +47,7 @@ effect *pupRegister(void)
 {
 	effect *entry;
 
-	sharedbuffer_reset();
-	buffer = (RGB32 *)sharedbuffer_alloc(video_area * PIXEL_SIZE);
+	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE);
 	if(buffer == NULL)
 		return NULL;
 

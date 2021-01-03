@@ -26,8 +26,7 @@ effect *onedRegister(void)
 {
 	effect *entry;
 
-	sharedbuffer_reset();
-	linebuf = (RGB32 *)sharedbuffer_alloc(video_width * PIXEL_SIZE);
+	linebuf = (RGB32 *)malloc(video_width * PIXEL_SIZE);
 	if(linebuf == NULL)
 		return NULL;
 

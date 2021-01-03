@@ -46,9 +46,8 @@ effect *timeDistortionRegister(void)
 		return NULL;
 	}
 
-	sharedbuffer_reset();
-	warptime[0] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
-	warptime[1] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
+	warptime[0] = (int *)malloc(video_area * sizeof(int));
+	warptime[1] = (int *)malloc(video_area * sizeof(int));
 	if(warptime[0] == NULL || warptime[1] == NULL) {
 		free(entry);
 		return NULL;

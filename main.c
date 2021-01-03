@@ -532,10 +532,6 @@ int main(int argc, char **argv)
 		}
 	}
 #endif
-	if(sharedbuffer_init()){
-		fprintf(stderr, "Memory allocation failed.\n");
-		exit(1);
-	}
 	if(utils_init()) {
 		fprintf(stderr, "Utility function initialization failed.\n");
 		exit(1);
@@ -551,7 +547,6 @@ int main(int argc, char **argv)
 
 	if(debug) {
 		utils_end();
-		sharedbuffer_end();
 	}
 
 	video_quit();

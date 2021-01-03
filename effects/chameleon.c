@@ -36,9 +36,8 @@ effect *chameleonRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
-	sum = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(unsigned int));
-	bgimage = (RGB32 *)sharedbuffer_alloc(video_area * PIXEL_SIZE);
+	sum = (unsigned int *)malloc(video_area * sizeof(unsigned int));
+	bgimage = (RGB32 *)malloc(video_area * PIXEL_SIZE);
 	if(sum == NULL || bgimage == NULL)
 		return NULL;
 

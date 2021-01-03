@@ -50,9 +50,8 @@ effect *edgeBlurRegister(void)
 		return NULL;
 	}
 
-	sharedbuffer_reset();
-	blur[0] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
-	blur[1] = (unsigned int *)sharedbuffer_alloc(video_area * sizeof(int));
+	blur[0] = (int *)malloc(video_area * sizeof(int));
+	blur[1] = (int *)malloc(video_area * sizeof(int));
 	if(blur[0] == NULL || blur[1] == NULL) {
 		free(entry);
 		return NULL;

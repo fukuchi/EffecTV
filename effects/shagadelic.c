@@ -34,9 +34,8 @@ effect *shagadelicRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
-	ripple = (char *)sharedbuffer_alloc(video_area*4);
-	spiral = (char *)sharedbuffer_alloc(video_area);
+	ripple = (char *)malloc(video_area*4);
+	spiral = (char *)malloc(video_area);
 	if(ripple == NULL || spiral == NULL) {
 		return NULL;
 	}

@@ -67,17 +67,16 @@ effect *matrixRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
 	mapW = video_width / FONT_W;
 	mapH = video_height / FONT_H;
-	cmap = (unsigned char *)sharedbuffer_alloc(mapW * mapH);
-	vmap = (unsigned char *)sharedbuffer_alloc(mapW * mapH);
-	img = (unsigned char *)sharedbuffer_alloc(mapW * mapH);
+	cmap = (unsigned char *)malloc(mapW * mapH);
+	vmap = (unsigned char *)malloc(mapW * mapH);
+	img = (unsigned char *)malloc(mapW * mapH);
 	if(cmap == NULL || vmap == NULL || img == NULL) {
 		return NULL;
 	}
 
-	blips = (Blip *)sharedbuffer_alloc(mapW * sizeof(Blip));
+	blips = (Blip *)malloc(mapW * sizeof(Blip));
 	if(blips == NULL) {
 		return NULL;
 	}

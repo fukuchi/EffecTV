@@ -32,8 +32,7 @@ effect *lifeRegister(void)
 {
 	effect *entry;
 	
-	sharedbuffer_reset();
-	field = (unsigned char *)sharedbuffer_alloc(video_area*2);
+	field = (unsigned char *)malloc(video_area*2);
 	if(field == NULL) {
 		return NULL;
 	}

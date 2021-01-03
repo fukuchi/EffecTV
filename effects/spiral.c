@@ -185,8 +185,7 @@ effect *spiralRegister(void)
 {
 	effect *entry;
     
-	sharedbuffer_reset();
-	depthmap = (int *)sharedbuffer_alloc(video_width * video_height * sizeof(int));
+	depthmap = (int *)malloc(video_width * video_height * sizeof(int));
 	if(depthmap == NULL) {
 		return NULL;
 	}

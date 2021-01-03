@@ -32,24 +32,6 @@ void fastsrand(unsigned int);
 
 
 /*
- * buffer.c
- */
-
-int sharedbuffer_init(void);
-void sharedbuffer_end(void);
-
-/* The effects uses shared buffer must call this function at first in
- * each effect registrar.
- */
-void sharedbuffer_reset(void);
-
-/* Allocates size bytes memory in shared buffer and returns a pointer to the
- * memory. NULL is returned when the rest memory is not enough for the request.
- */
-unsigned char *sharedbuffer_alloc(int);
-
-
-/*
  * image.c
  */
 
