@@ -267,11 +267,10 @@ static void setPattern(void)
 
 static void drawChar(RGB32 *dest, unsigned char c, unsigned char v)
 {
-	int x, y, i;
-	int *p;
+	int x, y;
+	RGB32 *p;
 	unsigned char *f;
 
-	i = 0;
 	if(v == 255) { // sticky characters
 		v = 160;
 	}

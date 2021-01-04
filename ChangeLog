@@ -1,3 +1,10 @@
+2021.01.03 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Makefile, buffer.c, effects/*.c:
+	  - Shared buffer has been removed.
+	* effects/{Deinterlace.c, burn.c, fire.c, matrix.c, pup.c}:
+	  - Code cleaning up to suppress compiler warnings.
+
 2020.09.24 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* effects/{holo.c, bluescreen.c, predator.c}:

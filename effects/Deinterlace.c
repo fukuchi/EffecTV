@@ -72,7 +72,7 @@ static int draw(RGB32 *src, RGB32 *dst)
 {
   int x,y;
   int zeile1a,zeile2a,zeile3a,zeile4a;
-  int zeile1b,zeile2b,zeile3b,zeile4b;
+  int zeile2b,zeile3b,zeile4b;
   int zeile1c,zeile2c,zeile3c,zeile4c;
   int outp1,outp2,outp3,outp4,outp5,outp6;
   int d1,d2;
@@ -83,7 +83,7 @@ static int draw(RGB32 *src, RGB32 *dst)
 	    zeile2a = *(RGB32 *)(src+(y+0)*video_width+x);
 	    zeile3a = *(RGB32 *)(src+(y+1)*video_width+x);
 	    zeile4a = *(RGB32 *)(src+(y+2)*video_width+x);
-	    zeile1b = *(RGB32 *)(src+(y-1)*video_width+x+1);
+//	    zeile1b = *(RGB32 *)(src+(y-1)*video_width+x+1);
 	    zeile2b = *(RGB32 *)(src+(y+0)*video_width+x+1);
 	    zeile3b = *(RGB32 *)(src+(y+1)*video_width+x+1);
 	    zeile4b = *(RGB32 *)(src+(y+2)*video_width+x+1);

@@ -38,11 +38,12 @@ static void makePalette(void)
 		palette[i] = ((r<<16)|(g<<8)|b) & 0xfefeff;
 	}
 	for(i=MaxColor; i<256; i++) {
-		if(r<255)r++;if(r<255)r++;if(r<255)r++;
-		if(g<255)g++;
-		if(g<255)g++;
-		if(b<255)b++;
-		if(b<255)b++;
+		r += 3;
+		g += 2;
+		b += 2;
+		if(r>255)r=255;
+		if(g>255)g=255;
+		if(b>255)b=255;
 		palette[i] = ((r<<16)|(g<<8)|b) & 0xfefeff;
 	}
 }
