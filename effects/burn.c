@@ -17,6 +17,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
+static void myFree(void);
 
 #define MaxColor 120
 #define Decay 15
@@ -60,13 +61,14 @@ effect *burnRegister(void)
 {
 	effect *entry;
 
-	buffer = (unsigned char *)malloc(video_area);
-	if(buffer == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	buffer = (unsigned char *)malloc(video_area);
+	if(buffer == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -75,6 +77,7 @@ effect *burnRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	makePalette();
 
@@ -170,4 +173,9 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(buffer);
 }

@@ -16,6 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "DisplayWall";
 static int state = 0;
@@ -35,14 +36,15 @@ effect *displayWallRegister(void)
 {
 	effect *entry;
 
-	vecx = (int *)malloc(sizeof(int) * video_area);
-	vecy = (int *)malloc(sizeof(int) * video_area);
-	if(vecx == NULL || vecy == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	vecx = (int *)malloc(sizeof(int) * video_area);
+	vecy = (int *)malloc(sizeof(int) * video_area);
+	if(vecx == NULL || vecy == NULL) {
+		free(entry);
 		free(vecx);
 		free(vecy);
 		return NULL;
@@ -53,6 +55,7 @@ effect *displayWallRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	scale = 3;
 	dx = 0;
@@ -193,4 +196,10 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(vecx);
+	free(vecy);
 }

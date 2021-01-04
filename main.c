@@ -157,6 +157,18 @@ static int registerEffects(void)
 	return effectMax;
 }
 
+static void destructEffects(void)
+{
+	int i;
+	effect *entry;
+
+	for(i=0;i<effectMax;i++) {
+		entry = (*effects_register_list[i])();
+		if(entry->free != NULL) {
+			entry->free();
+		}
+	}
+}
 static int changeEffect(int num)
 {
 /* return value:
@@ -547,6 +559,7 @@ int main(int argc, char **argv)
 
 	if(debug) {
 		utils_end();
+		destructEffects();
 	}
 
 	video_quit();

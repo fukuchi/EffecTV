@@ -30,6 +30,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
+static void myFree(void);
 
 static char *effectname = "MatrixTV";
 static int stat;
@@ -67,12 +68,20 @@ effect *matrixRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	mapW = video_width / FONT_W;
 	mapH = video_height / FONT_H;
 	cmap = (unsigned char *)malloc(mapW * mapH);
 	vmap = (unsigned char *)malloc(mapW * mapH);
 	img = (unsigned char *)malloc(mapW * mapH);
 	if(cmap == NULL || vmap == NULL || img == NULL) {
+		free(cmap);
+		free(vmap);
+		free(img);
 		return NULL;
 	}
 
@@ -84,16 +93,12 @@ effect *matrixRegister(void)
 	setPattern();
 	setPalette();
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
-		return NULL;
-	}
-
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -463,4 +468,11 @@ static int event(SDL_Event *event)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(cmap);
+	free(vmap);
+	free(img);
 }

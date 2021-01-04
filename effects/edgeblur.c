@@ -20,6 +20,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "EdgeBlurTV";
 static int state = 0;
@@ -54,6 +55,8 @@ effect *edgeBlurRegister(void)
 	blur[1] = (int *)malloc(video_area * sizeof(int));
 	if(blur[0] == NULL || blur[1] == NULL) {
 		free(entry);
+		free(blur[0]);
+		free(blur[1]);
 		return NULL;
 	}
 
@@ -62,6 +65,7 @@ effect *edgeBlurRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	makePalette();
 	palette = palettes;
@@ -148,4 +152,10 @@ static int event(SDL_Event *event)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(blur[0]);
+	free(blur[1]);
 }

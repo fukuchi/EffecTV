@@ -19,6 +19,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static void myFree(void);
 
 static char *effectname = "TimeDistortion";
 static int state = 0;
@@ -50,6 +51,8 @@ effect *timeDistortionRegister(void)
 	warptime[1] = (int *)malloc(video_area * sizeof(int));
 	if(warptime[0] == NULL || warptime[1] == NULL) {
 		free(entry);
+		free(warptime[0]);
+		free(warptime[1]);
 		return NULL;
 	}
 
@@ -58,6 +61,7 @@ effect *timeDistortionRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -136,4 +140,10 @@ static int draw(RGB32 *src, RGB32 *dest)
 	warptimeFrame ^= 1;
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(warptime[0]);
+	free(warptime[1]);
 }

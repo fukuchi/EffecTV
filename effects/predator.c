@@ -16,6 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
+static void myFree(void);
 
 #define MAGIC_THRESHOLD 40
 
@@ -35,13 +36,14 @@ effect *predatorRegister(void)
 {
 	effect *entry;
 
-	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
-	if(bgimage == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
+	if(bgimage == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -50,6 +52,7 @@ effect *predatorRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -112,4 +115,9 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(bgimage);
 }

@@ -17,6 +17,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "VertigoTV";
 static int state = 0;
@@ -72,13 +73,14 @@ effect *dizzyRegister(void)
 {
 	effect *entry;
 
-	buffer = (RGB32 *)malloc(video_area * 2 * PIXEL_SIZE);
-	if(buffer == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	buffer = (RGB32 *)malloc(video_area * 2 * PIXEL_SIZE);
+	if(buffer == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -87,6 +89,7 @@ effect *dizzyRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -185,4 +188,9 @@ static int event(SDL_Event *event)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(buffer);
 }

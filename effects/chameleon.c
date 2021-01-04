@@ -19,6 +19,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
+static void myFree(void);
 
 static char *effectname = "ChameleonTV";
 static int state = 0;
@@ -36,14 +37,17 @@ effect *chameleonRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	sum = (unsigned int *)malloc(video_area * sizeof(unsigned int));
 	bgimage = (RGB32 *)malloc(video_area * PIXEL_SIZE);
-	if(sum == NULL || bgimage == NULL)
-		return NULL;
-
-	entry = (effect *)malloc(sizeof(effect));
-
-	if(entry == NULL) {
+	if(sum == NULL || bgimage == NULL) {
+		free(entry);
+		free(sum);
+		free(bgimage);
 		return NULL;
 	}
 
@@ -52,6 +56,7 @@ effect *chameleonRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -213,4 +218,10 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(sum);
+	free(bgimage);
 }

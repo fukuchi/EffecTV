@@ -22,6 +22,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 extern void blurzoomcore(void);
 
@@ -171,8 +172,14 @@ effect *blurzoomRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	buf_width_blocks = (video_width / 32);
 	if(buf_width_blocks > 255) {
+		free(entry);
 		return NULL;
 	}
 	buf_width = buf_width_blocks * 32;
@@ -183,17 +190,17 @@ effect *blurzoomRegister(void)
 
 	blurzoombuf = (unsigned char *)malloc(buf_area * 2);
 	if(blurzoombuf == NULL) {
+		free(entry);
 		return NULL;
 	}
 
 	blurzoomx = (int *)malloc(buf_width*sizeof(int));
 	blurzoomy = (int *)malloc(buf_height*sizeof(int));
 	if(blurzoomx == NULL || blurzoomy == NULL) {
-		return NULL;
-	}
-
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+		free(entry);
+		free(blurzoombuf);
+		free(blurzoomx);
+		free(blurzoomy);
 		return NULL;
 	}
 
@@ -202,6 +209,7 @@ effect *blurzoomRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	setTable();
 	makePalette();
@@ -353,4 +361,11 @@ static int event(SDL_Event *event)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(blurzoombuf);
+	free(blurzoomx);
+	free(blurzoomy);
 }

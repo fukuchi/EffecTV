@@ -17,6 +17,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "OpTV";
 static int stat;
@@ -87,28 +88,39 @@ effect *opRegister(void)
 	effect *entry;
 	int i;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
+	for(i=0; i<OPMAP_MAX; i++) {
+		opmap[i] = NULL;
+	}
 	for(i=0; i<OPMAP_MAX; i++) {
 		opmap[i] = (char *)malloc(video_area);
 		if(opmap[i] == NULL) {
-			return NULL;
+			goto ABORT;
 		}
 	}
 
 	initPalette();
 	setOpmap();
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
-		return NULL;
-	}
-
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
+ABORT:
+	free(entry);
+	for(i=0; i<OPMAP_MAX; i++) {
+		free(opmap[i]);
+	}
+
+	return NULL;
 }
 
 static int start(void)
@@ -242,4 +254,11 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	for(int i=0; i<OPMAP_MAX; i++) {
+		free(opmap[i]);
+	}
 }

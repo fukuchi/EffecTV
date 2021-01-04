@@ -15,6 +15,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static void myFree(void);
 
 static char *effectname = "1DTV";
 static int state = 0;
@@ -26,19 +27,23 @@ effect *onedRegister(void)
 {
 	effect *entry;
 
-	linebuf = (RGB32 *)malloc(video_width * PIXEL_SIZE);
-	if(linebuf == NULL)
-		return NULL;
-
 	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL)
+	if(entry == NULL) {
 		return NULL;
+	}
+
+	linebuf = (RGB32 *)malloc(video_width * PIXEL_SIZE);
+	if(linebuf == NULL) {
+		free(entry);
+		return NULL;
+	}
 
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -84,4 +89,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(linebuf);
 }

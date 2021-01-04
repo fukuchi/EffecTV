@@ -40,7 +40,6 @@ effect *slofastRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
-		free(buffer);
 		return NULL;
 	}
 
@@ -49,6 +48,7 @@ effect *slofastRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = NULL;
 
 	return entry;
 }
@@ -61,8 +61,9 @@ static int start(void)
 	if(buffer == NULL)
 		return -1;
 	memset(buffer, 0, video_area*PIXEL_SIZE*PLANES);
-	for(i=0;i<PLANES;i++)
+	for(i=0;i<PLANES;i++) {
 		planetable[i] = &buffer[video_area*i];
+	}
 
 	head  = 0;
 	tail  = 0;
@@ -77,8 +78,7 @@ static int start(void)
 static int stop(void)
 {
 	if(state) {
-		if(buffer)
-			free(buffer);
+		free(buffer);
 		state = 0;
 	}
 

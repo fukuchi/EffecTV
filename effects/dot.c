@@ -17,6 +17,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 #define DOTDEPTH 5
 #define DOTMAX (1<<DOTDEPTH)
@@ -167,6 +168,11 @@ effect *dotRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	dot_size = 16;
 	dot_hsize = dot_size / 2;
 	dots_width = video_width / dot_size;
@@ -174,16 +180,13 @@ effect *dotRegister(void)
 
 	pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_hsize * sizeof(RGB32));
 	if(pattern == NULL) {
+		free(entry);
 		return NULL;
 	}
 	heart_pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_size * PIXEL_SIZE);
 	if(heart_pattern == NULL) {
+		free(entry);
 		free(pattern);
-		return NULL;
-	}
-
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
 		return NULL;
 	}
 
@@ -192,6 +195,7 @@ effect *dotRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	makePattern();
 	makeHeartPattern();
@@ -300,4 +304,10 @@ static int event(SDL_Event *event)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(pattern);
+	free(heart_pattern);
 }

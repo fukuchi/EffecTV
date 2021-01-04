@@ -18,6 +18,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "LifeTV";
 static int stat;
@@ -32,13 +33,14 @@ effect *lifeRegister(void)
 {
 	effect *entry;
 
-	field = (unsigned char *)malloc(video_area*2);
-	if(field == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	field = (unsigned char *)malloc(video_area*2);
+	if(field == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -47,6 +49,7 @@ effect *lifeRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -128,4 +131,9 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(field);
 }

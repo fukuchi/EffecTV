@@ -25,6 +25,7 @@
 static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
+static void myFree(void);
 
 static char *effectname = "EdgeTV";
 static int stat;
@@ -39,17 +40,18 @@ effect *edgeRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	map_width = video_width / 4;
 	map_height = video_height / 4;
 	video_width_margin = video_width - map_width * 4;
 
 	map = (RGB32 *)malloc(map_width*map_height*PIXEL_SIZE*2);
 	if(map == NULL) {
-		return NULL;
-	}
-
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -58,6 +60,7 @@ effect *edgeRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -155,4 +158,9 @@ static int draw(RGB32 *src, RGB32 *dest)
 	}
 
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(map);
 }

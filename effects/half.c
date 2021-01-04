@@ -61,6 +61,7 @@ effect *nervousHalfRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = NULL;
 
 	return entry;
 }

@@ -18,6 +18,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static char *effectname = "ShagadelicTV";
 static int stat;
@@ -34,14 +35,17 @@ effect *shagadelicRegister(void)
 {
 	effect *entry;
 
-	ripple = (char *)malloc(video_area*4);
-	spiral = (char *)malloc(video_area);
-	if(ripple == NULL || spiral == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	ripple = (char *)malloc(video_area*4);
+	spiral = (char *)malloc(video_area);
+	if(ripple == NULL || spiral == NULL) {
+		free(entry);
+		free(ripple);
+		free(spiral);
 		return NULL;
 	}
 
@@ -50,6 +54,7 @@ effect *shagadelicRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -179,4 +184,10 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(ripple);
+	free(spiral);
 }

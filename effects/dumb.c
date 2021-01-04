@@ -31,6 +31,7 @@ effect *dumbRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+	entry->free = NULL;
 
 	return entry;
 }

@@ -43,6 +43,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 static void diceCreateMap(void);
 
 static char *effectname = "DiceTV";
@@ -59,22 +60,24 @@ effect *diceRegister(void)
 {
 	effect *entry;
 
-	dicemap = (char*)malloc(video_height * video_width * sizeof(char));
-	if(dicemap == NULL) {
-		return NULL;
-	}
-
-    diceCreateMap();
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
+
+	dicemap = (char *)malloc(video_height * video_width * sizeof(char));
+	if(dicemap == NULL) {
+		free(entry);
+		return NULL;
+	}
+    diceCreateMap();
 
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -229,3 +232,7 @@ static void diceCreateMap(void)
     return;
 }
 
+static void myFree(void)
+{
+	free(dicemap);
+}

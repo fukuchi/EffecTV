@@ -28,6 +28,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 //static void diffUpdate();
 //static void diffSave();
 static char *effectname = "DiffTV";
@@ -41,13 +42,14 @@ effect *diffRegister(void)
 {
 	effect *entry;
 
-	prevbuf = (RGB32*)malloc(video_area * PIXEL_SIZE);
-	if(prevbuf == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
+	prevbuf = (RGB32*)malloc(video_area * PIXEL_SIZE);
+	if(prevbuf == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -56,6 +58,7 @@ effect *diffRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -207,3 +210,7 @@ static int event(SDL_Event *event)
 	return 0;
 }
 
+static void myFree(void)
+{
+	free(prevbuf);
+}

@@ -41,13 +41,17 @@ effect *warpRegister(void)
 	effect *entry;
 
 	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) return NULL;
+	if(entry == NULL) {
+		return NULL;
+	}
 
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = NULL;
+	entry->free = NULL;
+
 	return entry;
 }
 

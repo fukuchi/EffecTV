@@ -65,7 +65,7 @@ static void apply_lens(int ox, int oy,RGB32 *src,RGB32 *dst)
 effect *lensRegister(void)
 {
 	effect *entry;
-	mode=1;
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
 
@@ -74,6 +74,9 @@ effect *lensRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = NULL;
+
+	mode=1;
 
 	return entry;
 }

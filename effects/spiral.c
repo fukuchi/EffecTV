@@ -124,6 +124,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static void spiralCreateMap();
 static WaveEl* spiralDefineWaves();
@@ -184,14 +185,14 @@ effect *spiralRegister(void)
 {
 	effect *entry;
 
-	depthmap = (int *)malloc(video_width * video_height * sizeof(int));
-	if(depthmap == NULL) {
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
 		return NULL;
 	}
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
-		free(buffer);
+	depthmap = (int *)malloc(video_width * video_height * sizeof(int));
+	if(depthmap == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -201,6 +202,7 @@ effect *spiralRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
     entry->event = event;
+	entry->free = myFree;
 
     g_focus_x = (video_width/2);
     g_focus_y = (video_height/2);
@@ -555,4 +557,9 @@ static void spiralMoveFocus(void)
         }
     }
     return;
+}
+
+static void myFree(void)
+{
+	free(depthmap);
 }

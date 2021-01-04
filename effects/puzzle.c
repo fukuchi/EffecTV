@@ -18,6 +18,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 #define BLOCKSIZE 80
 #define SLIDING_INTERVAL 30
@@ -56,6 +57,11 @@ effect *puzzleRegister(void)
 	effect *entry;
 	int x, y;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	blockSize = BLOCKSIZE;
 	if(video_width < 320) {
 		blockSize = video_width / 4;
@@ -71,6 +77,7 @@ effect *puzzleRegister(void)
 
 	blocks = (Block *)malloc(blockNum * sizeof(Block));
 	if(blocks == NULL) {
+		free(entry);
 		return NULL;
 	}
 
@@ -84,16 +91,12 @@ effect *puzzleRegister(void)
 	marginW = video_width - blockW * blockSize;
 	marginH = video_height - blockH * blockSize;
 
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
-		return NULL;
-	}
-
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -353,4 +356,9 @@ static void autoSolve(void)
 			}
 		}
 	}
+}
+
+static void myFree(void)
+{
+	free(blocks);
 }

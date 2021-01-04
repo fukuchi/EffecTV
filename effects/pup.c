@@ -18,6 +18,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
+static void myFree(void);
 
 static char *effectname = "PUPTV";
 static int state = 0;
@@ -47,19 +48,23 @@ effect *pupRegister(void)
 {
 	effect *entry;
 
-	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE);
-	if(buffer == NULL)
-		return NULL;
-
 	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL)
+	if(entry == NULL) {
 		return NULL;
+	}
+
+	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE);
+	if(buffer == NULL) {
+		free(entry);
+		return NULL;
+	}
 
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	return entry;
 }
@@ -369,3 +374,8 @@ static void sonicPup(RGB32 *src)
 	}
 }
 #endif
+
+static void myFree(void)
+{
+	free(buffer);
+}

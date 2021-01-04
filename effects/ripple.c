@@ -20,6 +20,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
+static void myFree(void);
 
 static int mode = 0; // 0 = motion detection / 1 = rain
 static char *effectname = "RippleTV";
@@ -59,26 +60,30 @@ effect *rippleRegister(void)
 {
 	effect *entry;
 
+	entry = (effect *)malloc(sizeof(effect));
+	if(entry == NULL) {
+		return NULL;
+	}
+
 	map_h = video_height / 2 + 1;
 	map_w = video_width / 2 + 1;
 	map = (int *)malloc(map_h*map_w*3*sizeof(int));
 	vtable = (signed char *)malloc(map_h*map_w*2*sizeof(signed char));
 	if(map == NULL || vtable == NULL) {
+		free(entry);
+		free(map);
+		free(vtable);
 		return NULL;
 	}
 
 	map3 = map + map_w * map_h * 2;
-
-	entry = (effect *)malloc(sizeof(effect));
-	if(entry == NULL) {
-		return NULL;
-	}
 
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
+	entry->free = myFree;
 
 	setTable();
 
@@ -397,4 +402,10 @@ static int event(SDL_Event *event)
 		}
 	}
 	return 0;
+}
+
+static void myFree(void)
+{
+	free(map);
+	free(vtable);
 }
