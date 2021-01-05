@@ -5,7 +5,7 @@ include ./config.mk
 CC = gcc
 INSTALL = /usr/bin/install -c
 
-CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -Iv4lutils `pkg-config --cflags sdl2 libv4l2`
+CFLAGS = $(CONFIG) $(CFLAGS.opt) $(CFLAGS.debug) -Iv4lutils `pkg-config --cflags sdl2 libv4l2`
 LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl2 libv4l2` $(LIBS.extra)
 
 PROGRAM = effectv
@@ -37,7 +37,7 @@ all-recursive:
 all-am: $(PROGRAM)
 
 $(PROGRAM): $(OBJS) $(LIBEFFECTS) v4lutils/libv4lutils.a
-	$(CC) -o $@ $(OBJS) $(LIBEFFECTS) $(LIBS)
+	$(CC) $(CFLAGS.debug) -o $@ $(OBJS) $(LIBEFFECTS) $(LIBS)
 
 $(OBJS): EffecTV.h screen.h video.h utils.h
 

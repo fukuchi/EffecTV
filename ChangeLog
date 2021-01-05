@@ -4,6 +4,10 @@
 	  - Had forgotten to turn on the 'state'.
 	* effects/dizzy.c:
 	  - Buffer size was too small than expected.
+	* config.mk, Makefile:
+	  - PlayStation2 support has been dropped.
+	  - Architecture-related variables have been dropped.
+	  - Added 'CONFIG.debug' variable to the Makefile.
 
 2021.01.03 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
