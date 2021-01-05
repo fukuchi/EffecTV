@@ -163,10 +163,12 @@ static void destructEffects(void)
 	effect *entry;
 
 	for(i=0;i<effectMax;i++) {
-		entry = (*effects_register_list[i])();
+		entry = effectsList[i];
 		if(entry->free != NULL) {
 			entry->free();
 		}
+		free(entry);
+		effectsList[i] = NULL;
 	}
 }
 static int changeEffect(int num)
