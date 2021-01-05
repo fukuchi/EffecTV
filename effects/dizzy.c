@@ -72,7 +72,7 @@ effect *dizzyRegister(void)
 {
 	effect *entry;
 	
-	buffer = (RGB32 *)malloc(video_area*2);
+	buffer = (RGB32 *)malloc(video_area * 2 * PIXEL_SIZE);
 	if(buffer == NULL) {
 		return NULL;
 	}

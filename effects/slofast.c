@@ -69,6 +69,8 @@ static int start(void)
 	count = 0;
 
 	mode = STATE_FILL;
+	state = 1;
+
 	return 0;
 }
 

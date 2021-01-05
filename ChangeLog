@@ -1,3 +1,10 @@
+2021.01.05 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* effects/slofast.c:
+	  - Had forgotten to turn on the 'state'.
+	* effects/dizzy.c:
+	  - Buffer size was too small than expected.
+
 2021.01.03 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* Makefile, buffer.c, effects/*.c:
