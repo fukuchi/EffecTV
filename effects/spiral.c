@@ -91,7 +91,7 @@
 
 #define WAVE_CONCENTRIC_A       0
 #define WAVE_SAWTOOTH_UP        1
-#define WAVE_SAWTOOTH_DOWN      2 
+#define WAVE_SAWTOOTH_DOWN      2
 #define WAVE_TRIANGLE           3
 
 #define WAVE_SINUS              4
@@ -177,14 +177,13 @@ static void spiralSetName(void)
             sprintf(effectname, "%s:%s (%0.2fi/%df/%dd)", effectname_base,
                     g_wave_names[mode],
                     g_focus_increment, g_focus_interval, g_depth_shift);
-            
             screen_setcaption(effectname);
 }
-    
+
 effect *spiralRegister(void)
 {
 	effect *entry;
-    
+
 	depthmap = (int *)malloc(video_width * video_height * sizeof(int));
 	if(depthmap == NULL) {
 		return NULL;
@@ -245,12 +244,12 @@ static int start(void)
             return -1;
         }
     }
-    
+
     spiralCreateMap();
-    
+
 	plane = PLANE_MAX;
 
-#ifdef DEBUG 
+#ifdef DEBUG
     v4lprint(&vd);
 #endif
 
@@ -277,7 +276,7 @@ static int stop(void)
             free(g_wave_table);
             g_wave_table = NULL;
         }
-        
+
         SDL_ShowCursor(g_cursor_state);
         state = 0;
 	}
@@ -296,7 +295,7 @@ static int draw(RGB32 *src, RGB32 *dest)
     {
         spiralMoveFocus();
     }
-    
+
 	i = 0;
 	for(y = 0; y < video_height; y++) {
 		for(x = 0; x < video_width; x++) {
@@ -332,7 +331,7 @@ static int event(SDL_Event *event)
         case SDLK_x:
             g_toggle_xor = ~g_toggle_xor;
             break;
-            
+
         case SDLK_0:
             g_focus_y = (video_height/2);
             g_focus_x = (video_width/2);
@@ -345,7 +344,7 @@ static int event(SDL_Event *event)
             g_focus_increment *= 1.25;
             spiralSetName();
             break;
-            
+
         case SDLK_DELETE:
             g_focus_increment *= 0.80;
             spiralSetName();
@@ -359,7 +358,7 @@ static int event(SDL_Event *event)
             }
             spiralSetName();
             break;
-            
+
         case SDLK_END:
             g_focus_interval--;
             if (0 >= g_focus_interval)
@@ -377,7 +376,7 @@ static int event(SDL_Event *event)
             spiralSetName();
             spiralCreateMap();
             break;
-            
+
         case SDLK_PAGEDOWN:
             if (0 < g_depth_shift)
             {
@@ -386,31 +385,31 @@ static int event(SDL_Event *event)
             spiralSetName();
             spiralCreateMap();
             break;
-            
+
         case SDLK_1:
             g_focus_y = video_height/4;
             g_focus_x = video_width/4;
             spiralCreateMap();
             break;
-            
+
         case SDLK_2:
             g_focus_y = video_height/4;
             g_focus_x = 3 * video_width/4;
             spiralCreateMap();
             break;
-            
+
         case SDLK_3:
             g_focus_y = 3 * video_height/4;
             g_focus_x = video_width/4;
             spiralCreateMap();
             break;
-            
+
         case SDLK_4:
             g_focus_y = 3 * video_height/4;
             g_focus_x = 3 * video_width/4;
             spiralCreateMap();
             break;
-            
+
 		default:
 			break;
 		}
@@ -437,7 +436,7 @@ static int event(SDL_Event *event)
             SDL_ShowCursor(g_cursor_local);
         }
     }
-    
+
 	return 0;
 }
 
@@ -453,7 +452,7 @@ static void spiralCreateMap(void)
     int v;
     int i;
     int wave_offset;
-    
+
     /*
     ** The following code generates the default depth map.
     */
@@ -462,19 +461,19 @@ static void spiralCreateMap(void)
 
     x_ratio = 320.0 / video_width;
     y_ratio = 240.0 / video_height;
-    
+
 	for (y=0; y<video_height; y++) {
 
         rel_y = (g_focus_y - y) * y_ratio;
         yy = rel_y * rel_y;
-        
+
 		for(x=0; x<video_width; x++) {
             rel_x = (g_focus_x - x) * x_ratio;
             v = ((int)sqrt(yy + rel_x*rel_x)) & WAVE_LENGTH_MASK;
             depthmap[i++] = g_wave_table[wave_offset + v] >> g_depth_shift;
 		}
 	}
-    
+
     return;
 }
 
@@ -488,7 +487,7 @@ static WaveEl* spiralDefineWaves(void)
 
     // This code feels a little like a hack, but at least it contains
     // all like-minded hacks in one place.
-    
+
     wave_table = (WaveEl*)malloc(WAVE_TABLE_SIZE);
     if (NULL == wave_table)
     {
@@ -500,7 +499,7 @@ static WaveEl* spiralDefineWaves(void)
     {
         // The 'flat' wave is very easy to compute :)
         wave_table[WAVE_FLAT_OFFSET + i] = 0;
-        
+
         wave_table[WAVE_SAW_UP_OFFSET + i] = i & PLANE_MASK;
         wave_table[WAVE_SAW_DOWN_OFFSET + i] = PLANE_MAX - (i & PLANE_MASK);
         if (i & PLANES)
@@ -524,14 +523,14 @@ static WaveEl* spiralDefineWaves(void)
         }
 
         wave_table[WAVE_CONCENTRIC_B_OFFSET + i] = (i*PLANES)/w;
-        
+
         wave_table[WAVE_LENS_OFFSET + i] = i >> 3;
 
         wave_table[WAVE_SINUS_OFFSET + i] = ((PLANES/2) +
                                              (int)((PLANES/2 - 1) * sin(sinus_val))) & PLANE_MASK;
         sinus_val += M_PI/PLANES;
     }
-    
+
     return (wave_table);
 }
 
@@ -545,7 +544,7 @@ static void spiralMoveFocus(void)
         g_focus_counter = 0;
 
         g_focus_x = (g_focus_radius * cos(g_focus_degree)) + (video_width/2);
-        
+
         g_focus_y = (g_focus_radius * sin(g_focus_degree*2.0)) + (video_height/2);
 
         spiralCreateMap();

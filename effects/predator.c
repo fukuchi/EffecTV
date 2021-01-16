@@ -34,7 +34,7 @@ static void setBackground(RGB32 *src)
 effect *predatorRegister(void)
 {
 	effect *entry;
-	
+
 	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
@@ -44,7 +44,7 @@ effect *predatorRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

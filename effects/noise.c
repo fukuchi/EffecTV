@@ -31,12 +31,12 @@ static int setBackground(RGB32 *src)
 effect *noiseRegister(void)
 {
 	effect *entry;
-	
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

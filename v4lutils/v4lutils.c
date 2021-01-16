@@ -128,7 +128,7 @@ int v4lgetcapability(v4ldevice *vd)
 	return 0;
 }
 
-/* 
+/*
  * v4lenuminputs - enumerate all video inputs
  */
 int v4lenuminputs(v4ldevice *vd)

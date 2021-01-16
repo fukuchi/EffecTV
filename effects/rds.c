@@ -26,12 +26,12 @@ static int method = 0;
 effect *rdsRegister(void)
 {
 	effect *entry;
-	
+
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -71,7 +71,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 				x = video_width / 2 + i;
 				*(dest + x) = 0xffffff;
-	
+
 				while(x + stride/2 < video_width) {
 					v = *(src + x + stride/2);
 					R = (v&0xff0000)>>(16+6);
@@ -104,7 +104,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 
 				x = video_width / 2 + i;
 				*(dest + x) = 0xffffff;
-	
+
 				while(x + stride/2 < video_width) {
 					v = *(src + x + stride/2);
 					R = (v&0xff0000)>>(16+6);

@@ -33,7 +33,7 @@ static int mask;
 effect *shagadelicRegister(void)
 {
 	effect *entry;
-	
+
 	ripple = (char *)malloc(video_area*4);
 	spiral = (char *)malloc(video_area);
 	if(ripple == NULL || spiral == NULL) {
@@ -44,7 +44,7 @@ effect *shagadelicRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -118,7 +118,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 			v = *src++ | 0x1010100;
 			v = (v - 0x707060) & 0x1010100;
 			v -= v>>8;
-/* Try another Babe! 
+/* Try another Babe!
  * v = *src++;
  * *dest++ = v & ((r<<16)|(g<<8)|b);
  */

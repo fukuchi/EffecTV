@@ -26,7 +26,7 @@ effect *DeinterlaceRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -91,10 +91,10 @@ static int draw(RGB32 *src, RGB32 *dst)
 	    zeile2c = *(RGB32 *)(src+(y+0)*video_width+x+2);
 	    zeile3c = *(RGB32 *)(src+(y+1)*video_width+x+2);
 	    zeile4c = *(RGB32 *)(src+(y+2)*video_width+x+2);
-	    
+
 	    outp3 = zeile2b;
 	    outp4 = zeile3b;
-	    
+
 	    outp1=zeile2a;
 	    outp2=zeile3a;
 	    outp5=zeile2c;
@@ -113,7 +113,7 @@ static int draw(RGB32 *src, RGB32 *dst)
 	    *(RGB32 *)(dst+x+1+(y+0)*video_width) = outp4;
 	    *(RGB32 *)(dst+x+2+(y-1)*video_width) = outp5;
 	    *(RGB32 *)(dst+x+2+(y+0)*video_width) = outp6;
-	  }				  
-	
+	  }
+
 	return 0;
 }

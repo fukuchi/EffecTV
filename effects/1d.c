@@ -33,7 +33,7 @@ effect *onedRegister(void)
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL)
 		return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

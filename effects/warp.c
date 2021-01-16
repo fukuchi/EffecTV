@@ -42,7 +42,7 @@ effect *warpRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -82,12 +82,12 @@ static void initSinTable (void) {
 
 static void initOffsTable (void) {
 	int y;
-	
+
 	for (y = 0; y < video_height; y++) {
 		offstable[y] = y * video_width;
 	}
 }
-      
+
 static void initDistTable (void) {
 	Sint32	halfw, halfh, *distptr;
 	double	x,y,m;
@@ -107,7 +107,7 @@ static void initDistTable (void) {
 
 static void initWarp (void) {
 
-  offstable = (int *)malloc (video_height * sizeof (int));      
+  offstable = (int *)malloc (video_height * sizeof (int));
   disttable = malloc (video_width * video_height * sizeof (int));
   initSinTable ();
   initOffsTable ();
@@ -118,7 +118,6 @@ static void initWarp (void) {
 static void disposeWarp (void) {
   free (disttable);
   free (offstable);
-  
 }
 
 static int draw(RGB32 *src, RGB32 *dst)
@@ -130,11 +129,11 @@ static int draw(RGB32 *src, RGB32 *dst)
   yw  = (int) (sin((tval)*M_PI/256) * -35);
   cw  = (int) (sin((tval-70)*M_PI/64) * 50);
   xw += (int) (sin((tval-10)*M_PI/512) * 40);
-  yw += (int) (sin((tval+30)*M_PI/512) * 40);	  
+  yw += (int) (sin((tval+30)*M_PI/512) * 40);
 
   doWarp(xw,yw,cw,src,dst);
   tval = (tval+1) &511;
-  
+
   return 0;
 }
 
@@ -161,21 +160,20 @@ static void doWarp (int xw, int yw, int cw,RGB32 *src,RGB32 *dst) {
 	/*	printf("Forring\n"); */
         for (y = 0; y < height-1; y++) {
          for (x = 0; x < width; x++) {
- 	   i = *distptr++; 
- 	   dx = ctable [i+1] + x; 
- 	   dy = ctable [i] + y;	 
+ 	   i = *distptr++;
+ 	   dx = ctable [i+1] + x;
+ 	   dy = ctable [i] + y;
 
 
- 	   if (dx < 0) dx = 0; 
- 	   else if (dx > maxx) dx = maxx; 
-   
- 	   if (dy < 0) dy = 0; 
- 	   else if (dy > maxy) dy = maxy; 
+ 	   if (dx < 0) dx = 0;
+ 	   else if (dx > maxx) dx = maxx;
+
+ 	   if (dy < 0) dy = 0;
+ 	   else if (dy > maxy) dy = maxy;
 /* 	   printf("f:%d\n",dy); */
 	   /*	   printf("%d\t%d\n",dx,dy); */
- 	   *destptr++ = src[offstable[dy]+dx]; 
+ 	   *destptr++ = src[offstable[dy]+dx];
 	 }
 	 destptr += skip;
 	}
-	
 }

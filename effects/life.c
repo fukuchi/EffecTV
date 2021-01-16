@@ -31,7 +31,7 @@ static void clear_field(void)
 effect *lifeRegister(void)
 {
 	effect *entry;
-	
+
 	field = (unsigned char *)malloc(video_area*2);
 	if(field == NULL) {
 		return NULL;
@@ -41,7 +41,7 @@ effect *lifeRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

@@ -32,7 +32,7 @@ effect *quarkRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -45,7 +45,7 @@ effect *quarkRegister(void)
 static int start(void)
 {
 	int i;
-	
+
 	buffer = (RGB32 *)malloc(video_area * PIXEL_SIZE * PLANES);
 	if(buffer == NULL)
 		return -1;

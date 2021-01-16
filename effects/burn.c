@@ -59,7 +59,7 @@ static int setBackground(RGB32 *src)
 effect *burnRegister(void)
 {
 	effect *entry;
-	
+
 	buffer = (unsigned char *)malloc(video_area);
 	if(buffer == NULL) {
 		return NULL;
@@ -69,7 +69,7 @@ effect *burnRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

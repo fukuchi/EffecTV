@@ -343,7 +343,7 @@ effect *sparkRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -356,7 +356,7 @@ effect *sparkRegister(void)
 static int start(void)
 {
 	int i;
-	
+
 	for(i=0; i<POINT_MAX; i++) {
 		pp[i] = 0;
 	}

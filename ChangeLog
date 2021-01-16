@@ -1,3 +1,7 @@
+2021.01.16 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Code cleaning up. (trailing spaces were eliminated)
+
 2021.01.05 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* effects/slofast.c:

@@ -52,7 +52,7 @@ effect *timeDistortionRegister(void)
 		free(entry);
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

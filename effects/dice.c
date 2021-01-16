@@ -75,18 +75,17 @@ effect *diceRegister(void)
 	entry->stop = stop;
 	entry->draw = draw;
 	entry->event = event;
-	
+
 	return entry;
 }
 
 static int start(void)
 {
     diceCreateMap();
-    
-#ifdef DEBUG 
+
+#ifdef DEBUG
     v4lprint(&vd);
 #endif
-    
 
     state = 1;
 	return 0;
@@ -200,12 +199,11 @@ static int event(SDL_Event *event)
 		case SDLK_SPACE:
             diceCreateMap();
 			break;
-            
 		default:
 			break;
 		}
 	}
-    
+
 	return 0;
 }
 
@@ -214,21 +212,20 @@ static void diceCreateMap(void)
     int x;
     int y;
     int i;
-    
+
     g_map_height = video_height >> g_cube_bits;
     g_map_width = video_width >> g_cube_bits;
     g_cube_size = 1 << g_cube_bits;
 
     i = 0;
 	for (y=0; y<g_map_height; y++) {
-
 		for(x=0; x<g_map_width; x++) {
             // dicemap[i] = ((i + y) & 0x3); /* Up, Down, Left or Right */
             dicemap[i] = (inline_fastrand() >> 24) & 0x03;
             i++;
 		}
 	}
-    
+
     return;
 }
 

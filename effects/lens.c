@@ -102,7 +102,7 @@ static int draw(RGB32 *src, RGB32 *dst)
 	}
 
   	return 0;
-} 
+}
 
 static void init() {
 
@@ -169,7 +169,7 @@ static void init() {
      * formula:
      *
      * For ax^2 + bx + c = 0,
-     * 
+     *
      * x = (-b +- sqrt(b^2 - 4ac)) / 2a
      *
      * We can ignore the negative result, because we want the point at
@@ -262,13 +262,13 @@ static int event(SDL_Event *event)
                         		//fprintf(stdout,"mode=%d\n",mode);
 				break;
 
-				default: 
+				default:
 				break;
 
 			}
 		}
 
-		else { 
+		else {
 			if(mode==0){
 			   if (SDL_MOUSEMOTION == event->type){
 

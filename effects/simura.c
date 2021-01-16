@@ -60,7 +60,7 @@ effect *simuraRegister(void)
 	effect *entry;
 	int i;
 	RGB32 tmp[26];
-	
+
 	for(i=0; i<26; i++) {
 		tmp[keytable[i] - 'a'] = colortable[i];
 	}
@@ -77,7 +77,7 @@ effect *simuraRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

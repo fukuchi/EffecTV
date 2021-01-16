@@ -13,7 +13,7 @@
 #include "utils.h"
 
 #define PLANES_DEPTH 6
-#define PLANES (1<<PLANES_DEPTH) 
+#define PLANES (1<<PLANES_DEPTH)
 
 static int start(void);
 static int stop(void);
@@ -35,7 +35,7 @@ static void drawAppearing(RGB32 *src, RGB32 *dest);
 effect *chameleonRegister(void)
 {
 	effect *entry;
-	
+
 	sum = (unsigned int *)malloc(video_area * sizeof(unsigned int));
 	bgimage = (RGB32 *)malloc(video_area * PIXEL_SIZE);
 	if(sum == NULL || bgimage == NULL)
@@ -46,7 +46,7 @@ effect *chameleonRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

@@ -5,7 +5,7 @@
  * nervousTV - The name says it all...
  * Copyright (C) 2002 TANNENBAUM Edo
  *
- * 2002/2/9 
+ * 2002/2/9
  *   Original code copied same frame twice, and did not use memcpy().
  *   I modifed those point.
  *   -Kentaro Fukuchi

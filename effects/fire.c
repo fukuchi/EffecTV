@@ -59,7 +59,7 @@ static void makePalette(void)
 effect *fireRegister(void)
 {
 	effect *entry;
-	
+
 	buffer = (unsigned char *)malloc(video_area);
 	if(buffer == NULL) {
 		return NULL;
@@ -69,7 +69,7 @@ effect *fireRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

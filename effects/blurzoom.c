@@ -83,7 +83,7 @@ static void setTable(void)
 		blurzoomy[y] = ty * buf_width + tx - prevptr;
 		prevptr = ty * buf_width + xx;
 	}
-}		
+}
 
 #ifndef USE_NASM
 /* following code is a replacement of blurzoomcore.nas. */
@@ -93,7 +93,7 @@ static void blur(void)
 	int width;
 	unsigned char *p, *q;
 	unsigned char v;
-	
+
 	width = buf_width;
 	p = blurzoombuf + width + 1;
 	q = p + buf_area;
@@ -170,7 +170,7 @@ static void makePalette(void)
 effect *blurzoomRegister(void)
 {
 	effect *entry;
-	
+
 	buf_width_blocks = (video_width / 32);
 	if(buf_width_blocks > 255) {
 		return NULL;
@@ -196,7 +196,7 @@ effect *blurzoomRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

@@ -86,7 +86,7 @@ effect *opRegister(void)
 {
 	effect *entry;
 	int i;
-	
+
 	for(i=0; i<OPMAP_MAX; i++) {
 		opmap[i] = (char *)malloc(video_area);
 		if(opmap[i] == NULL) {
@@ -101,7 +101,7 @@ effect *opRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

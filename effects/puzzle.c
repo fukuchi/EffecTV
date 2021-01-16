@@ -88,7 +88,7 @@ effect *puzzleRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -248,7 +248,7 @@ static int event(SDL_Event *event)
 static void copyBlockImage(RGB32 *src, RGB32 *dest)
 {
 	int y;
-	
+
 	for(y=blockSize; y>0; y--) {
 		memcpy(dest, src, blockSize * PIXEL_SIZE);
 		src += video_width;

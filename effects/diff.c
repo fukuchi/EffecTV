@@ -62,8 +62,7 @@ effect *diffRegister(void)
 
 static int start(void)
 {
-    
-#ifdef DEBUG 
+#ifdef DEBUG
     v4lprint(&vd);
 #endif
 
@@ -85,7 +84,7 @@ static int draw(RGB32 *src, RGB32 *dest)
     unsigned int src_red, src_grn, src_blu;
     unsigned int old_red, old_grn, old_blu;
     unsigned int red_val, red_diff, grn_val, grn_diff, blu_val, blu_diff;
-    
+
     i = 0;
     for (y = 0; y < video_height; y++)
     {
@@ -125,7 +124,7 @@ static int draw(RGB32 *src, RGB32 *dest)
                 grn_diff = old_grn - src_grn;
             }
             grn_val = (grn_diff >= g_tolerance[1]) ? grn_val : 0x00;
-            
+
             // BLUE
             if (src_blu > old_blu)
             {
@@ -143,7 +142,7 @@ static int draw(RGB32 *src, RGB32 *dest)
                           ( ((src_grn + old_grn) >> 1) << 8) +
                           ( ((src_blu + old_blu) >> 1) ) );
 
-#if 0            
+#if 0
             if ((0x00 != blu_val) && (0x00 != grn_val) && (0x00 != red_val))
             {
                 dest[i] = src[i];
@@ -152,13 +151,13 @@ static int draw(RGB32 *src, RGB32 *dest)
             {
                 dest[i] = prevbuf[i];
             }
-#else            
+#else
             dest[i] = (red_val << 16) + (grn_val << 8) + blu_val;
 #endif
-            
+
  //x            dest[i] = (red_diff << 17) + (grn_diff << 9) + (blu_diff << 1);
 
-            
+
 //            prevbuf[i] = src[i];    // Since we're already iterating through both of them...
 
             i++;
@@ -176,35 +175,35 @@ static int event(SDL_Event *event)
         case SDLK_c:
             g_tolerance[0] -= TOLERANCE_STEP;
             g_tolerance[0] &= 0xFF;
-            
+
             g_tolerance[1] -= TOLERANCE_STEP;
             g_tolerance[1] &= 0xFF;
-            
+
             g_tolerance[2] -= TOLERANCE_STEP;
             g_tolerance[2] &= 0xFF;
-            
+
 //            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
             break;
         case SDLK_v:
             g_tolerance[0] += TOLERANCE_STEP;
             g_tolerance[0] &= 0xFF;
-            
+
             g_tolerance[1] += TOLERANCE_STEP;
             g_tolerance[1] &= 0xFF;
-            
+
             g_tolerance[2] += TOLERANCE_STEP;
             g_tolerance[2] &= 0xFF;
-            
+
 //            fprintf(stderr, "tol: %d,%d,%d\n", g_tolerance[0], g_tolerance[1], g_tolerance[2]);
             break;
 		case SDLK_SPACE:
 			break;
-            
+
 		default:
 			break;
 		}
 	}
-    
+
 	return 0;
 }
 

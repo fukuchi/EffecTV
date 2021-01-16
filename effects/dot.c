@@ -171,7 +171,7 @@ effect *dotRegister(void)
 	dot_hsize = dot_size / 2;
 	dots_width = video_width / dot_size;
 	dots_height = video_height / dot_size;
-	
+
 	pattern = (RGB32 *)malloc(DOTMAX * dot_hsize * dot_hsize * sizeof(RGB32));
 	if(pattern == NULL) {
 		return NULL;
@@ -186,7 +186,7 @@ effect *dotRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

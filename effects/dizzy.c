@@ -71,7 +71,7 @@ static void setParams(void)
 effect *dizzyRegister(void)
 {
 	effect *entry;
-	
+
 	buffer = (RGB32 *)malloc(video_area * 2 * PIXEL_SIZE);
 	if(buffer == NULL) {
 		return NULL;
@@ -81,7 +81,7 @@ effect *dizzyRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

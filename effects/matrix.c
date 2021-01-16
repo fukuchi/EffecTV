@@ -66,7 +66,7 @@ static void updateCharMap(void);
 effect *matrixRegister(void)
 {
 	effect *entry;
-	
+
 	mapW = video_width / FONT_W;
 	mapH = video_height / FONT_H;
 	cmap = (unsigned char *)malloc(mapW * mapH);
@@ -88,7 +88,7 @@ effect *matrixRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -252,7 +252,7 @@ static void setPattern(void)
 					v = 1;
 					break;
 				case 'o':
-					v = 2; 
+					v = 2;
 					break;
 				case 'O':
 				default:

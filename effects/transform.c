@@ -4,19 +4,19 @@
  *
  * Plugin for EffecTV by Fukuchi Kentarou
  * Written by clifford smith <nullset@dookie.net>
- * 
+ *
  * TransForm.c: Performs positinal translations on images
- * 
+ *
  * Space selects b/w the different transforms
  *
- * basicaly TransformList contains an array of 
+ * basicaly TransformList contains an array of
  * values indicating where pixels go.
  * This value could be stored here or generated. The ones i use
  * here are generated.
  * Special value: -1 = black, -2 = get values from mapFromT(x,y,t)
  * ToDo: support multiple functions ( -3 to -10 or something?)
  * Note: the functions CAN return -1 to mean black....
- * 
+ *
  */
 
 #include <stdlib.h>
@@ -55,7 +55,7 @@ effect *TransFormRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -102,10 +102,10 @@ static int start(void)
   for (y=0;y < video_height;y++) {
     for (x=0;x < video_width;x++) {
 
-      TableList[0][x+y*video_width]=     
-	TableList[1][(video_width-1-x)+y*video_width] = 
-	TableList[2][x+(video_height-1-y)*video_width] = 
-	TableList[3][(video_width-1-x)+(video_height-1-y)*video_width] = 
+      TableList[0][x+y*video_width]=
+	TableList[1][(video_width-1-x)+y*video_width] =
+	TableList[2][x+(video_height-1-y)*video_width] =
+	TableList[3][(video_width-1-x)+(video_height-1-y)*video_width] =
 	x+y*video_width;
       TableList[4][x+y*video_width] = -2; /* Function */
 	}
@@ -148,10 +148,9 @@ static int draw(RGB32 *src, RGB32 *dst)
 	    if (dest == -1) {
 	      value = 0;
 	    } else {
-	      value = *(RGB32 *)(src + dest);	 
+	      value = *(RGB32 *)(src + dest);
 	    }
 	    *(RGB32 *)(dst+x+y*video_width) = value;
-	    
 	  }
 
 	return 0;

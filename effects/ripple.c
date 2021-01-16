@@ -58,7 +58,7 @@ static int setBackground(RGB32 *src)
 effect *rippleRegister(void)
 {
 	effect *entry;
-	
+
 	map_h = video_height / 2 + 1;
 	map_w = video_width / 2 + 1;
 	map = (int *)malloc(map_h*map_w*3*sizeof(int));
@@ -73,7 +73,7 @@ effect *rippleRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -252,7 +252,7 @@ static int draw(RGB32 *src, RGB32 *dest)
 	/* simulate surface wave */
 	width = map_w;
 	height = map_h;
-	
+
 	/* This function is called only 30 times per second. To increase a speed
 	 * of wave, iterates this loop several times. */
 	for(i=loopnum; i>0; i--) {
@@ -302,8 +302,8 @@ static int draw(RGB32 *src, RGB32 *dest)
 		for(x=width-1; x>0; x--) {
 			/* difference of the height between two voxel. They are twiced to
 			 * emphasise the wave. */
-			vp[0] = sqrtable[((p[0] - p[1])>>(point-1))&0xff]; 
-			vp[1] = sqrtable[((p[0] - p[width])>>(point-1))&0xff]; 
+			vp[0] = sqrtable[((p[0] - p[1])>>(point-1))&0xff];
+			vp[1] = sqrtable[((p[0] - p[width])>>(point-1))&0xff];
 			p++;
 			vp+=2;
 		}

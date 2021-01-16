@@ -44,7 +44,7 @@ static void holoInit(void)
 effect *holoRegister(void)
 {
 	effect *entry;
-	
+
 	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
@@ -55,7 +55,7 @@ effect *holoRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

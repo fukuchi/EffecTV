@@ -30,7 +30,7 @@ effect *scrollRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -56,7 +56,7 @@ static int stop(void)
 
 static int draw(RGB32 *src, RGB32 *dest)
 {
-	memcpy (dest, src+(video_height - offset)*video_width, 
+	memcpy (dest, src+(video_height - offset)*video_width,
 		offset * video_width * sizeof (RGB32));
 	memcpy (dest+offset*video_width, src,
 		(video_height - offset) * video_width * sizeof (RGB32));

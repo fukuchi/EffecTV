@@ -6,7 +6,7 @@
  * Copyright (C) 2002 TANNENBAUM Edo
  * Copyright (C) 2004 Kentaro Fukuchi
  *
- * 2004/11/27 
+ * 2004/11/27
  *  The most of this code has been taken from Edo's NervousTV.
  */
 

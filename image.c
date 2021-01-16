@@ -307,7 +307,7 @@ unsigned char *image_diff_filter(unsigned char *diff)
 		}
 		dest += 2;
 	}
-	
+
 	return diff2;
 }
 

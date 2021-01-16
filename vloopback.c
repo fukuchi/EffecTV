@@ -81,13 +81,13 @@ static inline int gbuf_unlock(void)
 static unsigned char *vloopback_mmap(int dev, int memsize)
 {
 	unsigned char *map;
-	
+
 	map = mmap(0, memsize, PROT_READ|PROT_WRITE, MAP_SHARED, dev, 0);
 	if(map < 0) {
 		perror("vloopback_mmap:mmap");
 		return NULL;
 	}
-	return map;	
+	return map;
 }
 
 #if 0

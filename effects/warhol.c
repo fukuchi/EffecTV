@@ -20,8 +20,8 @@ static char *effectname = "WarholTV";
 static int state = 0;
 static RGB32 colortable[26] = {
 	0x000080, 0x008000, 0x800000,
-	0x00e000, 0x808000, 0x800080, 
-	0x808080, 0x008080, 0xe0e000, 
+	0x00e000, 0x808000, 0x800080,
+	0x808080, 0x008080, 0xe0e000,
 };
 
 effect *warholRegister(void)
@@ -30,7 +30,7 @@ effect *warholRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -62,7 +62,7 @@ static int draw(RGB32 *src, RGB32 *dst)
 	    {
 	      p = (x * DIVIDER) % video_width;
 	      q = (y * DIVIDER) % video_height;
-	      i = ((y * DIVIDER) / video_height) * DIVIDER 
+	      i = ((y * DIVIDER) / video_height) * DIVIDER
 		+ ((x * DIVIDER) / video_width);
 	      *dst++ = src[q * video_width + p] ^ colortable[i];
 	    }

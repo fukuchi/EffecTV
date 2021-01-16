@@ -26,7 +26,7 @@ effect *cycleRegister(void)
 
 	entry = (effect *)malloc(sizeof(effect));
 	if(entry == NULL) return NULL;
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
@@ -53,12 +53,12 @@ static int stop(void)
 static int draw(RGB32 *src, RGB32 *dst)
 {
   int i;
-  
+
   roff += 1;
-  goff += 3;        
+  goff += 3;
   if (stretch)
     image_stretch_to_screen();
-  
+
   boff += 7;
   for (i=0 ; i < video_area ; i++) {
     RGB32 t;

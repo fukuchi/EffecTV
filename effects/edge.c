@@ -2,7 +2,7 @@
  * EffecTV - Realtime Digital Video Effector
  * Copyright (C) 2001-2006 FUKUCHI Kentaro
  *
- * EdgeTV - detects edge and display it in good old computer way. 
+ * EdgeTV - detects edge and display it in good old computer way.
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
  *
  * The idea of EdgeTV is taken from Adrian Likins's effector script for GIMP,
@@ -38,7 +38,7 @@ static int video_width_margin;
 effect *edgeRegister(void)
 {
 	effect *entry;
-	
+
 	map_width = video_width / 4;
 	map_height = video_height / 4;
 	video_width_margin = video_width - map_width * 4;
@@ -52,7 +52,7 @@ effect *edgeRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;

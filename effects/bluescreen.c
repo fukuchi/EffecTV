@@ -114,7 +114,7 @@ static int setBlueScreen(int frames)
 effect *bluescreenRegister(void)
 {
 	effect *entry;
-	
+
 	bgimage = (RGB32 *)malloc(video_area*PIXEL_SIZE);
 	if(bgimage == NULL) {
 		return NULL;
@@ -124,7 +124,7 @@ effect *bluescreenRegister(void)
 	if(entry == NULL) {
 		return NULL;
 	}
-	
+
 	entry->name = effectname;
 	entry->start = start;
 	entry->stop = stop;
