@@ -20,7 +20,7 @@ DEFAULT_VIDEO_DEVICE = "/dev/video0"
 ###############################################################################
 ### none user configurable settings
 
-CONFIG.arch = -DI686
+CONFIG.arch =
 CFLAGS.opt = -O3 -fomit-frame-pointer -funroll-loops
 CFLAGS.debug = -g #-fsanitize=leak
 

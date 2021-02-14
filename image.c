@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2006 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006,2020-2021 FUKUCHI Kentaro
  *
  * image.c: utilities for image processing.
  *

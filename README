@@ -1,9 +1,10 @@
-EffecTV 0.3.11
+EffecTV 0.9.0
 
 GENERAL INFORMATION
 ===================
 EffecTV is a real-time video effect processor. You can enjoy movies,
 TV programs and any other video stream through the many amazing effects. 
+
 
 INSTALL
 =======
@@ -12,9 +13,10 @@ Requirements
 ------------
 Video capture card or USB device supported by Video4Linux2 (V4L2) is required.
 
-EffecTV requires the SDL library, available from http://www.libsdl.org/.
+EffecTV requires the SDL2 library, available from http://www.libsdl.org/.
 
 Vloopback device driver is required for the video loopback feature.
+
 
 Compiling & installing
 ----------------------
@@ -32,17 +34,14 @@ and man page "effectv.1" will be installed to /usr/local/man/man1/ by default.
 The input device file (typically "/dev/video0") must be readable and writable
 for you.
 
-USING
-=====
 
-Before using
-------------
-Before starting up EffecTV, you should know about your hardwares settings.
-You can adjust these settings with command line options. See the next section.
+USAGE
+=====
 
 Synopsis
 --------
 effectv [options...] [effect name]
+
 
 Options
 -------
@@ -80,6 +79,7 @@ effect name
 	after the command name ("effectv") or option(s). It's case-insensitive,
 	and a trailing "TV" can be omitted.
 
+
 Key
 ---
 Up/Down     change effect.
@@ -90,8 +90,9 @@ TAB         Horizontal flipping(toggle).
 Escape      Quit
 F12         show this key usage.
 
-Individual effects are described in further detail in the documents package.
-You should download effectv-docs.tar.gz found at EffecTV web page.
+Individual effects are described in further detail in the web page.
+See https://www.effectv.dev/.
+
 
 Summary of effects
 ------------------
@@ -267,60 +268,16 @@ size is smaller than the screen size, the output images are resized. Supported
 palettes (pixel format) of output images are RGB32, RGB24, RGB565, RGB555,
 YUV422, YUV422P and YUV420P.
 
+
 CONTACT
 =======
 
-Web
----
-See https://www.effectv.dev/
+Please visit https://www.effectv.dev/ for further information.
 
-Bug-reporting & Suggestions
----------------------------
-Bug reports and suggestions are welcome! Send an e-mail to:
+The git repository and issue tracker is available at:
 
-effectv-developers@lists.sourceforge.net
+https://github.com/fukuchi/EffecTV
 
-or, post a message to EffecTV open discussion forums at EffecTV project page
-at SourceForge (see below for the URL).
-
-SourceForge
-===========
-EffecTV project page has been opened at SourceForge(http://sourceforge.net/).
-
-http://sourceforge.net/projects/effectv/
-
-Mailing list
-------------
-If you want to subscribe to the EffecTV crews mailing list, info can be found
-at http://lists.sourceforge.net/lists/listrinfo/effectv-developers.
-
-Discussion forum
-----------------
-There are four open discussion forums: "Help", "Effects coders forum",
-"Open discussion" and "Japanese".
-
-Help
-	Questions and problems should be posted here.
-Effects coders forum
-	Discussion space for effects coders.
-Open Discussion
-	Free discussion space.
-Japanese
-	For discussion in Japanese language.
-
-BackStage Branch
-----------------
-BackStage Branch is an experimental development branch of EffecTV. New effects
-and new features will be added to the branch at first.
-
-CVS
----
-CVS repository of EffecTV can be checked out from the project page. Both the
-main trunk and the BackStage Branch are stored at there. Quick CVS usage
-instructions can be found at there.
-
-If you want access as a developer, you should be the member of the EffecTV
-developers group.  Please ask me to join the developers group.
 
 LICENSING INFORMATION
 =====================
@@ -332,11 +289,23 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
+
 AUTHORS
 =======
-See the file "CREWS".
+Kentaro	Fukuchi
+Sam Merten                  SpiralTV, DiceTV, and DiffTV
+Matthias Kleinmann          TV tuning support
+Buddy Smith                 TransFormTV, warpTV, and cycleTV
+Christian W. Zuckschwerdt   Man page
+Christian Berger            DeinterlaceTV
+Ed Tannenbaum               NervousTV, RndmTV, and RevTV
+Ico Doornekamp              NemoTV
+Jun IIO                     WarholTV and BrokenTV
+Monniez Christophe          MatrixTV
+Erich Schubert              SloFastTV
+Nicolas Argyrou             BlueScreenTV
+Ryo-ta                      TimeDistortion and ColourfulStreak
 
 ---
-EffecTV crews
-E-mail: effectv-developers@lists.sourceforge.net
-Web: https://www.effectv.dev/
+EffecTV
+https://www.effectv.dev/

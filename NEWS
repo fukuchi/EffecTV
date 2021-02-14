@@ -1,65 +1,65 @@
+Overview of Changes in EffecTV-0.9.0 (2021/2/14)
+================================================
+
+* Video capturing module has been switched to use Video4Linux2.
+* Screen module has been switched to use SDL2.
+* Default resolution has been changed to 640x480 from 320x240.
+* Shared buffering has been eliminated.
+* PlayStation2 support has been eliminated.
+* License of v4lutils has been changed to LGPL-2.1 from LGPL-2.
+* Various bug fixes and code cleaning up.
+
+
 Overview of Changes in EffecTV-0.3.11 (2006/2/14)
-==================================================
+=================================================
+
 * New effects "DisplayWall", "BlueScreenTV", "ColourfulStreak", "TimeDistortion"
   and "EdgeBlurTV" have been added.
-
 * Appearance of ShagadelicTV and OpTV become resolution independent.
-
 * Now it is able to change the video input channel at runtime. (ALT+0-9)
-
 * Video capturing becomes robust. Even if it failed to grab a image, it retry
   every second instead of the red screen of death.
-
 * Some bug fixes and code cleanings.
+
 
 Overview of Changes in EffecTV-0.3.10 (2005/2/14)
 =================================================
+
 * New effects "OpTV", "NervousHalf" and "SloFastTV" have been added.
-
 * Light flickering effect has been added to AgingTV.
-
-* Key usage is shown on starndard out. (Thanks to Forrest Cook)
-
+* Key usage is shown on standard out. (Thanks to Forrest Cook)
 * An experimental patch for IIDC1394 support. (See iidc1394.patch)
+
 
 Overview of Changes in EffecTV-0.3.9 (2004/1/13)
 ================================================
+
 * New effects "MatrixTV", "PupTV" and "ChameleonTV" have been added.
   You say "Who wants Matrix effect after the trilogy? It's obsolete." Sorry,
   it's due to Kentaro's slow slow udpating.
-
 * API of effect module has been simplified.
-
 * The supported version of vloopback has been changed from 0.90 to 0.91.
   Older version is no longer supported.
-
 * EffecTV can be launched from any effect you want. Put an effect name after
   the command name ("effectv") or option(s). It's case-insensitive, and a
   trailing "TV" can be omitted.
-
 * Some new features have been added to FireTV, BurningTV, RadioacTV and
   SparkTV.
-
 * PuzzleTV's block sliding effect becomes smooth.
-
 * Many bug fixes.
+
 
 Overview of Changes in EffecTV-0.3.8 (2002/10/5)
 ================================================
+
 * New effects BrokenTV and WarholTV developed by Jun IIO was added.
-
 * The default v4l device file was changed from "/dev/video" to "/dev/video0".
-
 * The supported version of vloopback was changed from 0.83 to 0.90.
   Version 0.83 is still supported, but it is not recommended.
-
 * A patch for vloopback-0.90 has been updated. Now the patch is attached to
   "README.vloopback" and a patch for vloopback-0.83 is attached to
   "README.vloopback83"
-
 * YUV422P and YUV420P format converter has been added to vloopback support.
-
 * vloopback support has been approved. FFmpeg has been supported. It requires
   vloopback-0.90 with the new patch.
-
 * The base version of ov511 patch for PlayStation2 has been changed to 1.63.

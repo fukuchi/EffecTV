@@ -1,3 +1,15 @@
+2021.02.14 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* EffecTV.h:
+	  - Bumped version to 0.9.0.
+	* Copyright years updated.
+	* FAQ, TODO:
+	  - FAQ and TODO have been deleted because it is outdated and useless.
+	* README, CREWS:
+	  - The authors list has been moved to README.
+	  - CREWS file has been deleted.
+	  - CONTACT information has been updated.
+
 2021.01.16 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* Code cleaning up. (trailing spaces were eliminated)

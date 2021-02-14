@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2006 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006,2021 FUKUCHI Kentaro
  *
  * EffecTV.h: common header
  *
@@ -27,9 +27,9 @@
 #include "video.h"
 
 #define VERSION_MAJOR 0
-#define VERSION_MINOR 3
-#define VERSION_PATCH 11
-#define VERSION_STRING "0.3.11"
+#define VERSION_MINOR 9
+#define VERSION_PATCH 0
+#define VERSION_STRING "0.9.0"
 
 #define DEFAULT_VIDEO_WIDTH 640
 #define DEFAULT_VIDEO_HEIGHT 480

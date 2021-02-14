@@ -1,6 +1,6 @@
 /*
  * EffecTV - Realtime Digital Video Effector
- * Copyright (C) 2001-2006 FUKUCHI Kentaro
+ * Copyright (C) 2001-2006,2021 FUKUCHI Kentaro
  *
  * video.c: video manager
  *
