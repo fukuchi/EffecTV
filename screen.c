@@ -14,6 +14,9 @@
 #include "EffecTV.h"
 #include "utils.h"
 
+/* Defined in image.c */
+extern RGB32 *stretching_buffer;
+
 /* Main screen for displaying video image */
 SDL_Surface *screen;
 SDL_Window *window;

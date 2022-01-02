@@ -258,11 +258,7 @@ static int startTV(const char *startEffect)
 			} else {
 				if(screen_lock() == 0) {
 					src = (RGB32 *)video_getaddress();
-					if(stretch) {
-						dest = stretching_buffer;
-					} else {
-						dest = (RGB32 *)screen_getaddress();
-					}
+					dest = (RGB32 *)screen_getaddress();
 
 					ret = currentEffect->draw(src, dest);
 

@@ -34,8 +34,6 @@ void fastsrand(unsigned int);
 /*
  * image.c
  */
-
-RGB32 *stretching_buffer;
 int image_init(void);
 void image_end(void);
 void image_stretching_buffer_clear(RGB32 color);
