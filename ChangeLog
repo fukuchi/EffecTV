@@ -1,3 +1,8 @@
+2022.11.03 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* utils.h:
+	  - Added 'extern' keyword to stretching_buffer.
+
 2021.02.14 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* EffecTV.h:
