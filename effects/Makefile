@@ -3,8 +3,8 @@
 include ../config.mk
 
 CC = gcc
-CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `sdl-config --cflags`
-LIBS = ../v4lutils/libv4lutils.a -lm `sdl-config --libs`
+CFLAGS = $(CONFIG) $(CONFIG.arch) $(CFLAGS.opt) -I.. -I../v4lutils `pkg-config --cflags sdl2`
+LIBS = ../v4lutils/libv4lutils.a -lm `pkg-config --libs sdl2`
 
 LIBEFFECTS = libeffects.a
 EFFECTS = $(DUMB) $(QUARK) $(FIRE) $(BURN) $(BLURZOOM) $(BALTAN) $(STREAK) \
