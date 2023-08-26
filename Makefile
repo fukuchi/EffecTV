@@ -6,7 +6,7 @@ CC = gcc
 INSTALL = /usr/bin/install -c
 
 CFLAGS = $(CONFIG) $(CFLAGS.opt) $(CFLAGS.debug) -Iv4lutils `pkg-config --cflags sdl2 libv4l2`
-LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl2 libv4l2` $(LIBS.extra)
+LIBS = v4lutils/libv4lutils.a -lm -lpthread `pkg-config --libs sdl2 libv4l2`
 
 PROGRAM = effectv
 

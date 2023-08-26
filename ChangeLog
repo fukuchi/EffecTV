@@ -1,3 +1,10 @@
+2023.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* effects/Makefile:
+	  - Removed unused flags.
+	* Makefile:
+	  - Removed unused variable reference.
+
 2022.11.03 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* utils.h:
