@@ -16,7 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "AgingTV";
+static const char *effectname = "AgingTV";
 static int state = 0;
 static int area_scale;
 

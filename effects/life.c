@@ -19,7 +19,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "LifeTV";
+static const char *effectname = "LifeTV";
 static int stat;
 static unsigned char *field, *field1, *field2;
 

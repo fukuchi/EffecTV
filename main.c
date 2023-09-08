@@ -186,7 +186,7 @@ static int changeEffect(int num)
 static int searchEffect(const char *name)
 {
 	int i, num, len1, len2;
-	char *p;
+	const char *p;
 
 	len1 = strlen(name);
 	if(len1 > 2) {

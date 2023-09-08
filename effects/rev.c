@@ -34,7 +34,7 @@ static int vscale=50;
 
 static int vthecolor=0xffffffff;
 
-static char *effectname = "RevTV";
+static const char *effectname = "RevTV";
 static int state = 0;
 
 static void vasulka(RGB32 *src, RGB32 *dst, int srcx, int srcy, int dstx, int dsty, int w, int h);

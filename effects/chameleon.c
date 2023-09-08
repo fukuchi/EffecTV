@@ -20,7 +20,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
 
-static char *effectname = "ChameleonTV";
+static const char *effectname = "ChameleonTV";
 static int state = 0;
 static int mode = 0;
 static RGB32 *bgimage = NULL;

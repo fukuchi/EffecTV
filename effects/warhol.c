@@ -16,7 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "WarholTV";
+static const char *effectname = "WarholTV";
 static int state = 0;
 static RGB32 colortable[26] = {
 	0x000080, 0x008000, 0x800000,

@@ -29,7 +29,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
-static char *effectname = "TransFormTV";
+static const char *effectname = "TransFormTV";
 static int state = 0;
 
 static int **TableList;
@@ -50,7 +50,7 @@ effect *TransFormRegister(void)
 {
 	effect *entry;
 
-  TableList = malloc(TableMax * sizeof(int *)); /* TableMax */
+  TableList = (int **)malloc(TableMax * sizeof(int *)); /* TableMax */
   /* above line is moved from TransFormStart to avoid memory leak.*/
 
 	entry = (effect *)malloc(sizeof(effect));
@@ -96,7 +96,7 @@ static int start(void)
 //   int xdest,ydest;
 
   for (i=0;i < TableMax ; i++) {
-    TableList[i]= malloc(sizeof(int) * video_width * video_height);
+    TableList[i]= (int *)malloc(sizeof(int) * video_width * video_height);
   }
 
   for (y=0;y < video_height;y++) {

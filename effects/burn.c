@@ -22,7 +22,7 @@ static int event(SDL_Event *);
 #define Decay 15
 #define MAGIC_THRESHOLD 50
 
-static char *effectname = "BurningTV";
+static const char *effectname = "BurningTV";
 static int state = 0;
 static unsigned char *buffer;
 static RGB32 palette[256];

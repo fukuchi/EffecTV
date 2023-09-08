@@ -19,7 +19,7 @@ static int event(SDL_Event *);
 
 #define MAGIC_THRESHOLD 40
 
-static char *effectname = "HolographicTV";
+static const char *effectname = "HolographicTV";
 static int state = 0;
 static RGB32 *bgimage;
 static int bgIsSet;

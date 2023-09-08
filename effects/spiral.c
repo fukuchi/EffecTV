@@ -129,7 +129,7 @@ static void spiralCreateMap();
 static WaveEl* spiralDefineWaves();
 static void spiralMoveFocus();
 
-static char *effectname_base = "SpiralTV";
+static const char *effectname_base = "SpiralTV";
 static char effectname[128] = "";
 static int state = 0;
 static unsigned int *buffer;

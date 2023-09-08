@@ -21,7 +21,7 @@ static int event(SDL_Event *event);
 #define DOTDEPTH 5
 #define DOTMAX (1<<DOTDEPTH)
 
-static char *effectname = "DotTV";
+static const char *effectname = "DotTV";
 static int state;
 static RGB32 *pattern;
 static RGB32 *heart_pattern;

@@ -26,7 +26,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "EdgeTV";
+static const char *effectname = "EdgeTV";
 static int stat;
 static RGB32 *map;
 

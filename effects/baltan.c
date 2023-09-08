@@ -19,7 +19,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "BaltanTV";
+static const char *effectname = "BaltanTV";
 static int state = 0;
 static RGB32 *buffer = NULL;
 static RGB32 *planetable[PLANES];

@@ -16,7 +16,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "NoiseTV";
+static const char *effectname = "NoiseTV";
 static int stat;
 static int bgIsSet = 0;
 

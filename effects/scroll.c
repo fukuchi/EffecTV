@@ -16,7 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "BrokenTV";
+static const char *effectname = "BrokenTV";
 static int state = 0;
 
 static void add_noise (RGB32 *dest);

@@ -18,7 +18,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "VertigoTV";
+static const char *effectname = "VertigoTV";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *current_buffer, *alt_buffer;

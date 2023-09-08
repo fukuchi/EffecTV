@@ -38,7 +38,7 @@ static int xd=5,yd=5;
 static int lens_width=150;
 static int lens_zoom = 30;
 
-static char *effectname = "lensTV";
+static const char *effectname = "lensTV";
 static int state = 0;
 static int *lens = NULL;
 static int mode ;

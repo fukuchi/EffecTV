@@ -61,7 +61,7 @@ static int event(SDL_Event *);
 #include <sys/time.h>
 #endif
 
-static char *effectname = "BlueScreenTV";
+static const char *effectname = "BlueScreenTV";
 static int state = 0;
 static RGB32 *bgimage;
 static int bgIsSet;

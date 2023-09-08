@@ -45,7 +45,7 @@ static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 static void diceCreateMap(void);
 
-static char *effectname = "DiceTV";
+static const char *effectname = "DiceTV";
 static int state = 0;
 
 static char* dicemap;

@@ -22,7 +22,7 @@ static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
 static int mode = 0; // 0 = motion detection / 1 = rain
-static char *effectname = "RippleTV";
+static const char *effectname = "RippleTV";
 static int stat;
 static signed char *vtable;
 static int *map;

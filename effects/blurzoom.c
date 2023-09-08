@@ -35,7 +35,7 @@ int buf_area;
 int buf_margin_right;
 int buf_margin_left;
 
-static char *effectname = "RadioacTV";
+static const char *effectname = "RadioacTV";
 static int stat;
 static RGB32 *palette;
 static RGB32 palettes[COLORS*PATTERN];

@@ -30,12 +30,12 @@ static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 //static void diffUpdate();
 //static void diffSave();
-static char *effectname = "DiffTV";
+static const char *effectname = "DiffTV";
 static int state = 0;
 
 static RGB32* prevbuf;
 
-static int g_tolerance[3] = {10, 10, 10};
+static unsigned int g_tolerance[3] = {10, 10, 10};
 
 effect *diffRegister(void)
 {

@@ -16,7 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dst);
 
-static char *effectname = "cycleTV";
+static const char *effectname = "cycleTV";
 static int state = 0;
 static int roff,goff,boff; /* Offset values */
 

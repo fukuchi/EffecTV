@@ -31,7 +31,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
 
-static char *effectname = "MatrixTV";
+static const char *effectname = "MatrixTV";
 static int stat;
 static int mode = 0;
 static unsigned char font[CHARNUM * FONT_W * FONT_H];
@@ -232,7 +232,7 @@ static void setPalette(void)
 static void setPattern(void)
 {
 	int c, l, x, y, cx, cy;
-	char *p;
+	const char *p;
 	unsigned char v;
 
 	/* FIXME: This code is highly depends on the structure of bundled */

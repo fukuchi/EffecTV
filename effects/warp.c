@@ -33,7 +33,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "warpTV";
+static const char *effectname = "warpTV";
 static int state = 0;
 
 effect *warpRegister(void)
@@ -108,7 +108,7 @@ static void initDistTable (void) {
 static void initWarp (void) {
 
   offstable = (int *)malloc (video_height * sizeof (int));
-  disttable = malloc (video_width * video_height * sizeof (int));
+  disttable = (Sint32 *)malloc (video_width * video_height * sizeof (int));
   initSinTable ();
   initOffsTable ();
   initDistTable ();

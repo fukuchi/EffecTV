@@ -19,7 +19,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *);
 
-static char *effectname = "PUPTV";
+static const char *effectname = "PUPTV";
 static int state = 0;
 static RGB32 *buffer;
 static int bgIsSet;

@@ -21,7 +21,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "EdgeBlurTV";
+static const char *effectname = "EdgeBlurTV";
 static int state = 0;
 static int *blur[2];
 static int blurFrame;

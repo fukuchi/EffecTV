@@ -20,7 +20,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "TimeDistortion";
+static const char *effectname = "TimeDistortion";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *planetable[PLANES];

@@ -22,7 +22,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "NervousHalf";
+static const char *effectname = "NervousHalf";
 static int state = 0;
 static RGB32 *buffer;
 static RGB32 *planetable[PLANES];

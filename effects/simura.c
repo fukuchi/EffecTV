@@ -17,7 +17,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "SimuraTV";
+static const char *effectname = "SimuraTV";
 static int stat;
 static RGB32 color = 0x000000;
 static int mirror = 1;

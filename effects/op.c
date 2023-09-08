@@ -18,7 +18,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "OpTV";
+static const char *effectname = "OpTV";
 static int stat;
 static unsigned char phase;
 static int mode = 0;

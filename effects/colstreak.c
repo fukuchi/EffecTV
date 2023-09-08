@@ -27,7 +27,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "ColourfulStreak";
+static const char *effectname = "ColourfulStreak";
 static int state = 0;
 static unsigned char *buffer;
 static unsigned char *Rplane;

@@ -17,7 +17,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "DisplayWall";
+static const char *effectname = "DisplayWall";
 static int state = 0;
 
 static int *vecx;

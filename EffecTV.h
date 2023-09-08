@@ -44,7 +44,7 @@ typedef unsigned int RGB32;
 
 typedef struct _effect
 {
-	char *name;
+	const char *name;
 	int (*start)(void);
 	int (*stop)(void);
 	int (*draw)(RGB32 *src, RGB32 *dest);

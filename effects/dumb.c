@@ -16,7 +16,7 @@ static int start(void);
 static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 
-static char *effectname = "DumbTV";
+static const char *effectname = "DumbTV";
 static int state = 0;
 
 effect *dumbRegister(void)

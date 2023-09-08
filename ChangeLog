@@ -1,3 +1,7 @@
+2023.09.09 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Pointers to string literal to 'const char *'.
+
 2023.08.28 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* effects/Makefile:

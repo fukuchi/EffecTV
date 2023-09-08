@@ -19,7 +19,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "ShagadelicTV";
+static const char *effectname = "ShagadelicTV";
 static int stat;
 static char *ripple;
 static char *spiral;

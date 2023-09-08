@@ -20,7 +20,7 @@ static int stop(void);
 static int draw(RGB32 *src, RGB32 *dest);
 static int event(SDL_Event *event);
 
-static char *effectname = "MosaicTV";
+static const char *effectname = "MosaicTV";
 static int stat;
 static int bgIsSet = 0;
 

@@ -23,7 +23,7 @@ static int event(SDL_Event *event);
 #define SLIDING_INTERVAL 30
 #define AUTOSOLVE_WAIT 300
 
-static char *effectname = "PuzzleTV";
+static const char *effectname = "PuzzleTV";
 static int stat;
 
 static int blockSize;
