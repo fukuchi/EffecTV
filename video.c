@@ -42,7 +42,7 @@ static void convert_BGR24toBGR32
 
 	length = width * height;
 	for(i=0; i<length; i++) {
-		*dest++ = *(unsigned int *)src & 0xffffff;
+		*dest++ = src[2] << 16 | src[1] << 8 | src[0];
 		src += 3;
 	}
 }
@@ -55,7 +55,7 @@ static void convert_BGR24toBGR32_hflip
 	dest += width - 1;
 	for(y=0; y<height; y++) {
 		for(x=0; x<width; x++) {
-			*dest-- = *(unsigned int *)src & 0xffffff;
+			*dest-- = src[2] << 16 | src[1] << 8 | src[0];
 			src += 3;
 		}
 		dest += width * 2;
