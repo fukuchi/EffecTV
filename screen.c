@@ -102,6 +102,7 @@ int screen_init(int w, int h, int s)
 	mainTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screen_width, screen_height);
 
 	SDL_ShowCursor(SDL_DISABLE);
+	SDL_StopTextInput();
 	atexit(screen_quit);
 	return 0;
 }

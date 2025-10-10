@@ -1,3 +1,7 @@
+2025.10.10 Kentaro Fukuchi <kentaro@fukuchi.org>
+	[develop]
+	* Disabled TEXTINPUT events to correctly handle KEYDOWN events.
+
 2023.09.09 Kentaro Fukuchi <kentaro@fukuchi.org>
 	[develop]
 	* Pointers to string literal to 'const char *'.
